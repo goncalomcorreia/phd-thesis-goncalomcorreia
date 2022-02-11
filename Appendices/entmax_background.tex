@@ -1,0 +1,270 @@
+\def\RR{{\mathbb{R}}}
+\def\EE{{\mathbb{E}}}
+\def\RRY{\RR^{|\cY|}}
+\def\y{\bm{y}}
+\def\triangleY{\triangle^{|\cY|}}
+\def\sizeY{{|\cY|}}
+\def\cC{{\mathcal{C}}}
+\def\cD{{\mathcal{D}}}
+\def\cX{{\mathcal{X}}}
+\def\cY{{\mathcal{Y}}}
+
+\fancychapter{Background: \texorpdfstring{\boldmath $\alpha$-\entmaxtext}{alpha-entmax}}\label{app:fenchelyoung}
+
+\section*{Regularized Fenchel-Young prediction functions}
+\begin{definition}[\citealt{blondel2019learning}]\label{def:rpf}
+
+    Let $\Omega \colon \simplex^d \to \RR \cup \{\infty\}$ be a strictly convex
+    regularization function. We define the prediction function $\amap_{\Omega}$ as
+    \begin{equation}
+        \amap_{\Omega}(\x) = \argmax_{\p \in \simplex^d}
+        \big(\p^\top\x - \Omega(\p)\big)
+        \label{eq:amap}
+    \end{equation}
+\end{definition}
+
+\section*{Characterizing the {\boldmath $\alpha$-\entmaxtext} mapping}\label{sec:bgform}
+
+\begin{lemma}[\citealt{entmax}]
+    \label{lemma:tsallis_reduction}%
+    For any $\x$, there exists a unique $\tau^\star$ such that
+    \begin{equation}\label{eq:entmax_form_app}
+        \aentmax(\x)
+        = [(\alpha - 1){\x} - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
+    \end{equation}
+\end{lemma}
+\begin{proof}
+    From the definition of $\aentmax$,
+    \begin{equation}
+        \aentmax(\bm{z}) \coloneqq
+        \argmax_{\p \in \simplex^d} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
+    \end{equation}
+    we may easily identify it with a regularized prediction function
+    (Def.~\ref{def:rpf}):
+    \[\aentmax(\x) \equiv \amap_{-\HHt_{\alpha}}(\x).\]
+    We first note that for all $\p \in \triangle^d$,
+    \begin{equation}
+        -(\alpha-1) \HHt_\alpha(\p) = \frac{1}{\alpha} \sum_{i=1}^d p_i^\alpha + \text{const}.
+    \end{equation}
+    From the constant invariance and
+    scaling properties of $\amap_{\Omega}$
+    \citep[Proposition~1, items~4--5]{blondel2019learning},
+    \[\amap_{-\HHt_\alpha}(\x)
+        = \amap_{\Omega}((\alpha - 1)\x),
+        \quad\text{with}\quad
+        \Omega(\p) =
+        \sum_{j=1}^{d} g(\pp_j),
+        \quad
+        g(t) = \frac{t^\alpha}{\alpha}.
+    \]
+    Using \citet[Proposition~5]{blondel2019learning}, noting that
+    $g'(t) = t^{\alpha - 1}$ and $(g')^{-1}(u) =  u^{\nicefrac{1}{\alpha-1}}$,
+    yields
+    \begin{equation}\label{eq:rootform}
+        \amap_{\Omega}(\x) = [\x - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}},
+        \quad\text{and therefore}\quad
+        \aentmax(\x) = [(\alpha-1)\x - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
+    \end{equation}
+    Since $\HHt_\alpha$ is strictly convex on the simplex, $\aentmax$ has a unique
+    solution $\p^\star$. \eqnref{eq:rootform}
+    implicitly defines a one-to-one mapping between $\p^\star$ and $\tau^\star$
+    as long as $\p^\star \in \simplex$,
+    therefore $\tau^\star$ is also unique.
+\end{proof}
+
+\section*{Connections to softmax and sparsemax}\label{sec:softmax}
+The Euclidean projection onto the simplex, sometimes referred to, in the context of
+neural attention, as sparsemax~\citep{sparsemax},
+is defined as
+\begin{equation}
+    \sparsemax(\x) \coloneqq \argmin_{\p \in \simplex} \| \p - \x \|_2^2.
+\end{equation}
+The solution can be characterized through the
+unique threshold $\thresh$ such that $\sum_i
+    \sparsemax(\x)_i = 1$ and \citet{Held1974}
+\begin{equation}
+    \sparsemax(\x) = [\x - \tau \bm{1}]_+~.
+\end{equation}
+Thus, each coordinate of the sparsemax solution is a piecewise-linear function.
+Visibly, this expression is recovered when setting $\alpha=2$ in the
+$\alpha$-\entmaxtext expression (\eqnref{eq:entmax_form_supp}); for other
+values of $\alpha$, the exponent induces curvature.
+
+On the other hand, the well-known softmax is usually defined through the
+expression
+\begin{equation}\label{eq:softmax-supp}
+    \softmax(\x)_i \coloneqq \frac{\exp(\xx_i)}{\sum_j \exp(\xx_j)},
+\end{equation}
+which can be shown to be the unique solution of the optimization problem
+\begin{equation}
+    \softmax(\x)_i =
+    \argmax_{\p \in \simplex} \p^\top\x + \HHs(\p),
+\end{equation}
+where $\HHs(\p) \coloneqq -\sum_i \pp_i \log \pp_i$ is the Shannon entropy.
+Indeed, setting the gradient to $0$ yields the condition
+$\log \pp_i = \xx_j - \nu_i - \tau - 1$, where $\thresh$ and $\nu > 0$ are Lagrange
+multipliers for the simplex constraints $\sum_i \pp_i = 1$ and $\pp_i \geq 0$,
+respectively. Since the \lhs is only finite for $\pp_i>0$,
+we must have $\nu_i=0$ for all $i$, by complementary
+slackness. Thus, the solution must have the form $\pp_i =
+    \nicefrac{\exp(\xx_i)}{Z}$, yielding \eqnref{eq:softmax-supp}.
+
+\section*{Jacobian of {\boldmath $\alpha$}-\entmaxtext \wrt the shape parameter
+      {\boldmath $\alpha$}:
+  Proof of Proposition~\ref{prop:grad_alpha}}
+\label{app:alpha_grad}
+Recall that the \entmaxtext transformation is defined as:
+\begin{equation}\label{eq:entmax_form_supp}
+    \aentmax(\bm{z}) \coloneqq
+    \argmax_{\p \in \simplex^d} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
+\end{equation}
+where $\alpha \geq 1$ and $\HHt_{\alpha}$ is the Tsallis entropy,
+\begin{equation}%
+    \HHt_{\alpha}(\bm{p})\!\coloneqq\!
+    %(\alpha-1)^{-1} \left(1 - \sum_j p_j^{\alpha}\right)
+    %= k(\alpha-1)^{-1}(1 - \|\p\|_{\alpha}^{\alpha}
+    \begin{cases}
+        \frac{1}{\alpha(\alpha-1)}\sum_j\!\left(p_j - p_j^\alpha\right)\!, &
+        \!\!\!\alpha \ne 1,                                                  \\
+        \HHs(\bm{p}),                                                      &
+        \!\!\!\alpha = 1,
+    \end{cases}
+\end{equation}
+and $\HHs(\bm{p}):= -\sum_j p_j \log p_j$ is the Shannon entropy.
+
+In this section, we derive the Jacobian of $\entmax$ with respect to the scalar parameter $\alpha$.
+
+\section*{General case of {\boldmath $\alpha>1$}}
+
+From the KKT conditions associated with the optimization problem in
+Eq.~\ref{eq:entmax_form_supp}, we have that the solution $\bm{p}^{\star}$ has the following form, coordinate-wise:
+\begin{equation}\label{eq:p_kkt}
+    p_i^{\star} = [(\alpha-1)(z_i - \tau^{\star})]_+^{1/(\alpha-1)},
+\end{equation}
+where $\tau^{\star}$ is a scalar Lagrange multiplier that ensures that
+$\bm{p}^{\star}$ normalizes to 1, \ie, it is defined implicitly by the condition:
+\begin{equation}\label{eq:tau_condition}
+    \sum_i [(\alpha-1)(z_i - \tau^{\star})]_+^{1/(\alpha-1)} = 1.
+\end{equation}
+For general values of $\alpha$, Eq.~\ref{eq:tau_condition} lacks a closed form solution. This makes the computation of the
+Jacobian
+\begin{equation}
+    \frac{\partial \aentmax(\bm{z})}{\partial \alpha}
+\end{equation}
+non-trivial. Fortunately, we can use the technique of implicit differentiation
+to obtain this Jacobian.
+
+The Jacobian exists almost everywhere, and the expressions we derive
+expressions yield a generalized Jacobian~\citep{clarke_book} at any
+non-differentiable points that may occur for certain ($\alpha$, $\x$)
+pairs. We begin by noting that $\frac{\partial p_i^{\star}}{\partial
+    \alpha} = 0$ if $p_i^{\star} = 0$, because increasing $\alpha$ keeps
+sparse coordinates sparse.\footnote{This follows from the margin
+    property of $\HHt_\alpha$~\citep{blondel2019learning}.}
+Therefore we need to worry only
+about coordinates that are in the support of $\bm{p}^\star$. We will assume
+hereafter that the $i$\textsuperscript{th} coordinate of $\bm{p}^\star$ is non-zero.
+We have:
+\begin{eqnarray}\label{eq:gradient_alpha_01}
+    \frac{\partial p_i^{\star}}{\partial \alpha} &=& \frac{\partial}{\partial \alpha} [(\alpha-1)(z_i - \tau^{\star})]^{\frac{1}{\alpha-1}}\nonumber\\
+    &=& \frac{\partial}{\partial \alpha} \exp \left[\frac{1}{\alpha-1} \log [(\alpha-1)(z_i - \tau^{\star})]\right]\nonumber\\
+    &=& p_i^{\star} \frac{\partial}{\partial \alpha} \left[\frac{1}{\alpha-1} \log [(\alpha-1)(z_i - \tau^{\star})]\right]\nonumber\\
+    &=& \frac{p_i^{\star}}{(\alpha-1)^2} \left[\frac{\frac{\partial}{\partial \alpha} [(\alpha-1)(z_i - \tau^{\star})]}{z_i - \tau^{\star}} - \log[(\alpha-1)(z_i - \tau^{\star})] \right]\nonumber\\
+    &=& \frac{p_i^{\star}}{(\alpha-1)^2} \left[\frac{z_i - \tau^{\star} - (\alpha-1)\frac{\partial \tau^{\star}}{\partial \alpha} }{z_i - \tau^{\star}} - \log[(\alpha-1)(z_i - \tau^{\star})] \right]\nonumber\\
+    &=& \frac{p_i^{\star}}{(\alpha-1)^2} \left[1 - \frac{\alpha-1}{z_i - \tau^{\star}}\frac{\partial \tau^{\star}}{\partial \alpha} - \log[(\alpha-1)(z_i - \tau^{\star})] \right].
+\end{eqnarray}
+We can see that this Jacobian depends on $\frac{\partial \tau^{\star}}{\partial \alpha}$, which we now compute using implicit differentiation.
+
+Let $\mathcal{S} = \{i: \pp^\star_i > 0 \}$).
+By differentiating both sides of Eq.~\ref{eq:tau_condition}, re-using some of
+the steps in Eq.~\ref{eq:gradient_alpha_01}, and recalling Eq.~\ref{eq:p_kkt},
+we get
+\begin{eqnarray}\label{eq:gradient_tau_implicit}
+    0 &=& \sum_{i \in \mathcal{S}} \frac{\partial}{\partial \alpha} [(\alpha-1)(z_i - \tau^{\star})]^{1/(\alpha-1)}\nonumber\\
+    &=& \sum_{i \in \mathcal{S}} \frac{p_i^{\star}}{(\alpha-1)^2} \left[1 - \frac{\alpha-1}{z_i - \tau^{\star}}\frac{\partial \tau^{\star}}{\partial \alpha} - \log[(\alpha-1)(z_i - \tau^{\star})] \right]\nonumber\\
+    &=&  \frac{1}{(\alpha-1)^2} - \frac{\partial \tau^{\star}}{\partial \alpha} \sum_{i \in \mathcal{S}} \frac{p_i^{\star}}{(\alpha - 1)(z_i - \tau^{\star})} - \sum_{i \in \mathcal{S}} \frac{p_i^{\star}}{(\alpha-1)^2} \log[(\alpha-1)(z_i - \tau^{\star})] \nonumber\\
+    &=&  \frac{1}{(\alpha-1)^2} - \frac{\partial \tau^{\star}}{\partial \alpha} \sum_{i} (p_i^{\star})^{2-\alpha} - \sum_{i} \frac{p_i^{\star}}{\alpha-1} \log p_i^{\star}\nonumber\\
+    &=&  \frac{1}{(\alpha-1)^2} - \frac{\partial \tau^{\star}}{\partial \alpha} \sum_{i} (p_i^{\star})^{2-\alpha} + \frac{\HHs(\bm{p}^*)}{\alpha-1},
+\end{eqnarray}
+from which we obtain:
+\begin{eqnarray}\label{eq:gradient_tau}
+    \frac{\partial \tau^{\star}}{\partial \alpha} &=& \frac{\frac{1}{(\alpha-1)^2} + \frac{\HHs(\bm{p}^{\star})}{\alpha-1}}{\sum_i (p_i^{\star})^{2-\alpha}}.
+\end{eqnarray}
+
+Finally, plugging Eq.~\ref{eq:gradient_tau} into Eq.~\ref{eq:gradient_alpha_01}, we get:
+\begin{eqnarray}\label{eq:gradient_alpha}
+    \frac{\partial p_i^{\star}}{\partial \alpha} &=&  \frac{p_i^{\star}}{(\alpha-1)^2} \left[1 - \frac{1}{(p_i^{\star})^{\alpha-1}}\frac{\partial \tau^{\star}}{\partial \alpha} - (\alpha-1)\log p_i^{\star} \right]\nonumber\\
+    &=&  \frac{p_i^{\star}}{(\alpha-1)^2} \left[1 - \frac{1}{(p_i^{\star})^{\alpha-1}}\frac{\frac{1}{(\alpha-1)^2} + \frac{\HHs(\bm{p}^{\star})}{\alpha-1}}{\sum_i (p_i^{\star})^{2-\alpha}} - (\alpha-1)\log p_i^{\star} \right]\nonumber\\
+    &=& \frac{p_i^{\star} - \tilde{p}_i(\alpha)}{(\alpha-1)^2} - \frac{p_i^{\star}\log p_i^{\star} + \tilde{p}_i(\alpha)\HHs(\bm{p}^{\star})}{\alpha-1},
+\end{eqnarray}
+where we denote by
+\begin{equation}
+    \tilde{p}_i(\alpha) = \frac{(p_i^{\star})^{2-\alpha}}{\sum_j (p_j^{\star})^{2-\alpha}}.
+\end{equation}
+The distribution $\tilde{\bm{p}}(\alpha)$ can be interpreted as a ``skewed''
+distribution obtained from $\bm{p}^{\star}$, which appears in the Jacobian of
+$\aentmax(\x)$ \wrt $\x$ as well~\cite{entmax}.
+
+
+\section*{Solving the indetermination for {\boldmath $\alpha=1$}}
+
+We can write Eq.~\ref{eq:gradient_alpha} as
+\begin{eqnarray}\label{eq:gradient_alpha_fraction}
+    \frac{\partial p_i^{\star}}{\partial \alpha} &=&
+    \frac{p_i^{\star} - \tilde{p}_i(\alpha) - (\alpha-1)(p_i^{\star}\log p_i^{\star} + \tilde{p}_i(\alpha)\HHs(\bm{p}^{\star}))}{(\alpha-1)^2}.
+\end{eqnarray}
+When $\alpha \rightarrow 1^+$, we have $\tilde{\bm{p}}(\alpha) \rightarrow \bm{p}^{\star}$, which leads to a $\frac{0}{0}$ indetermination.
+
+To solve this indetermination, we will need to apply L'H\^opital's rule twice.
+Let us first compute the derivative of $\tilde{p}_i(\alpha)$ with respect to $\alpha$. We have
+\begin{equation}
+    \frac{\partial}{\partial \alpha} (p_i^\star)^{2-\alpha} = -(p_i^{\star})^{2-\alpha} \log p_i^{\star},
+\end{equation}
+therefore
+\begin{eqnarray}
+    \frac{\partial}{\partial \alpha} \tilde{p}_i(\alpha) &=& \frac{\partial}{\partial \alpha} \frac{(p_i^\star)^{2-\alpha}}{\sum_j (p_j^\star)^{2-\alpha}}\nonumber\\
+    &=& \frac{-(p_i^{\star})^{2-\alpha} \log p_i^{\star} \sum_j (p_j^\star)^{2-\alpha} + (p_i^{\star})^{2-\alpha} \sum_j (p_j^{\star})^{2-\alpha} \log p_j^{\star}}{\left( \sum_j (p_j^\star)^{2-\alpha} \right)^2}\nonumber\\
+    &=& -\tilde{p}_i(\alpha)\log p_i^{\star} + \tilde{p}_i(\alpha) \sum_j \tilde{p}_j(\alpha) \log p_j^{\star}.
+\end{eqnarray}
+Differentiating the numerator and denominator in Eq.~\ref{eq:gradient_alpha_fraction}, we get:
+\begin{eqnarray}\label{eq:gradient_alpha_shannon_01}
+    \frac{\partial p_i^{\star}}{\partial \alpha} &=&
+    \lim_{\alpha \rightarrow 1^+} \frac{(1 + (\alpha-1)\HHs(\bm{p}^{\star})) \tilde{p}_i(\alpha) (\log p_i^{\star} - \sum_j \tilde{p}_j(\alpha) \log p_j^{\star}) - p_i^{\star}\log p_i^{\star} - \tilde{p}_i(\alpha) \HHs(\bm{p}^{\star})}{2(\alpha-1)} \nonumber\\
+    &=& A + B,
+\end{eqnarray}
+with
+\begin{eqnarray}\label{eq:A_shannon}
+    A &=& \lim_{\alpha \rightarrow 1^+} \frac{\HHs(\bm{p}^{\star}) \tilde{p}_i(\alpha) (\log p_i^{\star} - \sum_j \tilde{p}_j(\alpha) \log p_j^{\star}) \HHs(\bm{p}^{\star})}{2}\nonumber\\
+    &=& \frac{\HHs(\bm{p}^{\star}) p_i^{\star}\log p_i^{\star} + p_i^{\star} (\HHs(\bm{p}^{\star}))^2}{2},
+\end{eqnarray}
+and
+\begin{equation}\label{eq:B_shannon}
+    B = \lim_{\alpha \rightarrow 1^+} \frac{\tilde{p}_i(\alpha) (\log p_i^{\star} - \sum_j \tilde{p}_j(\alpha) \log p_j^{\star}) - p_i^{\star}\log p_i^{\star} - \tilde{p}_i(\alpha) \HHs(\bm{p}^{\star})}{2(\alpha-1)}.
+\end{equation}
+When $\alpha\rightarrow 1^+$, $B$ becomes again a $\frac{0}{0}$ indetermination, which we can solve by applying again L'H\^opital's rule. Differentiating the numerator and denominator in Eq.~\ref{eq:B_shannon}:
+\begin{eqnarray}\label{eq:B_shannon_02}
+    B &=& \frac{1}{2}\lim_{\alpha \rightarrow 1^+} \left\{ \tilde{p}_i(\alpha) \log p_i^{\star} \left(\sum_j \tilde{p}_j(\alpha) \log p_j^{\star} - \log p_i^{\star}\right) \right. \nonumber\\
+    && - \tilde{p}_i(\alpha) \left(\sum_j \tilde{p}_j(\alpha) \log p_j^{\star} - \log p_i^{\star}\right) \left(\sum_j \tilde{p}_j(\alpha) \log p_j^{\star} + \HHs(\bm{p}^{\star})\right) \nonumber\\
+    && \left. - \tilde{p}_i(\alpha) \sum_j \tilde{p}_j(\alpha) \log p_j^{\star} \left(\sum_k \tilde{p}_k(\alpha) \log p_k^{\star} - \log p_j^{\star}\right)\right\}\nonumber\\
+    &=& \frac{-p_i^{\star} \log p_i^{\star}(\HHs(\bm{p}^{\star}) + \log p_i^{\star})
+    +p_i^{\star} \sum_j p_j^{\star} \log p_j^{\star}(\HHs(\bm{p}^{\star}) + \log p_j^{\star})}{2}\nonumber\\
+    &=& \frac{-\HHs(\bm{p}^{\star}) p_i^{\star}\log p_i^{\star} - p_i^{\star} (\HHs(\bm{p}^{\star}))^2 - p_i^{\star}\log^2 p_i^{\star} + p_i^{\star} \sum_j p_j^{\star}\log^2 p_j^{\star}}{2}.
+\end{eqnarray}
+Finally, summing Eq.~\ref{eq:A_shannon} and Eq.~\ref{eq:B_shannon_02}, we get
+\begin{eqnarray}\label{eq:gradient_alpha_shannon_02}
+    \frac{\partial p_i^{\star}}{\partial \alpha}\bigg|_{\alpha=1} &=& \frac{- p_i^{\star}\log^2 p_i^{\star} + p_i^{\star} \sum_j p_j^{\star}\log^2 p_j^{\star}}{2}.
+\end{eqnarray}
+
+\section*{Summary}
+
+To sum up, we have the following expression for the Jacobian of $\aentmax$ with respect to $\alpha$:
+
+\begin{equation}\label{eq:final_gradient_alpha_supp}
+    \frac{\partial p_i^{\star}}{\partial \alpha} =
+    \left\{
+    \begin{array}{ll}
+        \frac{p_i^{\star} - \tilde{p}_i(\alpha)}{(\alpha-1)^2} - \frac{p_i^{\star}\log p_i^{\star} + \tilde{p}_i(\alpha)\HHs(\bm{p}^{\star})}{\alpha-1}, & \text{for $\alpha > 1$}  \\
+        \frac{- p_i^{\star}\log^2 p_i^{\star} + p_i^{\star} \sum_j p_j^{\star}\log^2 p_j^{\star}}{2},                                                    & \text{for $\alpha = 1$.}
+    \end{array}
+    \right.
+\end{equation}

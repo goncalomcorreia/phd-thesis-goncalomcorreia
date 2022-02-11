@@ -1,0 +1,99 @@
+%%
+%	version 2.0, 2017, Authors : Filipe Marques; (original Master Degree Thesis Template authors:) Miguel Amador and João Marques.
+%%
+\documentclass[defaultstyle,10pt,master,Helvetica]{01.thesis}
+%Use 01.thesis_pt instead for PT version 
+%Dummy text if written by default in English. Just changed to whatever you need.
+% Helvetica is a similar font to Arial, with small differences.
+
+%% Packages
+\input{00.Definitions/packages.tex}
+%% Page formatting
+\input{00.Definitions/pagesetup.tex}
+%% Custom commands
+\input{00.Definitions/command-utils.tex}
+
+
+%-----------------------------------------------------------
+%-----------------------------------------------------------
+\begin{document}
+%% Use Main document Language
+\selectlanguage{english}
+%% ------
+\pagestyle{begin}
+
+%% ----------- COVER --------------
+% After deciding the language in which you'll write the thesis -- PT (Portuguese) or EN (English) -- you can
+% edit and select (uncomment) the respective cover file.
+\input{0.Preliminaries/1.cover_EN_draft.tex}
+%\input{0.Preliminaries/1.cover_PT_draft.tex}
+%%-------------------------------------
+\clearpage
+% Since I am using double sided pages, the second page should be white.
+% Remember that when delivering the dissertation, IST requires for the cover to appear twice.
+
+\thispagestyle{empty}
+\cleardoublepage
+
+\setcounter{page}{1} \pagenumbering{roman} % --- Start with Roman numbering ---
+
+\baselineskip 18pt % line spacing: -12pt for single spacing
+%               -18pt for 1 1/2 spacing
+%               -24pt for double spacingnts}
+
+%%%% Initial Chapters
+\selectlanguage{english}
+\input{0.Preliminaries/4.Abstract.tex}
+\input{0.Preliminaries/5.Keywords.tex}
+\selectlanguage{portuguese}
+\input{0.Preliminaries/4.Resumo.tex}
+\input{0.Preliminaries/5.PalavrasChave.tex}
+\input{0.Preliminaries/3.Acknowledgments.tex}
+\input{0.Preliminaries/2.citation.tex} % --- Citation (optional) ---
+%% Use Main document Language
+\selectlanguage{english}
+%% ------
+\input{0.Preliminaries/6.Tables.tex}
+\acresetall
+%% Remain list of table titles are set manualy
+%\input{0.Preliminaries/7.Acronym.tex}
+\input{0.Preliminaries/8.Notation.tex}
+%% Use Main document Language
+\selectlanguage{english}
+% Pages number is starting now with arabic style... until now it was on roman mode
+\pagenumbering{arabic} \setcounter{page}{1}
+\baselineskip 18pt
+%% Define the title of Chapter Table of Contents
+\mtcsettitle{minitoc}{Contents}
+%% ------
+\pagestyle{documentsimple}%Simple head
+\input{1.Introduction/main.tex}
+\input{2.Background/main.tex}
+\input{3.APE/main.tex}
+\input{4.AdaptSparse/main.tex}
+\input{5.SparseMarg/main.tex}
+\input{6.Conclusions/main.tex}
+% \input{99.Conclusions/conclusions.tex}
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Bibliography}
+%% Use with Cite and Natbib
+%% check styles in https://en.wikibooks.org/wiki/LaTeX/Bibliography_Management
+\bibliography{refs}
+\bibliographystyle{unsrtnat}
+%% Use with Biblatex (.bib file is set in Packages) (Not working)
+%\printbibliography
+
+\cleardoublepage
+
+\begin{appendices}
+    \begin{appendix}
+        \pagenumbering{bychapter}
+        \input{Appendices/stat_analysis_other_lps.tex}
+        \input{Appendices/entmax_background.tex}
+        \cleardoublepage
+    \end{appendix}
+\end{appendices}
+
+
+\end{document}

@@ -1,0 +1,132 @@
+\section{Latent Variable Models}
+\label{sec:lvm}
+
+We assume throughout a latent variable model with observed variables
+$x \in \mathcal{X}$ and latent stochastic variables $z \in \ZZ$. The
+overall fit to a dataset $\mathcal D$ is $\sum_{x \in \mathcal{D}}
+\LL_x(\theta)$, where the loss of each observation,
+
+\begin{equation}\label{eq:fit}
+    \mathcal{L}_{x}(\theta) =
+    \mathbb E_{\pi(z \mid x, \theta)}
+    \left[ \ell(x, z; \theta)\right] =
+    \sum_{z \in \mathcal Z} \pi(z | x, \theta)~\ell(x, z; \theta) ~,
+\end{equation}
+
+\noindent is the expected value of a downstream loss $\ell(x,z;\theta)$ under a
+probability model $\pi(z|x,\theta)$ of the latent variable; in other
+words, the latent variable $z$ is {\it marginalized} to compute this loss.
+To model complex data, one parameterizes both the downstream loss and
+the distribution over latent assignments using neural networks, due
+to their flexibility and capacity~\citep{Kingma+2014:VAE}.
+
+\subsection{Reparameterization Trick}
+
+For continuous latent variables,
+low-variance pathwise gradient estimators can be obtained by
+separating the source of stochasticity from the sampling parameters,
+using the so-called \emph{reparameterization trick}
+\citep{Kingma+2014:VAE,RezendeEtAl14VAE}. For discrete latent
+variables, reparameterizations can only be obtained by introducing a
+step function like $\argmax$, which has null gradients almost everywhere.
+Replacing the gradient of $\argmax$ with a nonzero surrogate like the identity
+function, known as Straight-Through~\citep{STE}, or with the gradient of $\softmax$, known
+as \emph{Gumbel-Softmax}~\citep{Concrete,GumbelSoftmax}, leads to a
+biased estimator that can still perform well in practice. Continuous
+relaxations like Straight-Through and Gumbel-Softmax are only
+possible under a further modeling assumption that $\ell$ is defined
+continuously (thus differentiably) in a neighbourhood of the
+indicator vector $\bm{z} = \bm{e}_{\zsamp}$ for every $z \in \ZZ$.
+
+\subsection{Discrete Latent Variables}\label{sec:discrete_lvm_bg}
+
+In this thesis, we focus on \textbf{discrete} latent variables, where
+$|\ZZ|$ is finite, but possibly very large. One example is when
+$\pi(z|x,\theta)$ is a categorical distribution, parameterized by a
+vector $\pv \in \simplex^{|\ZZ|}$. To obtain $\pv$, a neural network
+computes a vector of scores $\s \in \mathbb{R}^{|\ZZ|}$, one score
+for each assignment, which is then mapped to the probability simplex,
+typically via $\pv = \softmax(\s)$. Another example is when $\ZZ$ is
+a structured (combinatorial) set, such as $\ZZ = \{0, 1\}^D$. In this
+case, $|\ZZ|$ grows exponentially with $D$ and it is infeasible to
+enumerate and score all possible assignments. For this structured
+case, scoring assignments involves a decomposition into parts, which
+we describe in \secref{sec:structured}.
+
+Training such models requires summing the contributions of all
+assignments of the latent variable, which involves as many as $|\ZZ|$
+evaluations of the downstream loss. When $\ZZ$ is not too large, the
+expectation may be evaluated explicitly, and learning can proceed
+with exact gradient updates. If $\ZZ$ is large, and/or if $\ell$ is
+an expensive computation, evaluating the expectation becomes
+prohibitive. In such cases, practitioners typically turn to MC
+estimates of $\nabla_\theta \LL_x(\theta)$ derived from latent
+assignments sampled from $\pi(z|x,\theta)$. Under an appropriate
+learning rate schedule, this procedure converges to a local optimum
+of $\mathcal L_x(\theta)$ as long as gradient estimates are unbiased
+\citep{robbins1951stochastic}. Next, we describe the two current main
+strategies for MC estimation of this gradient. Later, in
+\secref{sec:categorical}--\ref{sec:structured}, we propose our
+\textbf{deterministic} alternative, based on sparsifying $\pi(z| x,
+\theta)$.
+
+\paragraph*{Monte Carlo gradient estimates.} Let $\theta=(\theta_\pi,
+\theta_\ell)$, where $\theta_\pi$ is the subset of weights that $\pi$
+depends on, and $\theta_\ell$ the subset of weights that $\ell$
+depends on. Given a sample $\zsamp \sim \pi(z| x,\theta_\pi)$, an
+unbiased estimator of the gradient for \eqnref{eq:fit} \wrt
+$\theta_\ell$ is $\nabla_{\theta_\ell} \mathcal L_x(\theta) \approx
+\nabla_{\theta_\ell} \ell(x, \zsamp; \theta_\ell)$. Unbiased
+estimation of $\nabla_{\theta_\pi} \mathcal L_x(\theta)$ is more
+difficult, since $\theta_\pi$ is involved in the sampling of
+$\zsamp$, but can be done with the Score Function
+Estimator~\citep[SFE;][]{rubinstein1976monte,paisley2012variational}:
+$\nabla_{\theta_\pi} \mathcal L_x(\theta) \approx \ell(x, \zsamp;
+\theta_\ell) ~ \nabla_{\theta_\pi} \log \pi(\zsamp | x, \theta_\pi)$,
+also known as \textsc{reinforce}~\citep{Williams1992}. The SFE is
+powerful and general, making no assumptions on the form of $z$ or
+$\ell$, requiring only a sampling oracle and a way to assess
+gradients of $\log \pi(\zsamp | x, \theta_\pi)$. However, it comes
+with the cost of high variance. Making the estimator practically
+useful requires variance reduction techniques such as
+baselines~\citep{Williams1992,MuProp} and control
+variates~\citep{CV2013,REBAR,RELAX}. Variance reduction can also be
+achieved with Rao-Blackwellization techniques such as sum and
+sample~\citep{casella1996rao,BBVI14,RB19}, which marginalizes an
+expectation over the top-$k$ elements of $\pi(z| x,\theta_\pi)$ and
+takes a sample estimate from the complement set.
+
+\subsection{Structured Latent Variables}\label{sec:struct_lvm_bg}
+
+Many models of interest involve structured (or combinatorial) latent
+variables. In this section, we assume $z$ can be represented as a
+{\it bit-vector}---\ie a random vector of discrete binary variables
+$\bm{a}_{z} \in \{0, 1\}^D$. This assignment of binary variables may
+involve global factors and constraints (\eg tree constraints, or
+budget constraints on the number of active variables, \ie $\sum_i
+[\bm{a}_{z}]_i \le B$, where $B$ is the maximum number of variables
+allowed to activate at the same time). In such structured problems,
+$|\ZZ|$ increases exponentially with $D$, making exact evaluation of
+$\ell(x, z; \theta)$ prohibitive, even with sparsemax.
+
+Structured prediction typically handles this combinatorial explosion
+by parameterizing scores for individual binary variables and
+interactions within the global structured configuration, yielding a
+compact vector of \textbf{variable scores} $\bm{t} = \g(x; \theta)
+\in \mathbb{R}^D$ (\eg, log-potentials for binary attributes), with
+$D \ll |\ZZ|$. Then, the score of some global configuration $z \in
+\ZZ$ is $s_z \defeq \DP{\bm{a}_z}{\bm{t}}$. The variable scores
+induce a unique Gibbs distribution over structures, given by
+$\pi(z|x,\theta) \propto \exp(\DP{\bm{a}_{z}}{\bm{t}})$.
+Equivalently, defining $\bm{A} \in \mathbb{R}^{D \times |\ZZ|}$ as
+the matrix with columns $\bm{a}_{z}$ for all $z \in \ZZ$, we consider
+the discrete distribution parameterized by $\softmax(\s)$, where
+$\s=\bm{A}^\top \bm{t}$. (In the unstructured case, $\bm{A}=\bm{I}$.)
+
+In practice, however, we cannot materialize the matrix $\AA$ or the
+global score vector $\bm{s}$, let alone compute the softmax and the
+sum in \eqnref{eq:fit}. The SFE, however, can still be used, provided
+that exact sampling of $z\sim\pi(z | x, \theta)$ is feasible, and
+efficient algorithms exist for computing the normalizing constant
+$\sum_{z'}\exp(\DP{\bm{a}_{z'}}{\bm{t}})$~\citep{WJ2008}, needed to
+compute the probability of a given sample.

@@ -1,0 +1,79 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The Introduction:
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fancychapter{Introduction}
+\label{cap:int}
+
+The success of well known deep learning
+models~\citep{convnet,devlin2018bert,brown2020language} rely on a
+rich parameterization through the use of numerous neural network
+layers. Along with huge amounts of datapoints, this allows for these
+models to learn good vector representations that consequently permit
+these models to excel in their respective tasks. However, these
+models are often highly overparameterized and their interpretation is
+difficult. Moreover, they require very expensive computing power,
+which causes understandable environmental
+concerns~\citep{Strubell2019}. In natural language processing (NLP),
+one such model is the Transformer
+architecture~\citep{vaswani2017attention} which has quickly risen to
+prominence through its performance, leading to improvements in the
+state of the art of neural machine
+translation~\citep[NMT;][]{marian,ott2018scaling}, and served as
+inspiration to even bigger and powerful general-purpose models like
+BERT~\citep{devlin2018bert} and
+\mbox{GPT-3}~\citep{brown2020language}.
+
+On the other hand, neural latent variable models are powerful and
+expressive tools for finding patterns in high-dimensional data, such
+as images or text~\citep{Kim2018,Kingma+2014:VAE,RezendeEtAl14VAE}.
+These models have powerful structural biases that guide the model's
+training, leading to models that are more transparent. Of particular
+interest are \emph{discrete} latent variables, which can recover
+categorical and structured encodings of hidden aspects of the data,
+leading to compact representations~\citep{KingmaEtAl2014SSVAE} and,
+in some cases, superior explanatory power~\citep{titov2008joint,
+Bastings2019}.
+
+Latent variables in machine translation were widely used before the
+success of deep learning models and consequently NMT. Typically, the
+latent variables in these models were of structured nature, such as
+representing alignments of phrases in the source and target
+sentence~\citep{brown-etal-1993-mathematics}. These structured
+models ended up being abandoned in NMT in favour of a direct
+decomposition of the model distribution via chain rule without making
+any Markov assumptions, which was enabled by advances in
+architectures and optimization procedures.
+
+Recently, variational
+methods have paved the way for latent variables to be used in NMT,
+although usually using a continuous latent variable to represent the
+semantic space of the
+translation~\citep{zhang2016VariationalNeuralMachine}.
+We propose to incorporate structured latent variables into NMT. We
+focus on the use of these latent variables as a way to incrementally
+guide the model into decomposing translation as a sequence of
+subtasks, \eg first encountering a suitable draft translation from
+memory and then editing that draft to create the final target
+translated sentence, rather than translating from source to target in
+one step. Thanks to a probabilistic framework, our methods allow
+monolingual data from the source and/or target language, such that it
+can be used as semi-supervision of the final NMT model. Our contributions
+allow for future NMT models to have:
+
+\begin{itemize}
+    \item {\bf Inductive bias}: incorporated into the computational
+    graph through the structured latent variables;
+    \item {\bf Data efficiency}: thanks to the decomposition of a
+    hard task into easier sub-tasks;
+    \item {\bf Interpretability}: due to the explanatory power of
+    latent variables with a discrete structure.
+\end{itemize}
+
+\input{1.Introduction/1.applications.tex}
+\input{1.Introduction/2.motivation.tex}
+\input{1.Introduction/3.objectives.tex}
+\input{1.Introduction/4.outline.tex}
+\input{1.Introduction/5.publications.tex}
+\input{1.Introduction/6.workplan.tex}
+
+\cleardoublepage

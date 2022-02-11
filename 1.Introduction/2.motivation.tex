@@ -1,0 +1,55 @@
+\section{Motivation}
+\label{sec:int_motivation}
+
+In NMT, we learn a conditional distribution over $\mathcal X \times
+\mathcal Y$, where $\mathcal X$ is the space of source language
+sentences and $\mathcal{Y}$ the space of target-language sentences.
+This distribution is learned directly by parameterising
+
+\begin{equation}
+    Y_j|\theta, x, y_{<j} \sim \Cat(f(x, y_{<j}; \theta))
+    \label{eq:nmt_factorize}
+\end{equation}
+
+\noindent which takes a variable number of categorical draws in
+context auto-regressively, that is, without making Markov
+assumptions. On the one hand, the lack of independence assumption is
+important as it enables modelling of arbitrarily complex translation
+phenomena such as word-order differences and global agreement. On the
+other hand, such a rich factorisation demands an abundance of
+training resources, in particular, \emph{translation pairs}, not
+necessarily available for every language pair of interest.
+
+In order to carve a path towards less data-hungry NMT models, we wish
+to incorporate latent structure into these models such that the
+translation learning process is guided through these latent
+structures. Hopefully, this makes the process easier---instead of
+asking the model to map directly from $\mathcal{X}$ to $\mathcal{Y}$,
+we introduce latent variables that split that mapping into subtasks.
+Particularly, we propose to create a draft translation from the
+source sentence, and only then edit that draft translation into a
+final sentence. In document-level NMT and in in-domain NMT, we
+propose to endow the model with a latent summary of the document or
+of the domain, such that the final translation is achieved with
+context awareness. Both of these approaches have the potential to
+allow learning with less supervised data than in the auto-regressive
+factorisation shown in \eqref{eq:nmt_factorize}, thanks to reasonable
+assumptions of the generative process. We hypothesize that such models
+will allow for better results in language pairs with low-resources,
+when compared with vanilla NMT models.
+
+Oftentimes, even though parallel data for some language-pairs is
+scarce, monolingual data is available in abundance for many
+isolated languages. Having a latent structure that can be inferred
+from monolingual data (such as simple sentences, or common phrases)
+means that parts of the model can be trained in isolation
+only with the monolingual data available, granting the model
+with an ability for semi-supervision.
+
+Finally, by using discrete latent structures within the model, we end
+up with a window into the translation process. Depending on the
+sampled latent variable, the model will output a different
+translation. Looking at the possible latent assignments and their
+corresponding outputs, we may be able to interpret how the final
+translation came to be, to understand the source of model errors,
+and to even carefully control details of the final output.

@@ -1,0 +1,108 @@
+\begin{notation}
+    \begin{tabularx}{\textwidth}{r X}
+    % \multicolumn{2}{l}{\textbf{Vectors, matrices, and indexing.}} \\
+        $a$, $\bm{a}$, $\bm{A}$, and $\mathcal{A}$ &
+        a scalar, a vector, a matrix, and a set, respectively; \\
+
+        $v_i$ &
+            the $i$th element of vector $\bm{v}$; \\
+
+        $w_{ij}$ &
+            the element on the $i$th row and $j$th column of $\bm{W}$; \\
+
+        $\bm{e}_{i}$ &
+            the indicator vector for which every entry is
+            zero, except the $i$\textsuperscript{th}, which is 1; \\
+
+        $\simplex^K$ &
+            the canonical simplex, \ie, $\pv \in \reals^K~:~\DP{\bm{1}}{\pv} = 1, \pv \geq \bm{0}\}$;\\
+
+        $\mathbb H(p)$ &
+            the Shannon's entropy of a distribution $p(z)$, \ie, $-\sum_i p_i \log p_i$;\\
+
+        $\KL\left[ p || q \right]$ &
+            the Kullback-Leibler divergence of $p(z)$ from $q(z)$;\\
+
+        $\|z\|_0 \defeq |\{t: z_t \neq 0 \}|$ &
+            the number of non-zeros of a sequence $z$;\\
+
+        $\mathbb{E}_{p(z)}[f(z)]$ &
+            the expectation of a function $f:\ZZ \rightarrow \mathbb{R}$ under distribution $p(z)$,
+            letting $z \in \ZZ$ be a random variable;\\
+
+        % $\bs{w}_j$ &
+        %     the $j$th column of matrix $\bs{W}$; \\
+
+        % $\bs{v}_{\mathcal{S}}$ &
+        %     the sub-vector of $\bs{v}$ indexed by an
+        %     ordered set $\mathcal{S} \subset  \mathbb{N}$; \\
+
+        % $\bs{W}_{\mathcal{S}}$ &
+        %     the sub-matrix of $\bs{W}$ consisting of the
+        %     columns indexed by $\mathcal{S}$; \\
+
+        % $[\bs{v}_1, \ldots,  \bs{v}_k]$ &
+        %     vector concatenation, \ie, for $\bs{v}_i \in \real^{d_i},  
+        %     [\bs{v}_1, \ldots, \bs{v}_k] \in \real^{\sum_i d_i}$; \\
+
+        % $[\bs{W}_1, \ldots, \bs{W}_k]$
+        %     & column-wise stacking of  $\bs{W}_i \in
+        %     \real^{m\times d_i}$; $[\bs{W}_1,\ldots,\bs{W}_k]
+        %     \in\real^{m\times\sum_i d_i}$; \\
+
+        % $\range{n}$ &
+        %     the index set, \ie, $\{ 1, 2, \cdots, n \}$ for $n\in\mathbb{N}$. \\
+
+    %\multicolumn{2}{l}{\textbf{Important sets and functions.}} \\
+
+        % $\iverson[\pi]$ &
+        %     the Iverson bracket: $\iverson[\pi]=1$ if proposition $\pi$
+        %     is true, $0$ otherwise; \\
+
+        % $\norm{\bs{v}}_p$ &
+        %     the $\ell_p$ norm of vector $\bs{v}\in\real^d$, \ie,
+        %     $\norm{\bs{v}}_p = \left(\sum_{i=1}^d |v_i|^p \right)^{1/p}$; \\ 
+
+        % $\Simplex^d$ &
+        %     the canonical simplex, \ie, $\{\bs{y} \in \real^d,
+        %     \norm{\bs{y}}_1 = 1, \bs{y} \succcurlyeq \bs{0} \}$;\\
+
+        % $\id{\mathcal{S}}$ &
+        %     the indicator function of set $\mathcal{S}$,
+        %     $\id{\mathcal{S}}(\bs{x}) = 0$ if $\bs{x} \in \mathcal{S}$,
+        %     else $+\infty$;\\
+
+        % $\proj{\mathcal{S}}(\bs{v})$ &
+        %     euclidean projection of $\bs{v}$ onto the set $S$, \ie, 
+        %     $\displaystyle \argmin_{\bs{y} \in S} \norm{\bs{v}-\bs{y}}_2^2$; \\[-0.5em]
+
+        % $\bar{\real}$ &
+        %     extended real numbers, \ie, $\real \cup \{+\infty\}$ \\
+
+        % $\dom f$ &
+        %     the domain of function
+        %     $f:\real^d\rightarrow\bar\real$, \ie, $\left\{\bs{x}\in\real^d:
+        %     f(\bs{x}) < \infty \right\};$\\
+
+        % $\partial f(\bs{x})$ &
+        %     the subdifferential of convex function $f:\real^d \rightarrow
+        %     \bar{\real}$ at point $\bs{x}$, \ie, $\partial f(\bs{x})=\left\{
+        %     \bs{g} \in \real^d: \forall \bs{z} \in \dom f,
+        %     f(\bs{z}) \geq f(\bs{x}) + \bs{g}^\tr(\bs{z}-\bs{x})\right\}$;
+        %     its elements $\bs{g}\in\partial f(\bs{x})$ are called
+        %     \emph{subgradients} of $f$ at $\bs{x}$; \\
+
+        % $\nabla f(\bs{x})$ &
+        %     the gradient of differentiable $f$ at $\bs{x}$, \ie, $\partial
+        %     f(\bs{x})=\{\nabla f(\bs{x})\}$; \\
+
+        % $\bs{J_h}(\bs{x})$ &
+        %     the Jacobian of $\bs{h}:\real^d\rightarrow\real^m$, \ie, 
+        %     $\bigl(\bs{J_h}(\bs{x})\bigr)_{ij}=\pfrac{h(\bs{x})_i}{x_j}$; \\
+
+        % $\bs{H}_f(\bs{x})$ &
+        %     the Hessian of $f:\real^d\rightarrow\real$, \ie,
+        %     $\bigl(\bs{H}_f(\bs{x})\bigr)_{ij}=\pfrac{^2 f(\bs{x})}{x_i x_j}$; \\
+
+    \end{tabularx}
+\end{notation}
