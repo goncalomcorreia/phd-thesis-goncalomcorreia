@@ -1,3 +1,3 @@
-# phd-thesis-proposal
+# phd-thesis
 
 To compile, run `make`.
