@@ -1,7 +1,7 @@
 \fancychapter{Efficient Marginalization of Discrete and Structured Latent Variables via Sparsity}
 \label{cap:sparsemarg}
 
-\section{Introduction}
+\section{Motivation and Previous Work}
 \label{sec:intro}
 
 Training with discrete variables (\secref{sec:discrete_lvm_bg}) can
@@ -50,8 +50,6 @@ the efficiency of single-sample estimators.\footnote{Code is publicly
     available at
     \href{https://github.com/deep-spin/sparse-marginalization-lvm}{\tt
         https://github.com/deep-spin/sparse-marginalization-lvm}}
-
-\section{Related Work}
 
 \paragraph*{Differentiable sparse mappings.} There has been recent
 interest in applying sparse mappings of discrete distributions in
@@ -769,7 +767,10 @@ is given discrete treatment throughout. Its success shows that,
 unlike in the other tasks considered, training on biased gradients is
 not too problematic.
 
-\section{Final Remarks}
+\section{Subsequent Work}
+
+\section{Final Remarks and Chapter Summary}
+
 We described a novel training strategy for discrete latent variable
 models, eschewing the common approach based on MC gradient estimation
 in favor of deterministic, exact marginalization under a sparse

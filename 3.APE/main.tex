@@ -1,7 +1,7 @@
 \fancychapter{A Simple and Effective Approach to Automatic Post-Editing with Transfer Learning}
 \label{cap:ape}
 
-\section{Introduction}
+\section{Motivation and Previous Work}
 
 The goal of APE is to automatically correct the mistakes produced by
 a black-box MT system (\secref{sec:ape_bg}). APE is particularly
@@ -68,8 +68,6 @@ Our main contributions are the following:
         coupling BERT models in an APE system, comparing different options
         of parameter sharing, initialization, and fine-tuning.
 \end{itemize}
-
-\section{Related Work}\label{sec:related_ape}
 
 In their Dual-Source Transformer model, \citet{junczys2018ms} also
 found gains by tying together encoder parameters, and the embeddings
@@ -402,7 +400,9 @@ than the previous state of the art).
   \label{tab:results_smt}
 \end{table*}
 
-\section{Final Remarks}
+\section{Subsequent Work}
+
+\section{Final Remarks and Chapter Summary}
 
 In this chapter, we proposed a transfer learning approach to APE using
 BERT pre-trained models and careful parameter sharing. We explored
