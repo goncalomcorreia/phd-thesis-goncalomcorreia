@@ -1,8 +1,35 @@
-\section{Motivation}
+\section{Motivation, Objectives, and Scope}
 \label{sec:int_motivation}
 
+Our approach is designed for NMT, but it can be generalized to any
+text generation task. Other such tasks include dialogue generation,
+language modeling and simultaneous translation.
+
+In Machine Translation, a sentence written in a {\it source
+        language}, \eg English, is automatically translated into the chosen
+    {\it target language}, \eg Portuguese. In NMT, this translation
+process happens through a neural network model, typically a
+sequence-to-sequence (Seq2Seq) model that generates the target
+sentence conditioned on the source. The most successful models in NMT
+use some form of attention
+mechanism~\citep{bahdanau2014neural,vaswani2017attention}, and are
+described in \secref{sec:nmt}.
+
+In the scope of NMT, of particular interest for this thesis are
+language-pairs with limited amount of parallel source-target data
+({\it low-resource NMT}), the translation of whole documents from a
+source language into a target language ({\it document-level NMT}),
+and the ability of a general purpose translation model to learn a
+specific domain, such as medical texts ({\it in-domain NMT}). These
+particular uses of NMT best showcase the advantage of the latent
+variable models proposed, because these are applications that
+typically have scarse data and in which current models struggle due
+to less capacity to capture the hidden structural nature of the data,
+since they lack the inductive bias required to represent that
+complexity.
+
 In NMT, we learn a conditional distribution over $\mathcal X \times
-\mathcal Y$, where $\mathcal X$ is the space of source language
+    \mathcal Y$, where $\mathcal X$ is the space of source language
 sentences and $\mathcal{Y}$ the space of target-language sentences.
 This distribution is learned directly by parameterising
 
