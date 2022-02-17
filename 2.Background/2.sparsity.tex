@@ -1,5 +1,7 @@
-\section{Sparse Probabilities}
+\section{Sparsity and Structured Sparsity in Probability Distributions}
 \label{sec:sparsity_background}
+
+\subsection{Foundations}
 
 \subsection{Sparsemax}\label{sec:sparsemax_bg}
 
@@ -13,42 +15,42 @@ passes~\citep{Held1974,martins2016softmax}, described in detail below;
 the backward pass is essential in our use case. Since
 \eqnref{eq:sparsemax} is the Euclidean projection operator onto the probability
 simplex, and solutions can hit the boundary, sparsemax is likely to assign {\bf
-probabilities of exactly zero}; in contrast, softmax is always dense.
+        probabilities of exactly zero}; in contrast, softmax is always dense.
 
 As a projection onto a polytope, the solution is likely to fall on the
 boundaries or the corners of the set. In this case, points on the boundary of
 $\simplex^K$ have one or more zero coordinates. In contrast, $\softmax(\s)
-\propto \exp(\s)$ is always strictly inside the simplex.
+    \propto \exp(\s)$ is always strictly inside the simplex.
 From the optimality conditions of the sparsemax problem~\eqref{eq:sparsemax},
 it follows that the solution must have the form:
 \begin{equation}\label{eq:sparsemax_form}
-\sparsemax(\s) = \max(\s - \tau, 0)\,,
+    \sparsemax(\s) = \max(\s - \tau, 0)\,,
 \end{equation}
 where the maximum is elementwise, and $\tau$ is the unique value that
 ensures the result sums to one.
 Letting $\bar{\ZZ}$ be the set of nonzero coordinates in the solution,
 the normalization condition is equivalently
 \begin{equation}
-\tau = \frac{\sum_{z \in \bar{\ZZ}} \ss_z}{|\bar{\ZZ}|}\,.
+    \tau = \frac{\sum_{z \in \bar{\ZZ}} \ss_z}{|\bar{\ZZ}|}\,.
 \end{equation}
 Observing that small changes to $\s$ almost always have no effect on the support
 $\bar{\ZZ}$, differentiating Equation~\ref{eq:sparsemax_form} gives
 \begin{equation}
-\pfrac{\bar{\pv}}{\bar{\s}} = \bm{I}_{|\bar{\ZZ}|} - \frac{1}{|\bar{\ZZ}|}
-\bm{11}^\top\,,
+    \pfrac{\bar{\pv}}{\bar{\s}} = \bm{I}_{|\bar{\ZZ}|} - \frac{1}{|\bar{\ZZ}|}
+    \bm{11}^\top\,,
 \end{equation}
 where $\bar{\pv}$ and ${\bar{\s}}$ denote the subsets of the respective vectors
 indexed by the support $\bar{\ZZ}$. Outside of the support, the partial
 derivatives are zero. (\emph{Cf.} the more general result in \citet[Proposition
-2]{entmax}.)
+    2]{entmax}.)
 In terms of computation, $\tau$ may be found numerically using root finding
 algorithms on $f(\tau) = \max(\s - \tau, 0) - 1$.
 Alternatively, observe that it is enough to find $\bar{\ZZ}$. By showing that
 sparsemax must preserve the ordering, \ie, that if $\ss_{z'} > \ss_z$ and $z \in
-\bar{\ZZ}$ then $z' \in \bar{\ZZ}$, it can be shown that $\bar{\ZZ}$ must
+    \bar{\ZZ}$ then $z' \in \bar{\ZZ}$, it can be shown that $\bar{\ZZ}$ must
 consist of the $k$ highest-scoring coordinates of $\s$, where $k$ can be find by
 inspection after sorting $\s$. This leads to a straightforward $\mathcal{O}(K
-\log K)$ algorithm due to Held~\citep[pp.~16--17]{Held1974}. This can be further pushed to
+    \log K)$ algorithm due to Held~\citep[pp.~16--17]{Held1974}. This can be further pushed to
 $\mathcal{O}(K)$ using median pivoting algorithms~\citep{Condat2016, entmax}. We use
 a simpler implementation based on repeatedly calling $\topk$,
 doubling $k$ until the optimal solution is found. Since solutions get sparser
@@ -75,19 +77,19 @@ $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}, defined as:
 \end{equation}
 %
 where $\simplex^d \coloneqq
-\{\p \in \reals^d:\sum_{i} \pp_i = 1\}$
+    \{\p \in \reals^d:\sum_{i} \pp_i = 1\}$
 is the \emph{probability simplex}, and, for $\alpha\geq1$,
 $\HHt_\alpha$ is the Tsallis continuous family of entropies
 \citep{Tsallis1988}:
 %
 \begin{equation}\label{eq:tsallisdef}
     \HHt_{\alpha}(\bm{p})\!\coloneqq\!
-\begin{cases}
-\frac{1}{\alpha(\alpha-1)}\sum_j\!\left(p_j - p_j^\alpha\right)\!, &
-\!\!\!\alpha \ne 1,\\
--\sum_j \pp_j \log \pp_j, &
-\!\!\!\alpha = 1.
-\end{cases}
+    \begin{cases}
+        \frac{1}{\alpha(\alpha-1)}\sum_j\!\left(p_j - p_j^\alpha\right)\!, &
+        \!\!\!\alpha \ne 1,                                                  \\
+        -\sum_j \pp_j \log \pp_j,                                          &
+        \!\!\!\alpha = 1.
+    \end{cases}
 \end{equation}
 %
 This family contains the well-known Shannon and Gini entropies,
@@ -98,13 +100,13 @@ definition of $\HHt_\alpha$, the optimality conditions may be used to derive the
 following form for the solution (\appref{app:fenchelyoung}):
 %
 \begin{equation}\label{eq:entmax_form}
-\aentmax(\x) = [(\alpha - 1){\x} - \thresh \ones]_+^{\nicefrac{1}{\alpha-1}},
+    \aentmax(\x) = [(\alpha - 1){\x} - \thresh \ones]_+^{\nicefrac{1}{\alpha-1}},
 \end{equation}
 %
 where $[\cdot]_+$ is the positive part (ReLU) function, $\bm{1}$
 denotes the vector of all ones, and $\thresh$ -- which acts like a
 threshold -- is the Lagrange multiplier corresponding to the $\sum_i
-\pp_i=1$ constraint.
+    \pp_i=1$ constraint.
 
 \paragraph*{Properties of {\boldmath $\alpha$}-\entmaxtext.}
 The appeal of $\alpha$-\entmaxtext for attention rests on the
@@ -126,16 +128,16 @@ a neural network by showing that the $\alpha$-\entmaxtext Jacobian
 \wrt $\x$ for $\p^\star = \aentmax(\x)$ is
 
 \begin{equation}
-\begin{aligned}
-\pfrac{\aentmax(\x)}{\x} = \diag(\bm{s}) - \frac{1}{\sum_j s_j} \bm{ss}^\top,
-\text{where}\quad s_i = \begin{cases}(\pp_i^\star)^{2-\alpha}, & \pp_i^\star > 0, \\
-0,& \pp_i^\star = 0. \\\end{cases}
-\end{aligned}
+    \begin{aligned}
+        \pfrac{\aentmax(\x)}{\x} = \diag(\bm{s}) - \frac{1}{\sum_j s_j} \bm{ss}^\top,
+        \text{where}\quad s_i = \begin{cases}(\pp_i^\star)^{2-\alpha}, & \pp_i^\star > 0, \\
+             0,                        & \pp_i^\star = 0. \\\end{cases}
+    \end{aligned}
 \end{equation}
 
 Our work in \secref{sec:adaptive} furthers the study of
 $\alpha$-\entmaxtext by providing a derivation of the Jacobian {\bf
-\wrt the parameter} $\boldsymbol{\alpha}$, thereby allowing the shape
+        \wrt the parameter} $\boldsymbol{\alpha}$, thereby allowing the shape
 and sparsity of the mapping to be learned automatically. This is
 particularly appealing in the context of multi-head attention
 mechanisms, where we shall show in \secref{sec:stats} that different
@@ -149,18 +151,18 @@ interesting applications involve a discrete distribution of
 combinatorial size. For such cases, we turn to structured prediction
 methods in order to handle the combinatorial explosion. Of particular
 interest in this thesis is \smap~\citep{niculae2018sparsemap,
-sparsemapcg}, a structured extension of sparsemax:
+    sparsemapcg}, a structured extension of sparsemax:
 
 \begin{equation}\label{eq:sparsemap}
-\smapop(\bm{t}) \defeq \argmin_{\pv \in \simplex^{|\ZZ|}}
-\|\bm{A}\pv - \bm{t}\|_2^2,
+    \smapop(\bm{t}) \defeq \argmin_{\pv \in \simplex^{|\ZZ|}}
+    \|\bm{A}\pv - \bm{t}\|_2^2,
 \end{equation}
 
 \smap has been used successfully to model structures such as trees
 and matchings, and \citet{niculae2018sparsemap} apply an active set
 algorithm for evaluating it and computing gradients efficiently,
 requiring only a primitive for computing $\argmax_{z \in \ZZ} \langle
-\bm{a}_z, \bm{t}\rangle$. (We detail the algorithm below). While the
+    \bm{a}_z, \bm{t}\rangle$. (We detail the algorithm below). While the
 $\argmin$ in \eqref{eq:sparsemap} is generally not unique,
 Carath\'eodory's theorem guarantees that solutions with support size
 at most $D+1$ exist, and the active set algorithm enjoys linear and
@@ -183,8 +185,8 @@ Assume that we could identify the \emph{support}, or
 Then, given this set, we could find the solution to \eqref{eq:sparsemap}
 by solving the lower-dimensional equality-constrained problem
 \begin{equation}
-\minimize\| \bar{\bm{A}}\bar{\pv} - \bm{t} \|^2
-\quad\subjto\quad\bm{1}^\top\bar{\pv} = 1\,,
+    \minimize\| \bar{\bm{A}}\bar{\pv} - \bm{t} \|^2
+    \quad\subjto\quad\bm{1}^\top\bar{\pv} = 1\,,
 \end{equation}
 where we denote by $\bar{\bm{A}}$ and $\bar{\pv}$ the restrictions of $\bm{A}$
 and $\pv$ to the active set of structures $\bar\ZZ$.
@@ -194,7 +196,7 @@ conditions,
     \label{eq:qp_kkt}
     \begin{bmatrix}
         {\bar{\bm{A}}}^\top \bar{\bm{A}} & \bm{1} \\
-        \bm{1}^\top & 0 \\
+        \bm{1}^\top                      & 0      \\
     \end{bmatrix}
     \begin{bmatrix} \bar{\pv} \\ \tau \end{bmatrix}
     =
@@ -203,7 +205,7 @@ conditions,
 Of course, the optimal support is not known ahead of time. The active set
 algorithm attempts to guess the support in a greedy fashion,
 at each iteration either [if the solution of \eqref{eq:qp_kkt} is not feasible
-for \eqref{eq:sparsemap}]
+        for \eqref{eq:sparsemap}]
 dropping a structure from $\bar\ZZ$, or [otherwise] adding a new structure.
 Since the support changes one structure at a time, the design matrix in
 \eqref{eq:qp_kkt} gains or loses one row and column, so
@@ -216,16 +218,16 @@ Since we might not have the optimal $\bar{\ZZ}$ yet, $\hat{\pv}$ can be infeasib
 (some coordinates may be negative.)
 To account for this, we take a partial step in its direction,
 \begin{equation}
-\pv^{(i+1)} = (1-\gamma)\pv^{(i)} + \gamma \hat{\pv}^{(i+1)}\,
+    \pv^{(i+1)} = (1-\gamma)\pv^{(i)} + \gamma \hat{\pv}^{(i+1)}\,
 \end{equation}
 where, to ensure feasibility, the step size is given by
 \begin{equation}\label{eq:step_size}
-\gamma = \min \left(1, \min_{z \in \bar{\ZZ}; \xi^{(i)}_z > \hat{\xi}_z}
-\frac{
-\xi^{(i)}_z
-}{
-\xi^{(i)}_z - \hat{\xi}_z}
-\right)\,.
+    \gamma = \min \left(1, \min_{z \in \bar{\ZZ}; \xi^{(i)}_z > \hat{\xi}_z}
+    \frac{
+        \xi^{(i)}_z
+    }{
+        \xi^{(i)}_z - \hat{\xi}_z}
+    \right)\,.
 \end{equation}
 
 If, on the other hand, $\hat{\pv}$ is feasible for \eqref{eq:sparsemap},
@@ -238,7 +240,7 @@ constraint $\xi_z \geq 0$.
 Denote $\bm{\mu}^{(i)} \defeq \bm{A}\pv^{(i)} = \bar{\bm{A}}\bar{\pv}^{(i)}$.
 For any $z \not\in \bar{\ZZ}$, the corresponding dual variable must satisfy
 \begin{equation}\label{eq:dual}
-\nu_z = \tau^{(i)} - \DP{\bm{a}_z}{\bm{t} - \bm{\mu}^{(i)}}\,.
+    \nu_z = \tau^{(i)} - \DP{\bm{a}_z}{\bm{t} - \bm{\mu}^{(i)}}\,.
 \end{equation}
 If the smallest dual variable is positive, then our current guess satisfies all
 optimality conditions. To find the smallest dual variable we can equivalently
@@ -251,41 +253,41 @@ The full procedure is given in Algorithm~\ref{alg:activeset}.
 The backward pass can be computed by implicit differentiation of the KKT system \eqref{eq:qp_kkt} \wrt
 $\bm{t}$, giving, as in \cite{niculae2018sparsemap},
 \begin{equation}
-\pfrac{\bar{\pv}}{\bm{t}} = \bar{\bm{A}}\big(\bm{S} - \bm{ss}^\top / s\big),
-\quad\text{where}\quad
-\bm{S} = (\bar{\bm{A}}^\top \bar{\bm{A}})^{-1},
-\bm{s} = \bm{S1}, s = \bm{1}^\top\bm{S1}
-\,.
+    \pfrac{\bar{\pv}}{\bm{t}} = \bar{\bm{A}}\big(\bm{S} - \bm{ss}^\top / s\big),
+    \quad\text{where}\quad
+    \bm{S} = (\bar{\bm{A}}^\top \bar{\bm{A}})^{-1},
+    \bm{s} = \bm{S1}, s = \bm{1}^\top\bm{S1}
+    \,.
 \end{equation}
 It is possible to apply the $\ell_2$ regularization term only to a subset of the
 rows of $\bm{A}$, as is more standard in the graphical model literature. We
 refer the reader to the presentation in \cite{ad3,niculae2018sparsemap} for this extension.
 
 \begin{algorithm}[h!]\small
-\caption{Active set algorithm for SparseMAP \label{alg:activeset}}
-\begin{algorithmic}[1]
-\Statex \textbf{Init:}
-$\bar\ZZ^{(0)} = \{ z^{(0)}\}$
-\quad where \quad
-$z^{(0)} \in \argmax_{z \in \ZZ} \DP{\bm{a}_z}{\bm{t}}$
-or a random structure.
-\For {i \text{in} $1, \ldots, N$}
-\State Compute $\tau^{(i)}$ and $\hat\pv^{(i)}$ by solving the relaxed QP (Eq.~\ref{eq:qp_kkt}).
-\Comment{Cholesky update.}
-\State $\pv^{(i)} \gets (1-\gamma) \pv^{(i-1)} + \gamma \hat{\pv}^{(i)}$
-~(with $\gamma$ from Eq.~\ref{eq:step_size}).
-\If{$\gamma < 1$}
-\State Drop the minimizer of Eq.~\ref{eq:step_size} from $\bar{\ZZ}^{(i)}$.
-\Else
-\State Find most violated constraint,
-$z^{(i)} \gets \argmin_{z \in \ZZ} \nu_z$.
-\Comment{Eq.~\ref{eq:dual}, MAP oracle.}
-\If{$\nu_{z^{(i)}} \geq 0$}
-\State \Return \Comment{Converged.}
-\Else
-\State $\mathcal{Z}^{(i+1)} \gets \mathcal{Z}^{(i)} \cup \{ z^{(i)} \}$
-\EndIf
-\EndIf
-\EndFor
-\end{algorithmic}
+    \caption{Active set algorithm for SparseMAP \label{alg:activeset}}
+    \begin{algorithmic}[1]
+        \Statex \textbf{Init:}
+        $\bar\ZZ^{(0)} = \{ z^{(0)}\}$
+        \quad where \quad
+        $z^{(0)} \in \argmax_{z \in \ZZ} \DP{\bm{a}_z}{\bm{t}}$
+        or a random structure.
+        \For {i \text{in} $1, \ldots, N$}
+        \State Compute $\tau^{(i)}$ and $\hat\pv^{(i)}$ by solving the relaxed QP (Eq.~\ref{eq:qp_kkt}).
+        \Comment{Cholesky update.}
+        \State $\pv^{(i)} \gets (1-\gamma) \pv^{(i-1)} + \gamma \hat{\pv}^{(i)}$
+        ~(with $\gamma$ from Eq.~\ref{eq:step_size}).
+        \If{$\gamma < 1$}
+        \State Drop the minimizer of Eq.~\ref{eq:step_size} from $\bar{\ZZ}^{(i)}$.
+        \Else
+        \State Find most violated constraint,
+        $z^{(i)} \gets \argmin_{z \in \ZZ} \nu_z$.
+        \Comment{Eq.~\ref{eq:dual}, MAP oracle.}
+        \If{$\nu_{z^{(i)}} \geq 0$}
+        \State \Return \Comment{Converged.}
+        \Else
+        \State $\mathcal{Z}^{(i+1)} \gets \mathcal{Z}^{(i)} \cup \{ z^{(i)} \}$
+        \EndIf
+        \EndIf
+        \EndFor
+    \end{algorithmic}
 \end{algorithm}

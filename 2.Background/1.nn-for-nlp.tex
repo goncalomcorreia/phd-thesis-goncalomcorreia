@@ -1,5 +1,10 @@
-\section{Neural Machine Translation}
+\section{Neural Networks for NLP}
 \label{sec:nmt}
+
+\subsection{Foundations}
+
+\subsection{Sequence-to-Sequence Models and Transformers}
+\label{sec:transformer_bg}
 
 Sequence-to-sequence (seq2seq) models are the broad, main family of models
 used to train NMT systems. While there is a plethora of different architectures,
@@ -7,40 +12,37 @@ seq2seq models have in common the following blocks:
 
 \begin{itemize}
     \item the {\bf encoder}, which takes as input a sequence $x=[x^1,
-    \dots, x^N]$ and creates hidden representations $h=[h^1, \dots,
-    h^N]$, by learning representations of each word in $x$ and then
-    representations that take into accoun the context around each word;
+              \dots, x^N]$ and creates hidden representations $h=[h^1, \dots,
+              h^N]$, by learning representations of each word in $x$ and then
+          representations that take into accoun the context around each word;
     \item the {\bf decoder}, which takes the hidden representations
-    $h$ of the encoder and learns a mapping to produce a
-    variable-length sequence $\hat{y}$ conditioned on $h$, by
-    learning from the true target sentence $y=[y^1, \dots, y^M]$.
+          $h$ of the encoder and learns a mapping to produce a
+          variable-length sequence $\hat{y}$ conditioned on $h$, by
+          learning from the true target sentence $y=[y^1, \dots, y^M]$.
 \end{itemize}
 
 In the following section, we will expand on the current
 state-of-the-art seq2seq architecture.
 
-\subsection{Transformers}
-\label{sec:transformer_bg}
-
 The Transformer~\citep{vaswani2017attention} is a
 seq2seq model which maps an input sequence to
 an output sequence through many layers of \textbf{multi-head
-attention} mechanisms, yielding a dynamic, context-dependent strategy
+    attention} mechanisms, yielding a dynamic, context-dependent strategy
 for propagating information within and across sentences. It contrasts
 with previous seq2seq models, which usually rely either on costly
 gated recurrent operations~\citep[often
-LSTMs:][]{bahdanau2014neural,luong2015effective} or static
+    LSTMs:][]{bahdanau2014neural,luong2015effective} or static
 convolutions~\citep{convseq}.
 
 Given $n$ query contexts and $m$ sequence items under consideration,
 attention mechanisms compute, for each query, a weighted
 representation of the items. The particular attention mechanism used
 in \citet{vaswani2017attention} is called \emph{scaled dot-product
-attention}, and it is computed in the following way:
+    attention}, and it is computed in the following way:
 %
 \begin{equation}
     \att(\bm{Q}, \bm{K}, \bm{V}) = \amap
-\left(\frac{\bm{Q}\bm{K}^\tr}{\sqrt{d}}\right) \bm{V},
+    \left(\frac{\bm{Q}\bm{K}^\tr}{\sqrt{d}}\right) \bm{V},
     \label{eq:att_scaled_dot}
 \end{equation}
 %
@@ -68,26 +70,26 @@ This is simply the application of
 learned linear transformation that allows specialization:
 %
 \begin{equation}\label{eq:head}%
-\hspace{-.01ex}%
-\ath_i(\bm{Q}\!,\!\bm{K}\!,\!\bm{V})\!=\!\att(\bm{QW}_i^Q\!\!,\bm{KW}_i^K\!\!,\bm{VW}_i^V\!)%
-\hspace{-1.5ex}%
+    \hspace{-.01ex}%
+    \ath_i(\bm{Q}\!,\!\bm{K}\!,\!\bm{V})\!=\!\att(\bm{QW}_i^Q\!\!,\bm{KW}_i^K\!\!,\bm{VW}_i^V\!)%
+    \hspace{-1.5ex}%
 \end{equation}
 %
 In the Transformer, there are three separate multi-head attention mechanisms for
 distinct purposes:
 \begin{itemize}
-\item \textbf{Encoder self-attention:} builds rich, layered representations of
-each input word, by attending on the entire input sentence.
-\item \textbf{Context attention:} selects
-a representative weighted average of the encodings of the input words, at each
-time step of the decoder.
-\item \textbf{Decoder self-attention:} attends over the partial output sentence
-fragment produced so far.
+    \item \textbf{Encoder self-attention:} builds rich, layered representations of
+          each input word, by attending on the entire input sentence.
+    \item \textbf{Context attention:} selects
+          a representative weighted average of the encodings of the input words, at each
+          time step of the decoder.
+    \item \textbf{Decoder self-attention:} attends over the partial output sentence
+          fragment produced so far.
 \end{itemize}
 Together, these mechanisms enable the contextualized flow of information between
 the input sentence and the sequential decoder.
 
-\subsection{Automatic Post-Editing}
+\subsubsection{Automatic Post-Editing}
 \label{sec:ape_bg}
 
 {\bf Automatic post-editing}~\citep[APE;][]{simard2007rule} is
@@ -110,8 +112,8 @@ synthetic triplets.
 
 \paragraph*{Dual-Source Transformer.} The current state of the art in
 APE uses a Transformer~\citep{vaswani2017attention} with {\bf two
-encoders}, for the {\tt src} and {\tt mt}, and {\bf one decoder}, for
-{\tt pe}~\citep{junczys2018ms, tebbifakhr2018multi}. When
+        encoders}, for the {\tt src} and {\tt mt}, and {\bf one decoder}, for
+    {\tt pe}~\citep{junczys2018ms, tebbifakhr2018multi}. When
 concatenating human post-edited data and artificial triplets, these
 systems greatly improve the MT baseline. However, little successes
 are known using the shared task training data only.
@@ -121,3 +123,5 @@ baseline considerably, even without any auxiliary synthetic dataset;
 and, as shown in \secref{sec:experiments}, it achieves
 state-of-the-art results by combining it with the aforementioned
 artificial datasets.
+
+\subsection{Large Pre-trained Language Models}

@@ -1,10 +1,12 @@
 \section{Latent Variable Models}
 \label{sec:lvm}
 
+\subsection{Foundations}
+
 We assume throughout a latent variable model with observed variables
 $x \in \mathcal{X}$ and latent stochastic variables $z \in \ZZ$. The
 overall fit to a dataset $\mathcal D$ is $\sum_{x \in \mathcal{D}}
-\LL_x(\theta)$, where the loss of each observation,
+    \LL_x(\theta)$, where the loss of each observation,
 
 \begin{equation}\label{eq:fit}
     \mathcal{L}_{x}(\theta) =
@@ -19,8 +21,6 @@ words, the latent variable $z$ is {\it marginalized} to compute this loss.
 To model complex data, one parameterizes both the downstream loss and
 the distribution over latent assignments using neural networks, due
 to their flexibility and capacity~\citep{Kingma+2014:VAE}.
-
-\subsection{Reparameterization Trick}
 
 For continuous latent variables,
 low-variance pathwise gradient estimators can be obtained by
@@ -68,21 +68,21 @@ of $\mathcal L_x(\theta)$ as long as gradient estimates are unbiased
 strategies for MC estimation of this gradient. Later, in
 \secref{sec:categorical}--\ref{sec:structured}, we propose our
 \textbf{deterministic} alternative, based on sparsifying $\pi(z| x,
-\theta)$.
+    \theta)$.
 
 \paragraph*{Monte Carlo gradient estimates.} Let $\theta=(\theta_\pi,
-\theta_\ell)$, where $\theta_\pi$ is the subset of weights that $\pi$
+    \theta_\ell)$, where $\theta_\pi$ is the subset of weights that $\pi$
 depends on, and $\theta_\ell$ the subset of weights that $\ell$
 depends on. Given a sample $\zsamp \sim \pi(z| x,\theta_\pi)$, an
 unbiased estimator of the gradient for \eqnref{eq:fit} \wrt
 $\theta_\ell$ is $\nabla_{\theta_\ell} \mathcal L_x(\theta) \approx
-\nabla_{\theta_\ell} \ell(x, \zsamp; \theta_\ell)$. Unbiased
+    \nabla_{\theta_\ell} \ell(x, \zsamp; \theta_\ell)$. Unbiased
 estimation of $\nabla_{\theta_\pi} \mathcal L_x(\theta)$ is more
 difficult, since $\theta_\pi$ is involved in the sampling of
 $\zsamp$, but can be done with the Score Function
 Estimator~\citep[SFE;][]{rubinstein1976monte,paisley2012variational}:
 $\nabla_{\theta_\pi} \mathcal L_x(\theta) \approx \ell(x, \zsamp;
-\theta_\ell) ~ \nabla_{\theta_\pi} \log \pi(\zsamp | x, \theta_\pi)$,
+    \theta_\ell) ~ \nabla_{\theta_\pi} \log \pi(\zsamp | x, \theta_\pi)$,
 also known as \textsc{reinforce}~\citep{Williams1992}. The SFE is
 powerful and general, making no assumptions on the form of $z$ or
 $\ell$, requiring only a sampling oracle and a way to assess
@@ -100,11 +100,11 @@ takes a sample estimate from the complement set.
 
 Many models of interest involve structured (or combinatorial) latent
 variables. In this section, we assume $z$ can be represented as a
-{\it bit-vector}---\ie a random vector of discrete binary variables
+    {\it bit-vector}---\ie a random vector of discrete binary variables
 $\bm{a}_{z} \in \{0, 1\}^D$. This assignment of binary variables may
 involve global factors and constraints (\eg tree constraints, or
 budget constraints on the number of active variables, \ie $\sum_i
-[\bm{a}_{z}]_i \le B$, where $B$ is the maximum number of variables
+    [\bm{a}_{z}]_i \le B$, where $B$ is the maximum number of variables
 allowed to activate at the same time). In such structured problems,
 $|\ZZ|$ increases exponentially with $D$, making exact evaluation of
 $\ell(x, z; \theta)$ prohibitive, even with sparsemax.
@@ -113,9 +113,9 @@ Structured prediction typically handles this combinatorial explosion
 by parameterizing scores for individual binary variables and
 interactions within the global structured configuration, yielding a
 compact vector of \textbf{variable scores} $\bm{t} = \g(x; \theta)
-\in \mathbb{R}^D$ (\eg, log-potentials for binary attributes), with
+    \in \mathbb{R}^D$ (\eg, log-potentials for binary attributes), with
 $D \ll |\ZZ|$. Then, the score of some global configuration $z \in
-\ZZ$ is $s_z \defeq \DP{\bm{a}_z}{\bm{t}}$. The variable scores
+    \ZZ$ is $s_z \defeq \DP{\bm{a}_z}{\bm{t}}$. The variable scores
 induce a unique Gibbs distribution over structures, given by
 $\pi(z|x,\theta) \propto \exp(\DP{\bm{a}_{z}}{\bm{t}})$.
 Equivalently, defining $\bm{A} \in \mathbb{R}^{D \times |\ZZ|}$ as
