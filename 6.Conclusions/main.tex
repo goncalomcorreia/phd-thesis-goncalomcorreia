@@ -1,5 +1,15 @@
-\fancychapter{Future Work}
-\label{cap:future}
+\fancychapter{Conclusions}
+\label{cap:conclusions}
+
+\section{Summary of Contributions and Discussion}
+
+\section{Directions for Future Research}
+
+\begin{itemize}
+    \item semi-supervision of latent discrete variables and few-shot learning
+    \item non-differentiability of the latent discrete variables learning signal
+    \item structured latent variables applications in NLP: enumeration can make it easier to learn
+\end{itemize}
 
 In this chapter, we present the proposed preliminary research ideas
 that will be explored in the thesis. In previous works, we explored
@@ -45,8 +55,8 @@ improve interpretability of the deep neural model and also to use
 sparsity in order to improve efficiency in latent variable training,
 as discussed in \secref{cap:sparsemarg}.
 
-\section{Translating by Editing a Draft}
-\label{sec:draftedits}
+% \section{Translating by Editing a Draft}
+% \label{sec:draftedits}
 
 \begin{figure}[t]
     \centering
@@ -71,7 +81,7 @@ as discussed in \secref{cap:sparsemarg}.
 The proposed NMT model in this section is based on previously
 published work on prototype editing for language
 modeling~\citep{guu2018GeneratingSentencesEditing,
-he2020LearningSparsePrototypes}. In this generative model, the
+    he2020LearningSparsePrototypes}. In this generative model, the
 generative process has two main steps: (1) selecting a prototype
 $\bm{t}$ from a list of possible prototypes (\eg the training data),
 and (2) editing that prototype by sampling an edit vector $\bm{z}$
@@ -102,8 +112,8 @@ Under this model, the data has the following log marginal likelihood:
     \log p(\bm{X} ; \gamma, \alpha) =
     \log \int_\theta p_\alpha (\theta)
     \left[ \prod_n \sum_{t} \int_{z}
-    p(t | \theta) p(z) p(x | t, z)
-    dz \right] d\theta
+        p(t | \theta) p(z) p(x | t, z)
+        dz \right] d\theta
 \end{equation}
 
 In this model, $p_\alpha(\theta)$ is the prior over the prototype
@@ -123,7 +133,7 @@ with inference done as depicted in
 
 \begin{figure}[t]
     \centering
-    
+
     \begin{tikzpicture}
         % Define nodes
         \node[obs]                (y)     {$ y $};
@@ -131,11 +141,11 @@ with inference done as depicted in
         \node[latent, above =of y] (t) {$ t $};
         \node[latent, left =of t] (z) {$ z $};
         \node[obs,below =of z]   (x) {$ x $};
-        
+
         % Connect nodes
         \edge{x}{z,t};
         \edge{t,z}{y};
-        
+
         \plate{data}{(x)(y)(t)(z)}{$N$};
     \end{tikzpicture}
     ~
@@ -146,18 +156,18 @@ with inference done as depicted in
         \node[latent, above =of y] (t) {$ t $};
         \node[latent, left =of t] (z) {$ z $};
         \node[obs,below =of z]   (x) {$ x $};
-        
+
         % Connect nodes
         \edge[dashed]{y}{z};
         \edge[dashed]{y}{t};
-        
+
         \plate{data}{(x)(y)(t)(z)}{$N$};
     \end{tikzpicture}
 
     \caption{Generative model (left): $z$ and $t$ are modelled
-    conditioned on $x$, $y$ is independent of $x$ given $z$ and $t$.
-    Inference model (right): we ignore $x$ and model $z$ and $t$
-    independently given $y$.} \label{fig:conditional}
+        conditioned on $x$, $y$ is independent of $x$ given $z$ and $t$.
+        Inference model (right): we ignore $x$ and model $z$ and $t$
+        independently given $y$.} \label{fig:conditional}
 \end{figure}
 
 While \citet{he2020LearningSparsePrototypes} apply their sparse neural editor
@@ -166,7 +176,7 @@ distribution over $\mathcal{X} \times \mathcal{Y}$, i.e. a
 machine translation model. We propose to model this distribution
 as the marginal of a deep latent variable model
 \begin{align}
-    p(y, t, z|x, \theta) &=
+    p(y, t, z|x, \theta) & =
     p(t | x, \theta)p(z |x, \theta)p(y |t, z, \theta)
 \end{align}
 
@@ -175,16 +185,17 @@ continuous representation. See \figref{fig:conditional} (left).
 Instead of $t$ being a pointer to a sentence in the training data, we
 think of $t$ as being a template for $y$---it can be a lexicalised
 rule with gaps/variables, phrase-based mapping from $x$ to a string
-in the target language, etc. While the nature of $t$ is not yet
-defined in the scope of this thesis, we will exemplify the latter
-option in \secref{sec:transduction}.
+in the target language, etc.
+% While the nature of $t$ is not yet
+% defined in the scope of this thesis, we will exemplify the latter
+% option in \secref{sec:transduction}.
 
 We can express a lowerbound on the logarithm of the conditional likelihood for an observation $(x,y)$,
 \begin{align}
-    \log p(y|x, \theta) &\ge \mathbb E_{q(z,t|y,\lambda)}\left[ \log p(y|z,t, \theta) \right] \nonumber \\
-    &- \KL(q(z, t|y,\lambda) || p(z, t|x, \theta)) \\
-    &\overset{\text{MF}}{=} \mathbb E_{q(z|y,\lambda)q(t|y,\lambda)}\left[ \log p(y|z,t, \theta) \right] \nonumber \\
-    &- \KL(q(z|y,\lambda) || p(z|x,\theta)) - \KL(q(t|y,\lambda) || p(t|x, \theta)) ~.
+    \log p(y|x, \theta) & \ge \mathbb E_{q(z,t|y,\lambda)}\left[ \log p(y|z,t, \theta) \right] \nonumber                                \\
+                        & - \KL(q(z, t|y,\lambda) || p(z, t|x, \theta))                                                                 \\
+                        & \overset{\text{MF}}{=} \mathbb E_{q(z|y,\lambda)q(t|y,\lambda)}\left[ \log p(y|z,t, \theta) \right] \nonumber \\
+                        & - \KL(q(z|y,\lambda) || p(z|x,\theta)) - \KL(q(t|y,\lambda) || p(t|x, \theta)) ~.
 \end{align}
 
 For better disentanglement it's also useful to use constraints that
@@ -204,19 +215,19 @@ this model lacks constraints on $z$ and $t$, in other words,
 $p(z,t|x,\theta)$ is controlled by a NN and is only constrained by
 the choice of parametric family we employ. It may be necessary to
 impose some form of marginal constraints on $\mathbb
-E_X[p(z|x,\theta)]$ and $\mathbb E_X[p(t|x,\theta)]$. Another caveat
+    E_X[p(z|x,\theta)]$ and $\mathbb E_X[p(t|x,\theta)]$. Another caveat
 is conceptual: our graphical model establishes conditional
 independence $Z \perp T | X$, whereas disentangled representations
 should be \emph{marginally independent}.
 
-\subsection{\label{sec:transduction}Translation by Transducing}
+% \subsection{\label{sec:transduction}Translation by Transducing}
 
 Suppose we have a grammar $\mathcal T$ that allows us to identify a
 set $\mathcal T(x)$ of \emph{derivations}, each of which maps $x$ to
 some sentence in the target language. A derivation $t \in \mathcal
-T(x)$ is a sequence of operations that rewrite $x$ into a sentence in
+    T(x)$ is a sequence of operations that rewrite $x$ into a sentence in
 the target language. In this section we describe a component $p(t|x,
-\theta, \mathcal T)$, a probability distribution over the derivations
+    \theta, \mathcal T)$, a probability distribution over the derivations
 supported by a grammar that corresponds to a phrase-based transducer.
 The key to this component is an efficient representation of the set
 $\mathcal T(x)$: a directed acyclic graph whose size is a polynomial
@@ -229,26 +240,26 @@ $t$ given a source sentence $x$ is given by
 \begin{align}
     p(t|x, \theta) =
     \frac
-        {\exp(\sum_{i=1}^{|t|} f(x, t_i, \theta))}
-        {\sum_{t' \in \mathcal T(x)}
-            \exp(\sum_{i=1}^{|t'|} f(x, t'_i, \theta))
-        }
+    {\exp(\sum_{i=1}^{|t|} f(x, t_i, \theta))}
+    {\sum_{t' \in \mathcal T(x)}
+        \exp(\sum_{i=1}^{|t'|} f(x, t'_i, \theta))
+    }
 \end{align}
 
 \noindent which is a Gibbs distribution whose support is $\mathcal
-T(x)$. We use an efficient parameterisation based on arc potentials,
+    T(x)$. We use an efficient parameterisation based on arc potentials,
 though note that \emph{efficiency} here really depends on the size of
 the sample space of arcs. Note that the denominator sums over the
 space of all possible derivations compatible with $x$, a computation
 that scales linearly in the size of the graph that represents
 $\mathcal T(x)$---this is done via the forward
 algorithm.\footnote{Because our Gibbs is built on a DAG and we will
-keep this DAG polynomial in size, every algorithm in the book is
-available: forward, Viterbi, ancestral sampling.} Later, we
+    keep this DAG polynomial in size, every algorithm in the book is
+    available: forward, Viterbi, ancestral sampling.} Later, we
 will aim at a sparse alternative to the Gibbs distribution, that is,
 with support in a small subset of $\mathcal T(x)$.
 
-\section{NMT through Latent Summary}
+% \section{NMT through Latent Summary}
 
 \begin{figure}[t]
     \centering
@@ -273,21 +284,21 @@ with support in a small subset of $\mathcal T(x)$.
 
         % Connect nodes
         \edge[dashed]{xi,y}{z};
-        
+
         \plate{data}{(y)}{$N$};
     \end{tikzpicture}
 
     \caption{{\it Left}: a simple generative model for document-level
-    NMT with interesting properties. Given $z$, there is full
-    independence between $y_i$, but at test time there is an implicit
-    dependency.
-    {\it Right}: inference model. $X$ and $y_i$ infer $z$.}
+        NMT with interesting properties. Given $z$, there is full
+        independence between $y_i$, but at test time there is an implicit
+        dependency.
+            {\it Right}: inference model. $X$ and $y_i$ infer $z$.}
     \label{fig:doclevel}
 \end{figure}
 
 In this section, we build upon the generative model designed in
 \citet{edwards2017prociclr}. In that work, the authors use a {\it
-neural statistician}---a generative model that gets a dataset as
+        neural statistician}---a generative model that gets a dataset as
 input and is able to construct a continuous latent summary $c$ of
 that dataset, which in turn allows the model to get better latent
 representations $z$ for unsupervised and few-shot learning.
@@ -300,7 +311,7 @@ use a budget factor to constrain the number of sentences selected. We
 hypothesize that this idea could be tested in two applications:
 multi-domain NMT and document-level NMT.
 
-\subsection{Multi-domain Learning}
+% \subsection{Multi-domain Learning}
 
 Here $c$ will be a summary of the current domain to be translated,
 and will help $z$ to encode any topic specific content that a NMT
@@ -337,34 +348,34 @@ A possible model is depicted in \figref{fig:indomainstatistician}.
         % Connect nodes
         \edge[dashed]{y}{z};
         \edge[dashed]{x,y}{c};
-        
+
         \plate{data}{(x)(y)(z)}{$N$};
     \end{tikzpicture}
 
     \caption{{\it Left}: each sentence $x_i$ is translated to $y_i$
-    while $c$ and $z$ encode in-domain specific representations; $c$
-    encodes the summary of the in-domain dataset and $z$ the
-    translation representation of this summary into the target
-    language.
-    {\it Right}: inference model. $y_i$ infers $z$ and the whole
-    in-domain document $X$ infers $c$.}
+        while $c$ and $z$ encode in-domain specific representations; $c$
+        encodes the summary of the in-domain dataset and $z$ the
+        translation representation of this summary into the target
+        language.
+            {\it Right}: inference model. $y_i$ infers $z$ and the whole
+        in-domain document $X$ infers $c$.}
     \label{fig:indomainstatistician}
 \end{figure}
 
-\subsection{Document-level NMT}
+% \subsection{Document-level NMT}
 
 In document-level NMT, a document with $M$ sentences $X=[x_1, \dots,
-x_M]$ in the source language is translated to a target language and
+    x_M]$ in the source language is translated to a target language and
 forms a document with $N$ sentences $Y=[y_1, \dots, y_N]$. In the
 model depicted in \figref{fig:doclevel}, the sentences in the
 document $Y$ are only independent of each other given $z$, thus
 having an implicit dependency between the sentences that is encoded
 within $z$. This model can potentially mitigate posterior
 collapse~\footnote{Posterior collapse is a common issue in
-variational models with powerful decoders. Due to the auto-regressive
-nature of most sequence neural models, the decoder tends to ignore
-the approximated posterior computed by the encoder and, consequently,
-a useful posterior is not learned.} since the model needs to use $z$
+    variational models with powerful decoders. Due to the auto-regressive
+    nature of most sequence neural models, the decoder tends to ignore
+    the approximated posterior computed by the encoder and, consequently,
+    a useful posterior is not learned.} since the model needs to use $z$
 in order to get document-level information. This property also
 provides the model good memory footprint.
 
@@ -373,10 +384,11 @@ A model with latent summary is shown in
 one described above, now including a latent summary $c$. In this
 case, contrasting with the model example in
 \figref{fig:indomainstatistician}, the summary is created through the
-target document. A possible way to do this connects with
-\secref{sec:draftedits}, where there could be a memory of phrases
-used to encode $c$ (see \secref{sec:transduction}) that are used for
-agreement in documents of the target language.
+target document.
+% A possible way to do this connects with
+% \secref{sec:draftedits}, where there could be a memory of phrases
+% used to encode $c$ (see \secref{sec:transduction}) that are used for
+% agreement in documents of the target language.
 
 \begin{figure}[t]
     \centering
@@ -401,23 +413,21 @@ agreement in documents of the target language.
         \node[latent, above =of y] (z) {$ z $};
         \node[latent, right =of z] (c) {$ c $};
         \node[obs, right =of y]   (xi) {$ X $};
-        
+
         % Connect nodes
         \edge[dashed]{y}{z};
         \edge[dashed]{y,xi}{c};
-        
+
         \plate{data}{(y)(z)}{$N$};
     \end{tikzpicture}
 
     \caption{{\it Left}: document-level NMT with a latent summary.
-    The latent $c$ encodes a summary representation of the document
-    (perhaps a draft document that includes all the agreement
-    constraints that the document needs---connects with
-    \secref{sec:draftedits}). This summary is then used to encode
-    document-level features into $z$. Then each $y_i$ is translated
-    independently given the source document and $z$. {\it Right}:
-    inference model. $y_i$ infers $z$ and the whole in-domain
-    document $Y$ infers $c$.}
+        The latent $c$ encodes a summary representation of the document.
+        This summary is then used to encode
+        document-level features into $z$. Then each $y_i$ is translated
+        independently given the source document and $z$. {\it Right}:
+        inference model. $y_i$ infers $z$ and the whole in-domain
+        document $Y$ infers $c$.}
     \label{fig:doclevelstatistician}
 
 \end{figure}
