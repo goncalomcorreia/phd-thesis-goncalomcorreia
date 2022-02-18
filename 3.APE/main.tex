@@ -16,17 +16,21 @@ tasks. However, as BERT and other similar models were transformer
 encoders, it was not straightforward to consider them to be used
 as a sequence-to-sequence model. % TODO: refer this section in background
 
-Therefore, in this chapter, we present a simple and effective
+In this work, we presented a simple and effective
 solution to this problem, using the scarcity of Automatic Post-Editing
 data as the playground to explore the transfer learning capacity of
-large transformer encoder models in a sequence-to-sequence task.
+large transformer encoder models in a sequence-to-sequence task,
+being one of the first works to do so.
 
 \emph{This chapter is based on \citet{Correia2019}.}
 
-\section{Motivation and Previous Work}
+\section{Motivation}
 
+ {\bf Automatic post-editing}~\citep[APE;][]{simard2007rule} is
+inspired by human post-editing, in which a translator corrects
+mistakes made by an MT system.
 The goal of APE is to automatically correct the mistakes produced by
-a black-box MT system (\secref{sec:ape_bg}). APE is particularly
+a black-box MT system. APE is particularly
 appealing for rapidly customizing MT, avoiding to train new systems
 from scratch. Interfaces where human translators can post-edit and
 improve the quality of MT
@@ -47,6 +51,15 @@ artificial triplets, combined with the time to train an APE system on
 the resulting large dataset, may well exceed the time to train a MT
 system from scratch.
 
+When the current work was published, the state of the art in APE used
+a Transformer~\citep{vaswani2017attention} with {\bf two encoders},
+for the {\tt src} and {\tt mt}, and {\bf one decoder}, for {\tt pe}.
+This system was named the Dual-Source
+Transformer~\citep{junczys2018ms, tebbifakhr2018multi}. When
+concatenating human post-edited data and artificial triplets, these
+systems greatly improved the MT baseline. However, little successes
+are known using only the true data created by the human post-editors.
+
 Meanwhile, there have been many successes of {\bf transfer learning}
 for NLP: models such as CoVe~\citep{mccann2017learned},
 ELMo~\citep{peters2018deep}, OpenAI GPT~\citep{radford2018improving},
@@ -66,14 +79,11 @@ the computational and time resources that creating artificial
 triplets for APE needs---these triplets need to be created separately
 for every language pair that one wishes to train an APE system for.
 
-Current APE systems struggle to overcome the MT baseline without
-additional data. This baseline corresponds to leaving the MT
-uncorrected (``do-nothing'' baseline).\footnote{If an APE system has
-  worse performance than this baseline, it is pointless to use it.}
-With only the small shared task dataset (23K triplets), our proposed
-strategy outperforms this baseline by $-$4.9 TER and $+$7.4 BLEU in
-the English-German WMT 2018 APE shared task, with 3 hours of training
-on a single GPU. Adding the artificial eSCAPE
+By contrast, using transfer learning and with only the small shared
+task dataset (23K triplets), our proposed strategy outperforms this
+baseline considerably, by $-$4.9 TER and $+$7.4 BLEU in the
+English-German WMT 2018 APE shared task, with 3 hours of training on
+a single GPU. Adding the artificial eSCAPE
 dataset~\citep{negri2018escape} leads to a performance of 17.15 TER,
 a new state of the art.
 
@@ -90,6 +100,8 @@ Our main contributions are the following:
         coupling BERT models in an APE system, comparing different options
         of parameter sharing, initialization, and fine-tuning.
 \end{itemize}
+
+\section{Previous Work}
 
 In their Dual-Source Transformer model, \citet{junczys2018ms} also
 found gains by tying together encoder parameters, and the embeddings
@@ -148,14 +160,6 @@ better methods to obtain results that improve the baseline using only
 real post-edited data in these smaller APE datasets.
 
 \section{Automatic Post-Editing with BERT}\label{sec:ape_bert}
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.7\textwidth]{Figures/bert-ape-diagram.pdf}
-  \caption{\textbf{Dual-Source BERT.}
-    Dashed lines show shared parameters in our best configuration.}
-  \label{fig:transformer_diagram}
-\end{figure}
 
 \subsection{BERT as a Cross-Lingual Encoder}
 
@@ -231,6 +235,14 @@ pre-trained models in the decoder:
   \item \textbf{Shared feed-forward.} We tie the feed-forward weights
         (FF) between the encoder and decoder.
 \end{itemize}
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{Figures/bert-ape-diagram.pdf}
+  \caption{\textbf{Dual-Source BERT.}
+    Dashed lines show shared parameters in our best configuration.}
+  \label{fig:transformer_diagram}
+\end{figure}
 
 \section{Experiments} \label{sec:experiments}
 
