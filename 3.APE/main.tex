@@ -1,6 +1,28 @@
 \fancychapter{A Simple and Effective Approach to Automatic Post-Editing with Transfer Learning}
 \label{cap:ape}
 
+In the following chapter, we will focus on this thesis' goal of
+paving the way for more \textbf{data efficient} models. In order to
+achieve this, we use weak supervion in the form of transfer learning.
+
+When the article shown in this chapter was published, the use of
+pre-trained transformers % TODO: refer this section in background
+in NLP in generation tasks had not been explored as much as it has
+been in recent years. % TODO: may cite T5 as an example of seq2seq
+For instance, the work that proposed
+BERT~\citep{devlin2018bert} had only been recently released and NLP
+researchers were quickly interested in using it in a variety of
+tasks. However, as BERT and other similar models were transformer
+encoders, it was not straightforward to consider them to be used
+as a sequence-to-sequence model. % TODO: refer this section in background
+
+Therefore, in this chapter, we present a simple and effective
+solution to this problem, using the scarcity of Automatic Post-Editing
+data as the playground to explore the transfer learning capacity of
+large transformer encoder models.
+
+\emph{This chapter is based on \citet{Correia2019}.}
+
 \section{Motivation and Previous Work}
 
 The goal of APE is to automatically correct the mistakes produced by
