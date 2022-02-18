@@ -189,6 +189,14 @@ use the segment embeddings to differentiate between languages
 embeddings when the {\tt mt} starts, since it is not a continuation
 of {\tt src}.
 
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=0.9\textwidth]{Figures/bert-ape-diagram.pdf}
+  \caption{\textbf{Dual-Source BERT.}
+    Dashed lines show shared parameters in our best configuration.}
+  \label{fig:transformer_diagram}
+\end{figure}
+
 \subsection{BERT as a Decoder}\label{sec:ape_bert_decoder}
 
 Prior work has incorporated pre-trained models in {\it encoders}, but
@@ -235,14 +243,6 @@ pre-trained models in the decoder:
   \item \textbf{Shared feed-forward.} We tie the feed-forward weights
         (FF) between the encoder and decoder.
 \end{itemize}
-
-\begin{figure}[ht!]
-  \centering
-  \includegraphics[width=0.8\textwidth]{Figures/bert-ape-diagram.pdf}
-  \caption{\textbf{Dual-Source BERT.}
-    Dashed lines show shared parameters in our best configuration.}
-  \label{fig:transformer_diagram}
-\end{figure}
 
 \section{Experiments} \label{sec:experiments}
 
@@ -304,33 +304,7 @@ attention) and thus the context attention benefits from the
 pre-trained BERT's better weight initialization. No benefit was
 observed from sharing the feed-forward weights.
 
-\paragraph*{Final Results.}
-Finally, \tableref{tab:results_smt} shows our results on the WMT
-2016--18 test sets. The model named \emph{BERT Enc.\,+\,BERT Dec.}
-corresponds to the best setting found in
-\tableref{tab:ablation_smt}, while \emph{BERT Enc.\,+\,Transformer
-  Dec.} only uses BERT in the encoder. We show results for single
-models and ensembles of 4 independent models.
-
-Using the small shared task dataset only (23K triplets), our single
-\emph{BERT Enc.\,+\,BERT Dec.} model surpasses the MT baseline by a
-large margin ($-$4.90 TER in test 2018). The only system we are aware
-to beat the MT baseline with only the shared task data is
-\citet{berard2017lig}, which we also outperform ($-$4.05 TER in test
-2017). With only about 3 GPU-hours and on a much smaller dataset, our
-model reaches a performance that is comparable to an ensemble of the
-best WMT 2018 system with an artificial dataset of 5M triplets
-($+$0.02 TER in test 2016), which is much more expensive to train.
-With 4$\times$ ensembling, we get competitive results with systems
-trained on 8M triplets.
-
-When adding the eSCAPE corpus (8M triplets), performance surpasses
-the state of the art in all test sets. By ensembling, we improve even
-further, achieving a final 17.15 TER score in test 2018 ($-$0.85 TER
-than the previous state of the art).
-
 \begin{table}[t]
-  \small
   \centering
   \begin{tabular}{lcc}
     \toprule
@@ -364,75 +338,101 @@ than the previous state of the art).
   \label{tab:ablation_smt}
 \end{table}
 
-\begin{table*}[t]
-  \small
-  \centering
-  \begin{tabular}{lccccccc}
-    \toprule
-                                                     &                & \multicolumn{2}{c}{test 2016} &
-    \multicolumn{2}{c}{test 2017}                    &
-    \multicolumn{2}{c}{test 2018}                                                                                                      \\
-    \cmidrule{3-4} \cmidrule{5-6}  \cmidrule{7-8}
-    Model                                            & Train Size     & TER$\downarrow$               & BLEU$\uparrow$ &
-    TER$\downarrow$                                  & BLEU$\uparrow$ & TER$\downarrow$               & BLEU$\uparrow$                 \\
-    \midrule
-    MT baseline (Uncorrected)                        &                &
-    24.76                                            & 62.11          & 24.48                         & 62.49          & 24.24 & 62.99 \\
-    \midrule
-    \citet{berard2017lig}                            &
-    \multicolumn{1}{c}{23K}                          &
-    22.89                                            & ---            & 23.08                         & 65.57          & ---   & ---   \\
-    \midrule
-    \citet{junczys2018ms}                            &
-    \multicolumn{1}{c}{\multirow{2}{*}{5M}}          &
-    18.92                                            & 70.86          & 19.49                         & 69.72          & ---   & ---   \\
-    \citet{junczys2018ms}$\times 4$                  &
-    \multicolumn{1}{c}{}                             &
-    18.86                                            & 71.04          & 19.03                         & 70.46          & ---   & ---   \\
-    \midrule
-    \citet{tebbifakhr2018multi}                      &
-    \multicolumn{1}{c}{\multirow{3}{*}{8M}}          &
-    ---                                              & ---            & ---                           & ---            & 18.62 & 71.04 \\
-    \citet{junczys2018ms}                            &
-    \multicolumn{1}{c}{}                             &
-    17.81                                            & 72.79          & 18.10                         & 71.72          & ---   & ---   \\
-    \citet{junczys2018ms}$\times 4$                  &
-    \multicolumn{1}{c}{}                             &
-    17.34                                            & 73.43          & 17.47                         & 72.84          & 18.00 & 72.52 \\
-    \midrule
-    \midrule
-    Dual-Source Transformer$^\dagger$                &
-    \multicolumn{1}{c}{\multirow{4}{*}{23K}}         &
-    27.80                                            & 60.76          & 27.73                         & 59.78          & 28.00 & 59.98 \\
-    BERT Enc.\,+\,Transformer Dec. (\emph{Ours})     &
-    \multicolumn{1}{c}{}                             &
-    20.23                                            & 68.98          & 21.02                         & 67.47          & 20.93 & 67.60 \\
-    BERT Enc.\,+\,BERT Dec. (\emph{Ours})            &
-    \multicolumn{1}{c}{}                             &
-    18.88                                            & 71.61          & 19.03                         & 70.66          & 19.34 & 70.41 \\
-    BERT Enc.\,+\,BERT Dec. $\times 4$ (\emph{Ours}) &
-    \multicolumn{1}{c}{}                             &
-    \textbf{18.05}                                   & \textbf{72.39} & \textbf{18.07}                &
-    \textbf{71.90}                                   & \textbf{18.91} & \textbf{70.94}                                                 \\
-    \midrule
-    BERT Enc.\,+\,BERT Dec. (\emph{Ours})            &
-    \multicolumn{1}{c}{\multirow{2}{*}{8M}}          &
-    16.91                                            & 74.29          & 17.26                         & 73.42          & 17.71 & 72.74 \\
-    BERT Enc.\,+\,BERT Dec. $\times 4$ (\emph{Ours}) &
-    \multicolumn{1}{c}{}                             &
-    \textbf{16.49}                                   & \textbf{74.98} & \textbf{16.83}                &
-    \textbf{73.94}                                   & \textbf{17.15} & \textbf{73.60}                                                 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Results on the WMT 2016--18 APE shared task datasets. Our
-    single models trained on the 23K dataset took only 3h20m to converge
-    on a single Nvidia GeForce GTX 1080 GPU, while results for models
-    trained on 8M triplets take approximately 2 days on the same GPU.
-    Models marked with ``$\times 4$'' are ensembles of 4 models.
-    Dual-Source Transformer$^\dagger$ is a comparable re-implementation
-    of \citet{junczys2018ms}.}
-  \label{tab:results_smt}
-\end{table*}
+\paragraph*{Final Results.}
+Finally, \tableref{tab:results_smt} shows our results on the WMT
+2016--18 test sets. The model named \emph{BERT Enc.\,+\,BERT Dec.}
+corresponds to the best setting found in
+\tableref{tab:ablation_smt}, while \emph{BERT Enc.\,+\,Transformer
+  Dec.} only uses BERT in the encoder. We show results for single
+models and ensembles of 4 independent models.
+
+Using the small shared task dataset only (23K triplets), our single
+\emph{BERT Enc.\,+\,BERT Dec.} model surpasses the MT baseline by a
+large margin ($-$4.90 TER in test 2018). The only system we are aware
+to beat the MT baseline with only the shared task data is
+\citet{berard2017lig}, which we also outperform ($-$4.05 TER in test
+2017). With only about 3 GPU-hours and on a much smaller dataset, our
+model reaches a performance that is comparable to an ensemble of the
+best WMT 2018 system with an artificial dataset of 5M triplets
+($+$0.02 TER in test 2016), which is much more expensive to train.
+With 4$\times$ ensembling, we get competitive results with systems
+trained on 8M triplets.
+
+When adding the eSCAPE corpus (8M triplets), performance surpasses
+the state of the art in all test sets. By ensembling, we improve even
+further, achieving a final 17.15 TER score in test 2018 ($-$0.85 TER
+than the previous state of the art).
+
+\begin{landscape}
+  \begin{table*}[t]
+    \centering
+    \begin{tabular}{lccccccc}
+      \toprule
+                                                       &                & \multicolumn{2}{c}{test 2016} &
+      \multicolumn{2}{c}{test 2017}                    &
+      \multicolumn{2}{c}{test 2018}                                                                                                      \\
+      \cmidrule{3-4} \cmidrule{5-6}  \cmidrule{7-8}
+      Model                                            & Train Size     & TER$\downarrow$               & BLEU$\uparrow$ &
+      TER$\downarrow$                                  & BLEU$\uparrow$ & TER$\downarrow$               & BLEU$\uparrow$                 \\
+      \midrule
+      MT baseline (Uncorrected)                        &                &
+      24.76                                            & 62.11          & 24.48                         & 62.49          & 24.24 & 62.99 \\
+      \midrule
+      \citet{berard2017lig}                            &
+      \multicolumn{1}{c}{23K}                          &
+      22.89                                            & ---            & 23.08                         & 65.57          & ---   & ---   \\
+      \midrule
+      \citet{junczys2018ms}                            &
+      \multicolumn{1}{c}{\multirow{2}{*}{5M}}          &
+      18.92                                            & 70.86          & 19.49                         & 69.72          & ---   & ---   \\
+      \citet{junczys2018ms}$\times 4$                  &
+      \multicolumn{1}{c}{}                             &
+      18.86                                            & 71.04          & 19.03                         & 70.46          & ---   & ---   \\
+      \midrule
+      \citet{tebbifakhr2018multi}                      &
+      \multicolumn{1}{c}{\multirow{3}{*}{8M}}          &
+      ---                                              & ---            & ---                           & ---            & 18.62 & 71.04 \\
+      \citet{junczys2018ms}                            &
+      \multicolumn{1}{c}{}                             &
+      17.81                                            & 72.79          & 18.10                         & 71.72          & ---   & ---   \\
+      \citet{junczys2018ms}$\times 4$                  &
+      \multicolumn{1}{c}{}                             &
+      17.34                                            & 73.43          & 17.47                         & 72.84          & 18.00 & 72.52 \\
+      \midrule
+      \midrule
+      Dual-Source Transformer$^\dagger$                &
+      \multicolumn{1}{c}{\multirow{4}{*}{23K}}         &
+      27.80                                            & 60.76          & 27.73                         & 59.78          & 28.00 & 59.98 \\
+      BERT Enc.\,+\,Transformer Dec. (\emph{Ours})     &
+      \multicolumn{1}{c}{}                             &
+      20.23                                            & 68.98          & 21.02                         & 67.47          & 20.93 & 67.60 \\
+      BERT Enc.\,+\,BERT Dec. (\emph{Ours})            &
+      \multicolumn{1}{c}{}                             &
+      18.88                                            & 71.61          & 19.03                         & 70.66          & 19.34 & 70.41 \\
+      BERT Enc.\,+\,BERT Dec. $\times 4$ (\emph{Ours}) &
+      \multicolumn{1}{c}{}                             &
+      \textbf{18.05}                                   & \textbf{72.39} & \textbf{18.07}                &
+      \textbf{71.90}                                   & \textbf{18.91} & \textbf{70.94}                                                 \\
+      \midrule
+      BERT Enc.\,+\,BERT Dec. (\emph{Ours})            &
+      \multicolumn{1}{c}{\multirow{2}{*}{8M}}          &
+      16.91                                            & 74.29          & 17.26                         & 73.42          & 17.71 & 72.74 \\
+      BERT Enc.\,+\,BERT Dec. $\times 4$ (\emph{Ours}) &
+      \multicolumn{1}{c}{}                             &
+      \textbf{16.49}                                   & \textbf{74.98} & \textbf{16.83}                &
+      \textbf{73.94}                                   & \textbf{17.15} & \textbf{73.60}                                                 \\
+      \bottomrule
+    \end{tabular}
+    \caption{Results on the WMT 2016--18 APE shared task datasets. Our
+      single models trained on the 23K dataset took only 3h20m to converge
+      on a single Nvidia GeForce GTX 1080 GPU, while results for models
+      trained on 8M triplets take approximately 2 days on the same GPU.
+      Models marked with ``$\times 4$'' are ensembles of 4 models.
+      Dual-Source Transformer$^\dagger$ is a comparable re-implementation
+      of \citet{junczys2018ms}.}
+    \label{tab:results_smt}
+  \end{table*}
+\end{landscape}
 
 \section{Subsequent Work}
 
