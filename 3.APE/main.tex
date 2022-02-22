@@ -418,23 +418,39 @@ than the previous state of the art).
 
 \section{Subsequent Work}
 
-\citet{lopes2019unbabels} used our model on the harder
-English-German NMT subtask to obtain better TER performance than
-previous state of the art. To obtain this result, the transfer
-learning capabilities of BERT were not enough and further engineering
-effort was required. Particularly, a conservativeness factor was
-added during beam decoding to constrain the changes the APE system
-can make to the {\tt mt} output. Furthermore, the authors used a data
-weighting method to augment the importance of data samples that have
-lower TER. By doing this, data samples that required less
-post-editing effort are assigned higher weights during the training
-loop. Since the NMT system does very few errors on this domain this
-data weighting is important for the APE model to learn to do fewer
-corrections to the {\tt mt} output. However, their approach required
-the creation of an artificial dataset to obtain a performance that
-improved the MT baseline. We leave it for future work to investigate
-better methods to obtain results that improve the baseline using only
-real post-edited data in these smaller APE datasets.
+After our publication~\citep{Correia2019}, many works have since
+been published exploring the use of large pre-trained language models
+for generation purposes (may cite here works that use BERT as a
+language model, cite T5, and PLMs that were applied to MT as XLM), % TODO
+and our work shown in this chapter was one of the first to do so.
+% maybe too on the nose?
+
+Most closely related to our work, \citet{lopes2019unbabels} used our
+model on the harder English-German NMT APE subtask of WMT 2019,
+having won the shared task on that year. To obtain this result, the
+transfer learning capabilities of BERT were not enough and further
+engineering effort was required. Particularly, a conservativeness
+factor was added during beam decoding to constrain the changes the
+APE system can make to the {\tt mt} output. Furthermore, the authors
+used a data weighting method to augment the importance of data
+samples that have lower TER. By doing this, data samples that
+required less post-editing effort are assigned higher weights during
+the training loop. Since the NMT system does very few errors on this
+domain this data weighting is important for the APE model to learn to
+do fewer corrections to the {\tt mt} output. However, their approach
+required the creation of an artificial dataset to obtain a
+performance that improved the MT baseline. Further investigation is
+required in APE to come up with better methods that obtain improved
+results compared to the baseline using only real post-edited data in
+these smaller APE datasets based on NMT outputs rather than SMT ones.
+
+In the following years of the 2019 APE subtask, we have seen models
+that have been inspired by our BERT model, particularly
+\citet{lee2020POSTECHETRISubmissionWMT2020} that used an
+XLM~\citep{lample2019xlm} inspired model in 2020 APE WMT subtask,
+instead of the multilingual BERT that our work used. Another submission
+to that year's subtask pre-trained their own BERT-like model
+on a cross-lingual dataset~\citep{wang2020AlibabaSubmissionWMT}.
 
 \section{Final Remarks and Chapter Summary}
 
