@@ -226,6 +226,40 @@ pre-trained models in the decoder:
         (FF) between the encoder and decoder.
 \end{itemize}
 
+\begin{table}[t]
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+                                                       & TER$\downarrow$ & BLEU$\uparrow$ \\
+    \midrule
+    Transformer decoder                                & 20.33           & 69.31          \\
+    Pre-trained BERT                                   & 20.83           & 69.11          \\
+    \hspace{1ex}\textcolor{gray}{\textit{with}}
+    CA $\leftarrow$ SA                                 & 18.91           & 71.81          \\
+    \textover[r]
+    {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
+    \textover[r]
+    {SA $\leftrightarrow$}
+    {CA $\leftarrow$} Encoder SA                       & \textbf{18.44}  & \textbf{72.25} \\
+    \textover[r]
+    {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
+    \textover[r]
+    {CA $\leftrightarrow$}{CA $\leftarrow$} SA         & 18.75           & 71.83          \\
+    \textover[r]
+    {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
+    \textover[r]
+    {FF $\leftrightarrow$}{CA $\leftarrow$} Encoder FF & 19.04           & 71.53          \\
+    \bottomrule
+  \end{tabular}
+  \caption{
+    Ablation study of decoder configurations, by gradually having more
+    shared parameters between the encoder and decoder (trained without
+    synthetic data). $\leftrightarrow$ denotes parameter tying and
+    $\leftarrow$ an initialization.
+  }
+  \label{tab:ablation_smt}
+\end{table}
+
 \section{Experiments} \label{sec:experiments}
 
 We now describe our experimental results. Our models were implemented
@@ -264,86 +298,6 @@ exponential moving average strategy of \citet{junczys2018marian}
 with a decay of $10^{-4}$. At test time, we select the model with
 best TER on the development set, and apply beam search with a beam
 size of 8 and average length penalty.
-
-\paragraph*{Initialization and Parameter Sharing.}
-\tableref{tab:ablation_smt} compares the different decoder
-strategies described in \secref{sec:ape_bert_decoder} on the WMT 2018
-validation set. The best results were achieved by sharing the
-self-attention between encoder and decoder, and by initializing (but
-not sharing) the context attention with the same weights as the
-self-attention. Regarding the self-attention sharing, we hypothesize
-that its benefits are due to both encoder and decoder sharing a
-common language in their input (in the {\tt mt} and {\tt pe}
-sentence, respectively). Future work will investigate if this is
-still beneficial when the source and target languages are less
-similar. On the other hand, the initialization of the context
-attention with BERT's self-attention weights is essential to reap the
-benefits of BERT representations in the decoder---without it, using
-BERT decreases performance when compared to a regular transformer
-decoder. This might be due to the fact that context attention and
-self-attention share the same neural block architecture (multi-head
-attention) and thus the context attention benefits from the
-pre-trained BERT's better weight initialization. No benefit was
-observed from sharing the feed-forward weights.
-
-\begin{table}[t]
-  \centering
-  \begin{tabular}{lcc}
-    \toprule
-                                                       & TER$\downarrow$ & BLEU$\uparrow$ \\
-    \midrule
-    Transformer decoder                                & 20.33           & 69.31          \\
-    Pre-trained BERT                                   & 20.83           & 69.11          \\
-    \hspace{1ex}\textcolor{gray}{\textit{with}}
-    CA $\leftarrow$ SA                                 & 18.91           & 71.81          \\
-    \textover[r]
-    {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
-    \textover[r]
-    {SA $\leftrightarrow$}
-    {CA $\leftarrow$} Encoder SA                       & \textbf{18.44}  & \textbf{72.25} \\
-    \textover[r]
-    {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
-    \textover[r]
-    {CA $\leftrightarrow$}{CA $\leftarrow$} SA         & 18.75           & 71.83          \\
-    \textover[r]
-    {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
-    \textover[r]
-    {FF $\leftrightarrow$}{CA $\leftarrow$} Encoder FF & 19.04           & 71.53          \\
-    \bottomrule
-  \end{tabular}
-  \caption{
-    Ablation study of decoder configurations, by gradually having more
-    shared parameters between the encoder and decoder (trained without
-    synthetic data). $\leftrightarrow$ denotes parameter tying and
-    $\leftarrow$ an initialization.
-  }
-  \label{tab:ablation_smt}
-\end{table}
-
-\paragraph*{Final Results.}
-Finally, \tableref{tab:results_smt} shows our results on the WMT
-2016--18 test sets. The model named \emph{BERT Enc.\,+\,BERT Dec.}
-corresponds to the best setting found in
-\tableref{tab:ablation_smt}, while \emph{BERT Enc.\,+\,Transformer
-  Dec.} only uses BERT in the encoder. We show results for single
-models and ensembles of 4 independent models.
-
-Using the small shared task dataset only (23K triplets), our single
-\emph{BERT Enc.\,+\,BERT Dec.} model surpasses the MT baseline by a
-large margin ($-$4.90 TER in test 2018). The only system we are aware
-to beat the MT baseline with only the shared task data is
-\citet{berard2017lig}, which we also outperform ($-$4.05 TER in test
-2017). With only about 3 GPU-hours and on a much smaller dataset, our
-model reaches a performance that is comparable to an ensemble of the
-best WMT 2018 system with an artificial dataset of 5M triplets
-($+$0.02 TER in test 2016), which is much more expensive to train.
-With 4$\times$ ensembling, we get competitive results with systems
-trained on 8M triplets.
-
-When adding the eSCAPE corpus (8M triplets), performance surpasses
-the state of the art in all test sets. By ensembling, we improve even
-further, achieving a final 17.15 TER score in test 2018 ($-$0.85 TER
-than the previous state of the art).
 
 \begin{landscape}
   \begin{table*}[t]
@@ -415,6 +369,52 @@ than the previous state of the art).
     \label{tab:results_smt}
   \end{table*}
 \end{landscape}
+
+\paragraph*{Initialization and Parameter Sharing.}
+\tableref{tab:ablation_smt} compares the different decoder
+strategies described in \secref{sec:ape_bert_decoder} on the WMT 2018
+validation set. The best results were achieved by sharing the
+self-attention between encoder and decoder, and by initializing (but
+not sharing) the context attention with the same weights as the
+self-attention. Regarding the self-attention sharing, we hypothesize
+that its benefits are due to both encoder and decoder sharing a
+common language in their input (in the {\tt mt} and {\tt pe}
+sentence, respectively). Future work will investigate if this is
+still beneficial when the source and target languages are less
+similar. On the other hand, the initialization of the context
+attention with BERT's self-attention weights is essential to reap the
+benefits of BERT representations in the decoder---without it, using
+BERT decreases performance when compared to a regular transformer
+decoder. This might be due to the fact that context attention and
+self-attention share the same neural block architecture (multi-head
+attention) and thus the context attention benefits from the
+pre-trained BERT's better weight initialization. No benefit was
+observed from sharing the feed-forward weights.
+
+\paragraph*{Final Results.}
+Finally, \tableref{tab:results_smt} shows our results on the WMT
+2016--18 test sets. The model named \emph{BERT Enc.\,+\,BERT Dec.}
+corresponds to the best setting found in
+\tableref{tab:ablation_smt}, while \emph{BERT Enc.\,+\,Transformer
+  Dec.} only uses BERT in the encoder. We show results for single
+models and ensembles of 4 independent models.
+
+Using the small shared task dataset only (23K triplets), our single
+\emph{BERT Enc.\,+\,BERT Dec.} model surpasses the MT baseline by a
+large margin ($-$4.90 TER in test 2018). The only system we are aware
+to beat the MT baseline with only the shared task data is
+\citet{berard2017lig}, which we also outperform ($-$4.05 TER in test
+2017). With only about 3 GPU-hours and on a much smaller dataset, our
+model reaches a performance that is comparable to an ensemble of the
+best WMT 2018 system with an artificial dataset of 5M triplets
+($+$0.02 TER in test 2016), which is much more expensive to train.
+With 4$\times$ ensembling, we get competitive results with systems
+trained on 8M triplets.
+
+When adding the eSCAPE corpus (8M triplets), performance surpasses
+the state of the art in all test sets. By ensembling, we improve even
+further, achieving a final 17.15 TER score in test 2018 ($-$0.85 TER
+than the previous state of the art).
 
 \section{Subsequent Work}
 
