@@ -418,12 +418,12 @@ than the previous state of the art).
 
 \section{Subsequent Work}
 
-After our publication~\citep{Correia2019}, many works have since
-been published exploring the use of large pre-trained language models
-for generation purposes (may cite here works that use BERT as a
-language model, cite T5, and PLMs that were applied to MT as XLM), % TODO
-and our work shown in this chapter was one of the first to do so.
-% maybe too on the nose?
+After our publication~\citep{Correia2019}, many works have since been
+published exploring the use of large pre-trained language models for
+generation purposes (e.g.
+\citep{zhang2019PretrainingBasedNaturalLanguage,
+  chen2020DistillingKnowledgeLearned}), and our work shown in this
+chapter was one of the first to do so. % maybe too on the nose?
 
 Most closely related to our work, \citet{lopes2019unbabels} used our
 model on the harder English-German NMT APE subtask of WMT 2019,
@@ -454,7 +454,46 @@ model on a cross-lingual dataset, making it predict the target
 language during this pre-training
 stage~\citep{wang2020AlibabaSubmissionWMT}.
 
+On the data-efficiency side,
+\citet{gois2020LearningNonMonotonicAutomatic} have also performed
+experiments on the APE subtask, using only the real post-edited data,
+without recurring to expensive synthetic dataset creation. In their
+case, they also leveraged transfer learning using a BERT encoder, but
+increased the decoder's supervision to include real keystrokes data,
+from human post-editors. While not surpassing our approach, we
+consider this to also be a promising direction: to increase inductive
+bias in an effort to decrease larger data dependency. To address the
+more difficult challenge of doing APE on NMT outputs,
+\citet{chollampatt2020CanAutomaticPostEditing} used our model to
+explore how many traning instances are needed to achieve a better
+performance than the harder \emph{do-nothing} NMT baseline and have
+concluded that, while substantial improvements for NMT require more
+data samples than SMT, the APE model can still improve upon the
+baseline with relatively few training instances. To improve future
+APE research, they have released a more appropriately-sized dataset
+of real post-edited NMT data of 161K training instances based on
+subtitles (\emph{SubEdits}).
 
+The approach conducted in this chapter has also been successfully
+generalized to other tasks. \citet{kodama2020GeneratingResponsesthat}
+used our model for generation of responses of a dialogue system,
+where, in the input, instead of \texttt{src} and a tentative
+\texttt{mt} output, they concatenate a question with meta-data that
+indicates how the system should generate a response in terms of
+emotion and intimacy. As in our APE case, they also achieve good
+performance from a low-resource dataset. Even more generally,
+\citet{huang2021TransferLearningSequence} identifies APE as a part of
+a family of generation tasks in which there are multiple inputs.
+Inspired by our approach, they also tackle the low-resource nature of
+these tasks by leveraging weak supervision through transfer learning.
+To mitigate catastrophic forgetting between pre-training and
+fine-tuning, they propose a \emph{gradual fine-tuning} approach, in
+which they do an additional fine-tuning stage to adapt the
+pre-trained language model to a single-source sequence-to-sequence
+task, before finally fine-tuning on the multiple-source
+sequence-to-sequence task. They achieve increased performance on
+low-resource datasets, not only for APE, but also for multi-source
+translation and document-level translation.
 
 \section{Final Remarks and Chapter Summary}
 
@@ -469,8 +508,8 @@ competitive with systems trained on a large amount of artificial
 data, with much faster training. By adding artificial data, we obtain
 a new state of the art in APE.
 
-An extensive analysis on the capabilities of BERT and transfer
-learning in general for different domains and language pairs in APE
-is left for future work.
+% An extensive analysis on the capabilities of BERT and transfer
+% learning in general for different domains and language pairs in APE
+% is left for future work.
 
 \cleardoublepage
