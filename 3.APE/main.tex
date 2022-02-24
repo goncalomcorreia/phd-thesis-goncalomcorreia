@@ -18,8 +18,8 @@ as a sequence-to-sequence model. % TODO: refer this section in background
 
 In this work, we presented a simple and effective
 solution to this problem, using the scarcity of Automatic Post-Editing
-data as the playground to explore the transfer learning capacity of
-large transformer encoder models in a sequence-to-sequence task,
+data as the playground to explore the transfer learning capacity of a
+large transformer encoder model in a sequence-to-sequence task,
 being one of the first works to do so.
 
 \emph{This chapter is based on \citet{Correia2019}.}
@@ -60,7 +60,7 @@ concatenating human post-edited data and artificial triplets, these
 systems greatly improved the MT baseline. However, little successes
 are known using only the true data created by the human post-editors.
 
-Meanwhile, there have been many successes of {\bf transfer learning}
+Meanwhile, there had been many successes of {\bf transfer learning}
 for NLP: models such as CoVe~\citep{mccann2017learned},
 ELMo~\citep{peters2018deep}, OpenAI GPT~\citep{radford2018improving},
 ULMFiT~\citep{howard2018universal}, and BERT~\citep{devlin2018bert}
@@ -497,19 +497,18 @@ translation and document-level translation.
 
 \section{Final Remarks and Chapter Summary}
 
-In this chapter, we proposed a transfer learning approach to APE using
-BERT pre-trained models and careful parameter sharing. We explored
-various ways for coupling BERT in the decoder for language
+In this chapter, we proposed a transfer learning approach to APE
+using BERT pre-trained models and careful parameter sharing. We
+explored various ways for coupling BERT in the decoder for language
 generation. We found it beneficial to initialize the context
 attention of the decoder with BERT's self-attention and to tie
 together the parameters of the self-attention layers between the
 encoder and decoder. Using a small dataset, our results are
 competitive with systems trained on a large amount of artificial
 data, with much faster training. By adding artificial data, we obtain
-a new state of the art in APE.
-
-% An extensive analysis on the capabilities of BERT and transfer
-% learning in general for different domains and language pairs in APE
-% is left for future work.
+a new state of the art in APE. We hope that our approach will
+continue to inspire future work in leveraging weak supervision
+through transfer learning to improve performance on tasks with scarce
+data.
 
 \cleardoublepage
