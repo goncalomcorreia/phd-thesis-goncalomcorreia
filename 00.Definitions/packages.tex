@@ -1,20 +1,3 @@
-\typeout{}
-\typeout{--------------------------------------------------------------}
-\typeout{ +---+ Thesis Template                            }
-\typeout{ +---+      Version 2.0, November 2017                         }
-\typeout{ +---+  for Instituto Superior Tecnico (IST),                 }
-\typeout{ +---+  Universidade Técnica de Lisboa                         }
-\typeout{ * Using Thesis Style from Pedro Tomás                                }
-\typeout{ * Created to write Dissertations                             }
-\typeout{ * Conforms with IST Doctoral Degree format and with most important packages setup        }
-%\typeout{ * Should conform with IST PhD Degree format (not verified)   }
-\typeout{                                                              }
-\typeout{ AUTHOR: Filipe Marques; (original Master Degree Thesis Template authors:) Miguel Amador and João Marques                                          }
-\typeout{                                                              }
-\typeout{Important: Use all files in the archive, since this is based in all them. Modify dummy files at wish.                                                              }
-\typeout{--------------------------------------------------------------}
-\typeout{}
-
 % Defines an additional alphabet... not required in most cases
 % ------------------------------------------------------------
 % \DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
@@ -33,7 +16,7 @@
 %\usepackage[latin1]{inputenc}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-%\usepackage{lmodern} %will change font type
+\usepackage{lmodern} %will change font type
 
 % Package ulem.
 \usepackage{ulem} % Allows the use of other text emphatizer commands
@@ -91,8 +74,8 @@
 \usepackage{graphicx}
 %\usepackage[pdftex]{graphicx} %> esta selecção provoca colisão com epsfig e caption...
 \usepackage{epsfig}	%colisao com graphicx
-\usepackage[font=small,labelfont=bf,textfont=normalfont]{caption}
-\usepackage{caption} 	%to alter captions  (\usepackage[footnotesize,bf,center]{caption})
+%to alter captions  (\usepackage[footnotesize,bf,center]{caption})
+\usepackage[font=normal,labelfont=bf,textfont=normalfont]{caption}
 %\usepackage[hang,small,bf]{subfigure} %deprecated > use subfig or subcaption:
 \usepackage{subcaption}	%for subfigures
 \usepackage{dcolumn}
@@ -188,7 +171,7 @@
 {\endminipage\par\medskip}
 
 \usepackage{siunitx}
-\sisetup{load-configurations = abbreviations}
+% \sisetup{load-configurations = abbreviations}
 %%% -------------------- declares extra units
 \DeclareSIUnit\Mtoe{\mega \tonne oe} % use: \SI{100}{\Mtoe}
 \DeclareSIUnit\GWh{GWh} % use: \SI{100}{\GWh}  (not \GW\hour = GW h )
