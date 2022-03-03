@@ -1,7 +1,26 @@
 \fancychapter{Efficient Marginalization of Discrete and Structured Latent Variables via Sparsity}
 \label{cap:sparsemarg}
 
-\section{Motivation and Previous Work}
+In this chapter, we focus on the objective of making neural models
+more \textbf{compact}. We will propose a novel approach to train
+discrete and structured latent variable models that achieves an exact
+gradient unlike previous strategies in this field. Latent discrete
+and structured variables are of particular interest for compactness
+of neural models since they can constrain the model and provide
+inductive bias. This family of latent variable models can also be easily
+semi-supervised, which can further increase the inductive bias and
+thus the compactness of the model.
+
+The exactness of the gradient of our approach is achieved through
+marginalization. It will turn out to be efficient thanks to
+parameterizing the distribution over categories or structures with
+\textbf{sparsity}. This sparsity will \textbf{adapt} over time,
+increasing as the training progresses due to the model being more
+confident on latent variable assignments.
+
+\textit{This chapter is based on \citet{correia2020procneurips}.}
+
+\section{Motivation}
 \label{sec:intro}
 
 Training with discrete variables (\secref{sec:discrete_lvm_bg}) can
@@ -50,6 +69,8 @@ the efficiency of single-sample estimators.\footnote{Code is publicly
     available at
     \href{https://github.com/deep-spin/sparse-marginalization-lvm}{\tt
         https://github.com/deep-spin/sparse-marginalization-lvm}}
+
+\section{Previous Work}
 
 \paragraph*{Differentiable sparse mappings.} There has been recent
 interest in applying sparse mappings of discrete distributions in
@@ -773,6 +794,7 @@ unlike in the other tasks considered, training on biased gradients is
 not too problematic.
 
 \section{Subsequent Work}
+\label{sec:subsequent}
 
 While \citet{correia2020procneurips} is the most recent contribution
 shown in the present thesis, it has already proved to be a relevant
@@ -821,20 +843,22 @@ sparsemax had the best performance.
 We described a novel training strategy for discrete latent variable
 models, eschewing the common approach based on MC gradient estimation
 in favor of deterministic, exact marginalization under a sparse
-distribution. Sparsity leads to a powerful \emph{adaptive} method,
+distribution. Sparsity leads to a powerful \textbf{adaptive} method,
 which can investigate fewer or more latent assignments $z$ depending
 on the ambiguity of a training instance $x$, as well as on the stage
-in training.
-%
-We showcase the performance and flexibility of our method by
-investigating a variety of applications, with both discrete and
-structured latent variables, with positive results. Our models very
-quickly approach a small number of latent assignment evaluations per
-sample, but make progress much faster and overall lead to superior
-results.
-%
+in training. We showcase the performance and flexibility of our
+method by investigating a variety of applications, with both discrete
+and structured latent variables, with positive results. Our models
+very quickly approach a small number of latent assignment evaluations
+per sample, but make progress much faster and overall lead to
+superior results.
+
 Our proposed method thus offer the accuracy and robustness of exact
 marginalization while meeting the efficiency and flexibility of score
-function estimator methods, providing a promising alternative.
+function estimator methods, providing a promising alternative to
+successfully train more \textbf{compact} neural models. As we are
+learning from subsequent works (\secref{sec:subsequent}), we believe
+that our method can be used to address the challenges of training
+these sorts of models in a variety of applications, paricularly NLP.
 
 \cleardoublepage
