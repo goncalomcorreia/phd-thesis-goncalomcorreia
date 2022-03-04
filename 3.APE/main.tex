@@ -27,7 +27,7 @@ being one of the first works to do so.
 \section{Motivation}
 
  {\bf Automatic post-editing}~\citep[APE;][]{simard2007rule} is
-inspired by human post-editing, in which a translator corrects
+inspired by human post-editing, in which a human translator corrects
 mistakes made by an MT system.
 The goal of APE is to automatically correct the mistakes produced by
 a black-box MT system. APE is particularly
@@ -52,7 +52,7 @@ the resulting large dataset, may well exceed the time to train a MT
 system from scratch.
 
 When the current work was published, the state of the art in APE used
-a Transformer~\citep{vaswani2017attention} with {\bf two encoders},
+a Transformer~\citep{vaswani2017attention} variant with {\bf two encoders},
 for the {\tt src} and {\tt mt}, and {\bf one decoder}, for {\tt pe}.
 This system was named the Dual-Source
 Transformer~\citep{junczys2018ms, tebbifakhr2018multi}. When
@@ -74,18 +74,18 @@ In this chapter, we build upon the successes above and show that {\bf
     APE}, using a pre-trained BERT model. This is an appealing strategy
 in practice: while large language models like BERT are expensive to
 train, this step is only done once and covers many languages,
-reducing engineering efforts substantially. This is in contrast with
-the computational and time resources that creating artificial
-triplets for APE needs---these triplets need to be created separately
-for every language pair that one wishes to train an APE system for.
+reducing engineering efforts substantially. In contrast, artificial
+triplets for APE need to be created separately for every language
+pair that one wishes to train an APE system for, which ends up
+increasing the computational and time resources in the long run.
 
-By contrast, using transfer learning and with only the small shared
+On the other hand, using transfer learning and with only the small shared
 task dataset (23K triplets), our proposed strategy outperforms this
 baseline considerably, by $-$4.9 TER and $+$7.4 BLEU in the
-English-German WMT 2018 APE shared task, with 3 hours of training on
+English-German WMT 2018 APE shared task, with only 3 hours of training on
 a single GPU. Adding the artificial eSCAPE
 dataset~\citep{negri2018escape} leads to a performance of 17.15 TER,
-a new state of the art.
+a new state of the art at the time.
 
 Our main contributions are the following:
 \begin{itemize}
@@ -151,8 +151,8 @@ This model obtains deep bidirectional representations by training a
 Transformer~\citep{vaswani2017attention} with a large-scale dataset
 in a masked language modeling task where the objective is to predict
 missing words in a sentence. We use the BERT\textsubscript{BASE}
-model, which is composed of $L=12$ self-attention layers, hidden size
-$H=768$, $A=12$ attention heads, and feed-forward inner layer size
+model, which is composed of $N=12$ self-attention layers, hidden size
+$K=768$, $H=12$ attention heads, and feed-forward inner layer size
 $F=3072$. In addition to the word and learned position embeddings,
 BERT also has {\bf segment embeddings} to differentiate between a
 segment A and a segment B---this is useful for tasks such as natural
@@ -263,9 +263,9 @@ pre-trained models in the decoder:
 \section{Experiments} \label{sec:experiments}
 
 We now describe our experimental results. Our models were implemented
-on a fork of OpenNMT-py~\citep{klein2017opennmt} using a
-Pytorch~\citep{pytorch} re-implementation of
-BERT.\footnote{\url{https://github.com/huggingface/transformers}}
+on a fork of OpenNMT-py~\citep{klein2017opennmt} using HuggingFace's
+transformers
+library.\footnote{\url{https://github.com/huggingface/transformers}}
 Our model's implementation is publicly
 available.\footnote{\url{https://github.com/deep-spin/OpenNMT-APE}}
 
@@ -288,7 +288,7 @@ We use Adam~\citep{kingma2014adam} with a triangular learning rate
 schedule that increases linearly during the first 5,000 steps until
 $5\times 10^{-5}$ and has a linear decay afterwards. When using BERT
 components, we use a $\ell_2$ weight decay of $0.01$. We apply
-dropout~\citep{srivastava2014dropout} with $p_{drop}=0.1$ to all
+dropout~\citep{srivastava2014dropout} with $p_{\text{drop}}=0.1$ to all
 layers and use label smoothing with
 $\epsilon=0.1$~\citep{pereyra2017regularizing}. For the small data
 experiments, we use a batch size of 1024 tokens and save checkpoints
@@ -391,7 +391,7 @@ attention) and thus the context attention benefits from the
 pre-trained BERT's better weight initialization. No benefit was
 observed from sharing the feed-forward weights.
 
-\paragraph*{Final Results.}
+\paragraph*{Final Results and Analysis.}
 Finally, \tableref{tab:results_smt} shows our results on the WMT
 2016--18 test sets. The model named \emph{BERT Enc.\,+\,BERT Dec.}
 corresponds to the best setting found in
@@ -425,29 +425,30 @@ generation purposes (e.g.
   chen2020DistillingKnowledgeLearned}), and our work shown in this
 chapter was one of the first to do so. % maybe too on the nose?
 
-Most closely related to our work, \citet{lopes2019unbabels} used our
-model on the harder English-German NMT APE subtask of WMT 2019,
-having won the shared task on that year. To obtain this result, the
-transfer learning capabilities of BERT were not enough and further
-engineering effort was required. Particularly, a conservativeness
-factor was added during beam decoding to constrain the changes the
-APE system can make to the {\tt mt} output. Furthermore, the authors
-used a data weighting method to augment the importance of data
-samples that have lower TER. By doing this, data samples that
-required less post-editing effort are assigned higher weights during
-the training loop. Since the NMT system does very few errors on this
-domain this data weighting is important for the APE model to learn to
-do fewer corrections to the {\tt mt} output. However, their approach
-required the creation of an artificial dataset to obtain a
-performance that improved the MT baseline. Further investigation is
-required in APE to come up with better methods that obtain improved
-results compared to the baseline using only real post-edited data in
-these smaller APE datasets based on NMT outputs rather than SMT ones.
+Most closely related to our work, and co-authored by the writer of
+the present thesis, \citet{lopes2019unbabels} used our model on the
+harder English-German NMT APE subtask of WMT 2019, winning the shared
+task on that year. To obtain this result, the transfer learning
+capabilities of BERT were not enough and further engineering effort
+was required. Particularly, a conservativeness factor was added
+during beam decoding to constrain the changes the APE system can make
+to the {\tt mt} output. Furthermore, the authors used a data
+weighting method to augment the importance of data samples that have
+lower TER. By doing this, data samples that required less
+post-editing effort are assigned higher weights during the training
+loop. Since the NMT system does very few errors on this domain this
+data weighting is important for the APE model to learn to do fewer
+corrections to the {\tt mt} output. However, their approach required
+the creation of an artificial dataset to obtain a performance that
+improved the MT baseline. Further investigation is required in APE to
+come up with better methods that obtain improved results compared to
+the baseline using only real post-edited data in these smaller APE
+datasets based on NMT outputs rather than SMT ones.
 
 In the following years of the APE subtask, we have seen models that
 have been inspired by our BERT model. Particularly,
 \citet{lee2020POSTECHETRISubmissionWMT2020} used an
-XLM~\citep{lample2019xlm} inspired model in 2020 APE WMT subtask,
+XLM~\citep{lample2019xlm} inspired model in the 2020 APE WMT subtask,
 instead of the multilingual BERT that our work used. Another
 submission to that year's subtask pre-trained their own BERT-like
 model on a cross-lingual dataset, making it predict the target
@@ -461,7 +462,7 @@ without recurring to expensive synthetic dataset creation. In their
 case, they also leveraged transfer learning using a BERT encoder, but
 increased the decoder's supervision to include real keystrokes data,
 from human post-editors. While not surpassing our approach, we
-consider this to also be a promising direction: to increase inductive
+consider this to also be a promising direction: increasing inductive
 bias in an effort to decrease larger data dependency. To address the
 more difficult challenge of doing APE on NMT outputs,
 \citet{chollampatt2020CanAutomaticPostEditing} used our model to
