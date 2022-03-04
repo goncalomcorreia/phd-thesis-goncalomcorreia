@@ -1,7 +1,26 @@
 \fancychapter{Efficient Marginalization of Discrete and Structured Latent Variables via Sparsity}
 \label{cap:sparsemarg}
 
-\section{Motivation and Previous Work}
+In this chapter, we focus on the objective of making neural models
+more \textbf{compact}. We will propose a novel approach to train
+discrete and structured latent variable models that achieves an exact
+gradient unlike previous strategies in this field. Latent discrete
+and structured variables are of particular interest for compactness
+of neural models since they can constrain the model and provide
+inductive bias. This family of latent variable models can also be easily
+semi-supervised, which can further increase the inductive bias and
+thus the compactness of the model.
+
+The exactness of the gradient of our approach is achieved through
+marginalization. It will turn out to be efficient thanks to
+parameterizing the distribution over categories or structures with
+\textbf{sparsity}. This sparsity will \textbf{adapt} over time,
+increasing as the training progresses due to the model being more
+confident on latent variable assignments.
+
+\textit{This chapter is based on \citet{correia2020procneurips}.}
+
+\section{Motivation}
 \label{sec:intro}
 
 Training with discrete variables (\secref{sec:discrete_lvm_bg}) can
@@ -50,6 +69,8 @@ the efficiency of single-sample estimators.\footnote{Code is publicly
     available at
     \href{https://github.com/deep-spin/sparse-marginalization-lvm}{\tt
         https://github.com/deep-spin/sparse-marginalization-lvm}}
+
+\section{Previous Work}
 
 \paragraph*{Differentiable sparse mappings.} There has been recent
 interest in applying sparse mappings of discrete distributions in
@@ -232,60 +253,54 @@ here, we refer the reader to the works referenced above. For all
 Gumbel baselines, we relax the sample into the continuous space but
 assume a discrete distribution when computing the entropy of $\pi(z
     \mid x, \theta)$, as suggested as one implementation option in
-\citet{Concrete}. Our code is publicly available at
-\href{https://github.com/deep-spin/sparse-marginalization-lvm}{\tt
-    https://github.com/deep-spin/sparse-marginalization-lvm} and was
+\citet{Concrete}. Our code is publicly available~\footnote{
+    \href{https://github.com/deep-spin/sparse-marginalization-lvm}{\tt
+        https://github.com/deep-spin/sparse-marginalization-lvm}} and was
 largely inspired by the structure and implementations found in
 EGG~\citep{Kharitonov2019} and was built upon it.
 
 \subsection{Semisupervised Variational Auto-encoder (VAE)}\label{sec:gen}
-%
 
-\begin{figure}[t]
-    \begin{minipage}[c]{0.52\linewidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=.9\textwidth]{Figures/ss_mnist_elbo_path.pdf}
-        \vspace{0pt}
-    \end{minipage}
-    \begin{minipage}[c]{0.45\linewidth}
-        \vspace{0pt}
-        \centering
-        \small
-        \begin{tabular}{lrr}
-            \toprule
-            Method &
-            Accuracy (\%)
-                   & Dec. calls                                                                 \\
-            \midrule
-
-            \multicolumn{3}{l}{\emph{Monte Carlo}}                                              \\
-            SFE
-                   & $94.75${\tiny\color{gray}$\pm .002$} & $1$                                 \\
-            SFE$+$
-                   & $96.53${\tiny\color{gray}$\pm .001$} & $2$                                 \\
-            NVIL
-                   & $96.01${\tiny\color{gray}$\pm .002$} & $1$                                 \\
-            Sum\&Sample
-                   & $96.73${\tiny\color{gray}$\pm .001$} & $2$                                 \\
-            Gumbel
-                   & $95.46${\tiny\color{gray}$\pm .001$} & $1$                                 \\
-            ST Gumbel
-                   & $86.35${\tiny\color{gray}$\pm .006$} & $1$                                 \\
-            \spacerule
-            \multicolumn{3}{l}{\emph{Marginalization}}                                          \\
-            Dense
-                   & $96.93${\tiny\color{gray}$\pm .001$} & $10$                                \\
-            Sparse {\small \color{gray}{(proposed)}}
-                   & $96.87${\tiny\color{gray}$\pm .001$} & $1.01${\tiny\color{gray}$\pm 0.01$} \\
-            \bottomrule
-        \end{tabular}
-        \vspace{5pt}
-    \end{minipage}
-    \caption{\label{fig:ssvaeelbo}Semisupervised VAE on MNIST.
-        Left: Learning curves (test).
-        Right: Average test results and standard errors over 10 runs.}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=.9\textwidth]{Figures/ss_mnist_elbo_path.pdf}
+    \caption{\label{fig:ssvaeelbo}Learning curves on the test set for semi-supervised VAE on MNIST.}
 \end{figure}
+
+
+\begin{table}[t]
+    \centering
+    \begin{tabular}{lrr}
+        \toprule
+        Method &
+        Accuracy (\%)
+               & Dec. calls                                                                 \\
+        \midrule
+
+        \multicolumn{3}{l}{\emph{Monte Carlo}}                                              \\
+        SFE
+               & $94.75${\tiny\color{gray}$\pm .002$} & $1$                                 \\
+        SFE$+$
+               & $96.53${\tiny\color{gray}$\pm .001$} & $2$                                 \\
+        NVIL
+               & $96.01${\tiny\color{gray}$\pm .002$} & $1$                                 \\
+        Sum\&Sample
+               & $96.73${\tiny\color{gray}$\pm .001$} & $2$                                 \\
+        Gumbel
+               & $95.46${\tiny\color{gray}$\pm .001$} & $1$                                 \\
+        ST Gumbel
+               & $86.35${\tiny\color{gray}$\pm .006$} & $1$                                 \\
+        \spacerule
+        \multicolumn{3}{l}{\emph{Marginalization}}                                          \\
+        Dense
+               & $96.93${\tiny\color{gray}$\pm .001$} & $10$                                \\
+        Sparse {\small \color{gray}{(proposed)}}
+               & $96.87${\tiny\color{gray}$\pm .001$} & $1.01${\tiny\color{gray}$\pm 0.01$} \\
+        \bottomrule
+    \end{tabular}
+    \caption{\label{tab:ssvaeelbo}
+        Average test results and standard errors over 10 runs for semi-supervised VAE on MNIST.}
+\end{table}
 
 We consider the semisupervised VAE of \citet{KingmaEtAl2014SSVAE},
 which models the joint probability $p(z,h,x|\phi)=p(z)p(h)p(x|z,h)$, where
@@ -339,7 +354,7 @@ hidden layer of size 128, also with ReLU activations. The
 multivariate Gaussian has 8 dimensions and its covariance is
 diagonal. For all models we have chosen the learning rate based on
 the best ELBO on the validation set, doing a grid search (5e-5, 1e-4,
-5e-4, 1e-3, 5e-3). The accuracy shown in \figref{fig:ssvaeelbo} is
+5e-4, 1e-3, 5e-3). The accuracy shown in \tableref{tab:ssvaeelbo} is
 the test accuracy taken after the last epoch of training. The
 temperature of the Gumbel models was annealed according to $\tau =
     \max\left(0.5, -rt\right)$, where $t$ is the global training step.
@@ -474,27 +489,25 @@ also experiment with a 0/1 loss, rather than negative log-likelihood
 
 \begin{table}[t]
     \begin{center}
-        \begin{small}
-            \begin{tabular}{lr@{~}lr}
-                \toprule
-                Method                                 & \multicolumn{2}{c}{Comm. succ. (\%)} & Dec. calls                             \\
-                \midrule
-                {\emph{Monte Carlo}}                   &                                      &                                &       \\
-                SFE (NLL)                              & $33.05$                              & {\tiny\color{gray}$\pm 2.84$}  & $1$   \\
-                SFE (0/1)                              & $55.36$                              & {\tiny\color{gray}$\pm 2.92$}  & $1$   \\
-                SFE$+$ (0/1)                           & $44.32$                              & {\tiny\color{gray}$\pm 2.72$}  & $2$   \\
-                NVIL                                   & $37.04$                              & {\tiny\color{gray}$\pm 1.61$}  & $1$   \\
-                Gumbel                                 & $23.51$                              & {\tiny\color{gray}$\pm 16.19$} & $1$   \\
-                ST Gumbel                              & $27.42$                              & {\tiny\color{gray}$\pm 13.36$} & $1$   \\
-                \spacerule
-                \emph{Marginalization}                 &                                      &                                &       \\
-                Dense                                  & $93.37$                              & {\tiny\color{gray}$\pm 0.42$}  & $256$ \\
-                Sparse {\small \color{gray}(proposed)} &
-                $93.35$                                & {\tiny\color{gray}$\pm 0.50$}        &
-                $3.13${\tiny\color{gray}$\pm 0.48$}                                                                                    \\
-                \bottomrule
-            \end{tabular}
-        \end{small}
+        \begin{tabular}{lr@{~}lr}
+            \toprule
+            Method                                 & \multicolumn{2}{c}{Comm. succ. (\%)} & Dec. calls                             \\
+            \midrule
+            {\emph{Monte Carlo}}                   &                                      &                                &       \\
+            SFE (NLL)                              & $33.05$                              & {\tiny\color{gray}$\pm 2.84$}  & $1$   \\
+            SFE (0/1)                              & $55.36$                              & {\tiny\color{gray}$\pm 2.92$}  & $1$   \\
+            SFE$+$ (0/1)                           & $44.32$                              & {\tiny\color{gray}$\pm 2.72$}  & $2$   \\
+            NVIL                                   & $37.04$                              & {\tiny\color{gray}$\pm 1.61$}  & $1$   \\
+            Gumbel                                 & $23.51$                              & {\tiny\color{gray}$\pm 16.19$} & $1$   \\
+            ST Gumbel                              & $27.42$                              & {\tiny\color{gray}$\pm 13.36$} & $1$   \\
+            \spacerule
+            \emph{Marginalization}                 &                                      &                                &       \\
+            Dense                                  & $93.37$                              & {\tiny\color{gray}$\pm 0.42$}  & $256$ \\
+            Sparse {\small \color{gray}(proposed)} &
+            $93.35$                                & {\tiny\color{gray}$\pm 0.50$}        &
+            $3.13${\tiny\color{gray}$\pm 0.48$}                                                                                    \\
+            \bottomrule
+        \end{tabular}
     \end{center}
     \caption{Emergent communication success test results,
         averaged across 10 runs. Random guess baseline $6.25\%$.}
@@ -520,7 +533,7 @@ starts off dense while exploring, but quickly becomes very sparse
 
 \begin{figure*}[ht]
     \centering
-    \includegraphics[width=0.45\columnwidth]{Figures/sparsemax_nonzero_em_comm.pdf}
+    \includegraphics[width=0.65\columnwidth]{Figures/sparsemax_nonzero_em_comm.pdf}
     \caption{
         Median decoder calls per epoch during training
         time with 10 and 90 percentiles in dotted lines by sparsemax.
@@ -594,41 +607,36 @@ $q$, we may compute the terms $\EE_{q(z\mid x, \lambda)} [\log p(x \mid z,
         \phi)]$ and $\EE_{q(z\mid x, \lambda)} [\log q(z \mid x, \lambda)]$
 explicitly.
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
-    \begin{minipage}[c]{0.52\linewidth}
-        \vspace{0pt}
-        \includegraphics[width=.95\textwidth]{Figures/distortion-rate.pdf}
-        \vspace{0pt}
-    \end{minipage}%
-    \begin{minipage}[c]{0.45\linewidth}
-        \vspace{0pt}
-        \small
-        \begin{tabular}{lrr}
-            \toprule
-            Method            & $D=32$ & $D=128$       \\
-            \midrule
-            \multicolumn{3}{l}{\emph{Monte Carlo}}     \\
-            SFE               & $3.74$ & $3.77$        \\
-            SFE$+$            & $3.61$ & $3.59$        \\
-            NVIL              & $3.65$ & $3.60$        \\
-            Gumbel            & $3.57$ & $3.49$        \\
-            ST Gumbel         & $3.53$ & $3.55$        \\
-            \spacerule
-            \multicolumn{3}{l}{\emph{Marginalization}} \\
-            Top-$k$ sparsemax & $3.62$ & $3.61$        \\
-            \smap             & $3.72$ & $3.67$        \\
-            \smap (w/ budget) & $3.64$ & $3.66$        \\
-            \bottomrule
-        \end{tabular}
-        \vspace{5pt}
-    \end{minipage}
-    \caption{\label{fig:distortion}
-        Test results for Fashion-MNIST.
-        Left and middle: RD plots
-        (the closer to the lower right corner, the better).
-        Right: NLL in bits/dim (lower, the better).}
+    \includegraphics[width=0.95\textwidth]{Figures/distortion-rate.pdf}
+    \caption{\label{fig:distortion_rd}Test results for Fashion-MNIST. RD plots
+        (the closer to the lower right corner, the better).}
 \end{figure}
+
+\begin{table}
+    \centering
+    \begin{tabular}{lrr}
+        \toprule
+        Method            & $D=32$ & $D=128$       \\
+        \midrule
+        \multicolumn{3}{l}{\emph{Monte Carlo}}     \\
+        SFE               & $3.74$ & $3.77$        \\
+        SFE$+$            & $3.61$ & $3.59$        \\
+        NVIL              & $3.65$ & $3.60$        \\
+        Gumbel            & $3.57$ & $3.49$        \\
+        ST Gumbel         & $3.53$ & $3.55$        \\
+        \spacerule
+        \multicolumn{3}{l}{\emph{Marginalization}} \\
+        Top-$k$ sparsemax & $3.62$ & $3.61$        \\
+        \smap             & $3.72$ & $3.67$        \\
+        \smap (w/ budget) & $3.64$ & $3.66$        \\
+        \bottomrule
+    \end{tabular}
+    \vspace{5pt}
+    \caption{\label{tab:distortion_tab}
+        Test results for Fashion-MNIST. NLL in bits/dim (lower, the better).}
+\end{table}
 
 \paragraph*{Data and architecture.} We use
 Fashion-MNIST~\citep{fmnist}, consisting of $28 \times 28$, 256-level
@@ -685,33 +693,33 @@ outcomes in the complement set $\ZZ \setminus \bar \ZZ$. We compute
 the first part exactly and estimate the second part via rejection
 sampling from $p(z)$.
 
-\paragraph*{Results and discussion.} \figref{fig:distortion} shows an
-importance sampling estimate ($1024$ samples per test example were
-taken) of the negative log-likelihood for the several methods,
-together with the converged values of each method in the RD plane.
-Both show results for which the bit-vector has dimensionality $D=32$
-and $D=128$. Regarding the estimated negative log-likelihood, our
-methods exhibit increased performance when compared to SFE, and
-top-$k$ sparsemax is competitive with the remaining unbiased
-estimators. However, in the RD plane, both our methods show
-comparable performance to SFE$+$ and NVIL for $D=32$, but for $D=128$
-all of our methods have a significantly higher rate and lower
-distortion than any unbiased estimator, suggesting a better fit of
-$p(x|\phi)$~\citep{Alemi2018}. In \figref{fig:structcalls}, we can observe the training
-progress in number of calls to $p(x \mid z, \phi)$ for the models
-with 32 and 128 latent bits, respectively. While $\sparsemaxk$
-introduces bias towards the most probable assignments and may discard
-outcomes that $\sparsemax$ would assign non-zero probability to, as
-training progresses distributions may (or tend to) be sufficiently
-sparse and this mismatch disappears, making the gradient computation
-exact.
+\paragraph*{Results and discussion.} \tableref{tab:distortion_tab}
+shows an importance sampling estimate ($1024$ samples per test
+example were taken) of the negative log-likelihood for the several
+methods, together with the converged values of each method in the RD
+plane in \figref{fig:distortion_rd}. Both show results for which the
+bit-vector has dimensionality $D=32$ and $D=128$. Regarding the
+estimated negative log-likelihood, our methods exhibit increased
+performance when compared to SFE, and top-$k$ sparsemax is
+competitive with the remaining unbiased estimators. However, in the
+RD plane, both our methods show comparable performance to SFE$+$ and
+NVIL for $D=32$, but for $D=128$ all of our methods have a
+significantly higher rate and lower distortion than any unbiased
+estimator, suggesting a better fit of $p(x|\phi)$~\citep{Alemi2018}.
+In \figref{fig:structcalls}, we can observe the training progress in
+number of calls to $p(x \mid z, \phi)$ for the models with 32 and 128
+latent bits, respectively. While $\sparsemaxk$ introduces bias
+towards the most probable assignments and may discard outcomes that
+$\sparsemax$ would assign non-zero probability to, as training
+progresses distributions may (or tend to) be sufficiently sparse and
+this mismatch disappears, making the gradient computation exact.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.33\textwidth]{Figures/spars.pdf}
+    \includegraphics[width=0.95\textwidth]{Figures/spars.pdf}
     \caption{Bit vector VAE median and quartile decoder calls per
         epoch,
-        $D=32$ (top) / $D=128$ (bottom).\label{fig:structcalls}}
+        $D=32$ (left) / $D=128$ (right).\label{fig:structcalls}}
 \end{figure}
 
 Remarkably, this happens for $D=32$\,---\,the support of
@@ -737,13 +745,13 @@ estimators have for 100 epochs.
 
 \begin{figure}[ht]
     \centering
-    \begin{subfigure}[b]{0.35\textwidth}
+    \begin{subfigure}[b]{0.49\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Figures/elbo-bit-vector.pdf}
         \caption{Negative ELBO over training epochs.}
         \label{fig:elbo_bit_epochs}
     \end{subfigure}
-    \begin{subfigure}[b]{0.35\textwidth}
+    \begin{subfigure}[b]{0.49\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Figures/elbo-calls.pdf}
         \caption{Negative ELBO over decoder calls.}
@@ -773,6 +781,7 @@ unlike in the other tasks considered, training on biased gradients is
 not too problematic.
 
 \section{Subsequent Work}
+\label{sec:subsequent}
 
 While \citet{correia2020procneurips} is the most recent contribution
 shown in the present thesis, it has already proved to be a relevant
@@ -821,20 +830,22 @@ sparsemax had the best performance.
 We described a novel training strategy for discrete latent variable
 models, eschewing the common approach based on MC gradient estimation
 in favor of deterministic, exact marginalization under a sparse
-distribution. Sparsity leads to a powerful \emph{adaptive} method,
+distribution. Sparsity leads to a powerful \textbf{adaptive} method,
 which can investigate fewer or more latent assignments $z$ depending
 on the ambiguity of a training instance $x$, as well as on the stage
-in training.
-%
-We showcase the performance and flexibility of our method by
-investigating a variety of applications, with both discrete and
-structured latent variables, with positive results. Our models very
-quickly approach a small number of latent assignment evaluations per
-sample, but make progress much faster and overall lead to superior
-results.
-%
+in training. We showcase the performance and flexibility of our
+method by investigating a variety of applications, with both discrete
+and structured latent variables, with positive results. Our models
+very quickly approach a small number of latent assignment evaluations
+per sample, but make progress much faster and overall lead to
+superior results.
+
 Our proposed method thus offer the accuracy and robustness of exact
 marginalization while meeting the efficiency and flexibility of score
-function estimator methods, providing a promising alternative.
+function estimator methods, providing a promising alternative to
+successfully train more \textbf{compact} neural models. As we are
+learning from subsequent works (\secref{sec:subsequent}), we believe
+that our method can be used to address the challenges of training
+these sorts of models in a variety of applications, paricularly NLP.
 
 \cleardoublepage
