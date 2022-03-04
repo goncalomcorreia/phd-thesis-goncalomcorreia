@@ -89,39 +89,4 @@ distinct purposes:
 Together, these mechanisms enable the contextualized flow of information between
 the input sentence and the sequential decoder.
 
-\subsubsection{Automatic Post-Editing}
-\label{sec:ape_bg}
-
-{\bf Automatic post-editing}~\citep[APE;][]{simard2007rule} is
-inspired by human post-editing, in which a translator corrects
-mistakes made by an MT system. APE systems are trained from triplets
-({\tt src}, {\tt mt}, {\tt pe}), containing respectively the source
-sentence, the machine-translated sentence, and its post-edited
-version.
-
-\paragraph*{Artificial triplets.} Since there is little data
-available (e.g WMT 2018 APE shared task has 23K triplets), most
-research has focused on creating artificial triplets to achieve the
-scale that is needed for powerful sequence-to-sequence models to
-outperform the MT baseline, either from ``round-trip''
-translations~\citep{junczys2016log}---which involve translating a
-target language monolingual dataset into the source language and then
-back again to target language---or starting from parallel data, as in
-the eSCAPE corpus of \citet{negri2018escape}, which contains 8M
-synthetic triplets.
-
-\paragraph*{Dual-Source Transformer.} The current state of the art in
-APE uses a Transformer~\citep{vaswani2017attention} with {\bf two
-        encoders}, for the {\tt src} and {\tt mt}, and {\bf one decoder}, for
-    {\tt pe}~\citep{junczys2018ms, tebbifakhr2018multi}. When
-concatenating human post-edited data and artificial triplets, these
-systems greatly improve the MT baseline. However, little successes
-are known using the shared task training data only.
-
-By contrast, with transfer learning, our work outperforms this
-baseline considerably, even without any auxiliary synthetic dataset;
-and, as shown in \secref{sec:experiments}, it achieves
-state-of-the-art results by combining it with the aforementioned
-artificial datasets.
-
 \subsection{Large Pre-trained Language Models}
