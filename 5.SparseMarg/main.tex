@@ -654,26 +654,31 @@ baseline, SFE+, and NVIL), and biased reparameterized gradient
 estimators (Gumbel-Softmax and ST Gumbel-Softmax). As there is no
 supervision for the latent code, we cannot compare the methods in
 terms of accuracy or task success. Instead, we display the trained
-models in the rate-distortion (RD) plane~\citep{Alemi2018}\footnote{Distortion is the
-    expected value of the reconstruction negative log-likelihood, while
-    rate is the average KL divergence from the prior to the approximate
-    posterior.} and also report bits-per-dimension of $x$, estimated with
-importance sampling, on held-out data.
+models in the rate-distortion (RD)
+plane~\citep{Alemi2018}\footnote{Distortion is the expected value of
+    the reconstruction negative log-likelihood, while rate is the average
+    KL divergence from the prior to the approximate posterior.} and also
+report bits-per-dimension of $x$, estimated with importance sampling,
+on held-out data.
 
-Bits-per-dimension is the negative logarithm of marginal
-likelihood normalized per number of pixels in the image, thus we need
-to assess or estimate the marginal likelihood of observations. For
-dense parameterizations, the usual option is importance sampling (IS)
-using the trained approximate posterior as importance distribution:
-\ie, $\log p(x|\phi) \overset{\text{IS}}{\approx} \log
-    \left(\frac{1}{S} \sum_{s=1}^S \frac{p(z^{(s)}, x|\phi)}{q(z^{(s)} |
-            x, \lambda)} \right)$ with $z^{(s)} \sim q(z|x, \lambda)$. The result
-is a stochastic lower bound which converges to the true log-marginal
-in the limit as $S \to \infty$. With a sparse posterior approximation
-we can split the marginalization
+Bits-per-dimension is the negative logarithm of marginal likelihood
+normalized per number of pixels in the image, thus we need to assess
+or estimate the marginal likelihood of observations. For dense
+parameterizations, the usual option is importance sampling (IS) using
+the trained approximate posterior as importance distribution: \ie,
+$\log p(x|\phi) \overset{\text{IS}}{\approx} \log \left(\frac{1}{S}
+    \sum_{s=1}^S \frac{p(z^{(s)}, x|\phi)}{q(z^{(s)} | x, \lambda)}
+    \right)$ with $z^{(s)} \sim q(z|x, \lambda)$. The result is a
+stochastic lower bound which converges to the true log-marginal in
+the limit as $S \to \infty$. With a sparse posterior approximation we
+can split the marginalization
+
 \begin{equation}
-    \log p(x|\phi) = \log \left( \sum_{z \in \bar \ZZ} p(z)p(x|z, \phi) + \sum_{z \in \ZZ \setminus \ZZ} p(z)p(x|z, \phi)  \right)
+    \log p(x|\phi) = \log \left( \sum_{z \in \bar \ZZ}
+    p(z)p(x|z, \phi) + \sum_{z \in \ZZ \setminus \ZZ} p(z)p(x|z, \phi)
+    \right)
 \end{equation}
+
 into one part that handles outcomes in the support $\bar \ZZ$ of the
 sparse posterior approximation and another part that handles the
 outcomes in the complement set $\ZZ \setminus \bar \ZZ$. We compute
@@ -701,13 +706,13 @@ training progresses distributions may (or tend to) be sufficiently
 sparse and this mismatch disappears, making the gradient computation
 exact.
 
-\begin{wrapfigure}[16]{r}{0.33\textwidth}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.33\textwidth]{Figures/spars.pdf}
     \caption{Bit vector VAE median and quartile decoder calls per
         epoch,
         $D=32$ (top) / $D=128$ (bottom).\label{fig:structcalls}}
-\end{wrapfigure}
+\end{figure}
 
 Remarkably, this happens for $D=32$\,---\,the support of
 $\sparsemaxk$ is smaller than $k$, giving the true gradient to
@@ -768,6 +773,48 @@ unlike in the other tasks considered, training on biased gradients is
 not too problematic.
 
 \section{Subsequent Work}
+
+While \citet{correia2020procneurips} is the most recent contribution
+shown in the present thesis, it has already proved to be a relevant
+contribution to the field of discrete and structured latent variable
+modelling. In particular, and most closely related to our work,
+\citet{chen2021EvidentialSoftmaxSparse} added another method to the
+family of efficient marginalization techniques that we started in
+\citet{correia2020procneurips}. They introduce a new normalizing
+function called \emph{ev-softmax} that has its origins in evidential
+theory and evidential sparsification~\citep{itkina2020evidential}.
+The properties of this function are more similar to \emph{softmax}
+than \emph{sparsemax}, while still allowing for a sparse
+distribution. They show that their method is less prone to
+multimodality collapse~\citep{itkina2020evidential} and show improved
+results in the experiment described in \secref{sec:gen}.
+
+In another application of sparsity for discrete latent variable
+models, \citet{farinhas2022SparseCommunicationMixed} introduced a new
+family of mixed discrete-continuous random variables that can be used
+to train these models. Their method has its origins in the recent
+field of sparse and continuous
+distributions~\citep{martins2020SparseContinuousAttention}. Their
+method is applied to the experiments that we described in
+\secref{sec:comm} and \secref{sec:bernvae} and show promising
+results. As in our case, their method also bypasses the need for
+methods with high variance, as in SFE, and relaxations of the
+discrete space, as in Gumbel-Softmax; however, in their case, that's
+not due to explicit marginalization but rather due to the nature of
+the mixed random variables that they introduce.
+
+As we will explore further in the next chapter, we believe that the
+methods we have proposed here have potential for structured
+applications. In particular, due to the structured nature of
+language, the explicit marginalization of the structured space can
+prove valuable to NLP. For example, our method has been applied
+successfully for semantic
+parsing~\citep{wang2021LearningExecutionsSemantic}. In this work, the
+authors use our top-$k$ sparsemax method in the E-step of an EM
+algorithm. Since they do not have access to a true top-$k$, they
+approximate it using beam search. When compared to the other
+baselines and other methods proposed, the approach that used top-$k$
+sparsemax had the best performance.
 
 \section{Final Remarks and Chapter Summary}
 
