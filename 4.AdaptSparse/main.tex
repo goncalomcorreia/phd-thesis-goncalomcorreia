@@ -8,18 +8,17 @@ architecture of the Transformer is largely uninterpretable,
 which can be unappealing if one wishes to understand the
 reasons behind the strengths and shortcomings of the model.
 
-To this end, we introduce in the present chapter an
-approach that uses \textbf{learnable sparsity} on each
-of the Transformer's attention heads. In the context
-of this thesis, this contribution leads to neural models
-that are more \textbf{transparent} in their decisions.
-This increased transparency will prove useful to be able to
-more easily interpret the roles that each attention head
+To this end, we introduce in the present chapter an approach that
+uses \textbf{learnable sparsity} on each of the Transformer's
+attention heads. In the context of this thesis, this contribution
+leads to neural models that are more \textbf{transparent} in their
+decisions. This increased transparency will prove useful in order to
+be able to more easily interpret the roles that each attention head
 plays in the overall model.
 
 \textit{This chapter is based on \citet{correia2019adaptively}.}
 
-\section{Motivation and Previous Work}
+\section{Motivation}
 
 At the heart of the Transformer architecture
 (\secref{sec:transformer_bg}) lie \emph{multi-head attention}
@@ -85,6 +84,8 @@ Our contributions are the following:
         tokens to attend adaptively.}
     \label{fig:comparison}
 \end{figure}
+
+\section{Previous Work}
 
 \paragraph*{Sparse attention.}
 Prior work has developed sparse attention mechanisms, including
@@ -327,12 +328,13 @@ learned internal mechanics of the self-attention heads.
 
 \section{Analysis}
 
-We conduct an analysis for the higher-resource dataset WMT 2014
-English $\rightarrow$ German of the attention in the sparse adaptive
-Transformer model ($\alpha$-\entmaxtext) at multiple levels: we
-analyze high-level statistics as well as individual head behavior.
-Moreover, we make a qualitative analysis of the interpretability
-capabilities of our models.
+We conduct high-level analysis of the learned attention heads of the
+sparse adaptive Transformer model ($\alpha$-\entmaxtext) trained on
+the 4 datasets. We then present, for the higher-resource dataset WMT
+2014 English $\rightarrow$ German, a more detailed analysis of the
+attention at the individual head behavior. Moreover, we make a
+qualitative analysis of the interpretability capabilities of our
+models.
 
 \subsection{High-Level Statistics}
 \label{sec:stats}
@@ -575,6 +577,17 @@ diversity seems to peak in the middle layers of the encoder
 self-attention and context attention, while this is not the case for
 the decoder self-attention.
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\columnwidth]{Figures/head_prev.pdf}
+    \caption{
+        Self-attention from the most confidently previous-position head in
+        each model. The learned parameter in the $\alpha$-\entmaxtext model
+        is $\alpha=1.91$. Quantitatively more confident, visual inspection
+        confirms that the adaptive head behaves more consistently.}
+    \label{fig:head_prev}
+\end{figure}
+
 \subsection{Identifying Head Specializations}
 
 Previous work pointed out some specific roles played by
@@ -605,43 +618,6 @@ highest-confidence head being sparse ($\alpha=1.91$).
 For position $+1$, the models each dedicate one head, with confidence
 around $95\%$, slightly higher for \entmaxtext. The adaptive model
 sets $\alpha=1.96$ for this head.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.95\columnwidth]{Figures/head_prev.pdf}
-    \caption{
-        Self-attention from the most confidently previous-position head in
-        each model. The learned parameter in the $\alpha$-\entmaxtext model
-        is $\alpha=1.91$. Quantitatively more confident, visual inspection
-        confirms that the adaptive head behaves more consistently.}
-    \label{fig:head_prev}
-\end{figure}
-
-\paragraph*{BPE-merging head.}
-Due to the sparsity of our models, we are able to identify other head
-specializations, easily identifying which heads should be further analyzed.
-In \figref{fig:head_bpe} we show one such head where the $\alpha$ value
-is particularly high (in the encoder, layer 1, head 4 depicted in
-\figref{fig:learning_alpha}). We found that this head most often looks at
-the current time step with high confidence, making it a positional head
-with offset $0$. However, this head often spreads weight sparsely
-over 2-3 neighboring tokens, when the tokens are part of the same BPE
-cluster\footnote{BPE-segmented words are denoted by $\sim$ in the
-    Figures.} or hyphenated words. As this head is in the first layer, it
-provides a useful service to the higher layers by combining
-information evenly within some BPE clusters.
-
-For each BPE cluster or cluster of hyphenated words,
-we computed a score between 0 and 1 that corresponds to the
-maximum attention mass assigned by any token to the rest of the
-tokens inside the cluster in order to quantify the BPE-merging
-capabilities of these heads.\footnote{If the
-    cluster has size 1, the score is the weight the token assigns to
-    itself.} There are not any attention heads in
-the softmax model that are able to obtain a score over $80\%$, while
-for $1.5$-\entmaxtext and $\alpha$-\entmaxtext there are two heads
-in each ($83.3\%$ and $85.6\%$ for $1.5$-\entmaxtext and $88.5\%$ and
-$89.8\%$ for $\alpha$-\entmaxtext).
 
 \begin{figure}[t]
     \centering
@@ -694,6 +670,32 @@ $89.8\%$ for $\alpha$-\entmaxtext).
     \label{fig:sparsity_difference}
 \end{figure}
 
+\paragraph*{BPE-merging head.}
+Due to the sparsity of our models, we are able to identify other head
+specializations, easily identifying which heads should be further analyzed.
+In \figref{fig:head_bpe} we show one such head where the $\alpha$ value
+is particularly high (in the encoder, layer 1, head 4 depicted in
+\figref{fig:learning_alpha}). We found that this head most often looks at
+the current time step with high confidence, making it a positional head
+with offset $0$. However, this head often spreads weight sparsely
+over 2-3 neighboring tokens, when the tokens are part of the same BPE
+cluster\footnote{BPE-segmented words are denoted by $\sim$ in the
+    Figures.} or hyphenated words. As this head is in the first layer, it
+provides a useful service to the higher layers by combining
+information evenly within some BPE clusters.
+
+For each BPE cluster or cluster of hyphenated words,
+we computed a score between 0 and 1 that corresponds to the
+maximum attention mass assigned by any token to the rest of the
+tokens inside the cluster in order to quantify the BPE-merging
+capabilities of these heads.\footnote{If the
+    cluster has size 1, the score is the weight the token assigns to
+    itself.} There are not any attention heads in
+the softmax model that are able to obtain a score over $80\%$, while
+for $1.5$-\entmaxtext and $\alpha$-\entmaxtext there are two heads
+in each ($83.3\%$ and $85.6\%$ for $1.5$-\entmaxtext and $88.5\%$ and
+$89.8\%$ for $\alpha$-\entmaxtext).
+
 \paragraph*{Interrogation head.}
 On the other hand, in \figref{fig:head_interro} we show a head for which our
 adaptively sparse model chose an $\alpha$ close to 1, making it
@@ -718,11 +720,12 @@ for sentences of similar length.
 
 \section{Final Remarks and Chapter Summary}
 
-We contribute a novel strategy for adaptively sparse attention, and,
-in particular, for adaptively sparse Transformers. We present the
-first empirical analysis of Transformers with sparse attention
-mappings (\ie, \entmaxtext), showing potential in both translation
-accuracy as well as in model interpretability.
+In the present chapter, we contributed with a novel strategy for
+\textbf{learnable sparse} attention, and, in particular, for adaptively
+sparse Transformers. We presented the first empirical analysis of
+Transformers with sparse attention mappings (\ie, \entmaxtext),
+showing potential in both translation accuracy as well as in model
+interpretability and \textbf{transparency}.
 
 In particular, we analyzed how the attention heads in the proposed
 adaptively sparse Transformer can specialize more and with higher
@@ -730,11 +733,5 @@ confidence. Our adaptivity strategy relies only on gradient-based
 optimization, side-stepping costly per-head hyper-parameter searches.
 Further speed-ups are possible by leveraging more parallelism in the
 bisection algorithm for computing $\alpha$-\entmaxtext.
-
-Finally, some of the automatically-learned behaviors of our
-adaptively sparse Transformers -- for instance, the
-near-deterministic positional heads or the subword joining head --
-may provide new ideas for designing static variations of the
-Transformer.
 
 \cleardoublepage
