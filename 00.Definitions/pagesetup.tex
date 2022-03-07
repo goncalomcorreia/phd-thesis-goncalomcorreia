@@ -15,7 +15,7 @@
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
-\fancyhf{} 
+\fancyhf{}
 %\fancyhead[LE]{\bfseries\nouppercase{\leftmark}}
 %\fancyhead[RO]{\bfseries\nouppercase{\rightmark}}
 \fancyfoot[LE,RO]{\bfseries\small\thepage}
@@ -23,20 +23,20 @@
 \renewcommand{\footrulewidth}{0.0pt}
 \addtolength{\headheight}{2pt} % make space for the rule
 \fancypagestyle{plain}{% Used in Chapter titles
-   \fancyhead{} % get rid of headers
-   \renewcommand{\headrulewidth}{0pt} % and the line
-   \renewcommand{\footrulewidth}{0pt}
-   \fancyfoot[LE,RO]{\bfseries\small\thepage}
+	\fancyhead{} % get rid of headers
+	\renewcommand{\headrulewidth}{0pt} % and the line
+	\renewcommand{\footrulewidth}{0pt}
+	\fancyfoot[LE,RO]{\bfseries\small\thepage}
 }
 
 \fancypagestyle{begin}{%
-   \fancyhead{}
-   \renewcommand{\headrulewidth}{0pt}
-   \renewcommand{\footrulewidth}{0pt}
-   \fancyfoot[LE,RO]{\bfseries\small\thepage}
+	\fancyhead{}
+	\renewcommand{\headrulewidth}{0pt}
+	\renewcommand{\footrulewidth}{0pt}
+	\fancyfoot[LE,RO]{\bfseries\small\thepage}
 }
 \fancypagestyle{document}{%
-	\fancyhf{} 
+	\fancyhf{}
 	\fancyhead[LE]{\bfseries\nouppercase{\leftmark}}
 	\fancyhead[RO]{\bfseries\nouppercase{\rightmark}}
 	\fancyfoot[LE,RO]{\bfseries\small\thepage}
@@ -52,7 +52,7 @@
 	\addtolength{\headheight}{2pt} % make space for the rule
 }
 \setcounter{secnumdepth} {5}
-\setcounter{tocdepth} {5}
+\setcounter{tocdepth} {2}
 \renewcommand{\thesubsubsection}{\thesubsection.\Alph{subsubsection}}
 
 % Removed deprecated package subfigure. See if relevant if you choose to use the subfig package instead.
