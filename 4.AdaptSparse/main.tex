@@ -115,30 +115,32 @@ to be denser on average when compared to the ones in the first
 layers, while their work has found that lower layers tend to have a
 shorter attention span compared to higher layers.
 
-\paragraph*{Transformer interpretability.}
-The original Transformer paper~\citep{vaswani2017attention} shows
-attention visualizations, from which some speculation can be made of
-the roles the several attention heads have.
-\citet{marecek-rosa-2018-extracting} study the syntactic abilities of
-the Transformer self-attention, while \citet{raganato2018analysis}
-extract dependency relations from the attention weights.
-\citet{bert-rediscovers} find that the self-attentions in
-BERT~\citep{devlin2018bert} follow a sequence of processes that
-resembles a classical NLP pipeline. Regarding redundancy of heads,
-\citet{specialized} develop a method that is able to prune heads of
-the multi-head attention module and make an empirical study of the
-role that each head has in self-attention (positional, syntactic and
-rare words). \citet{li2018multi} also aim to reduce head redundancy
-by adding a regularization term to the loss that maximizes head
-disagreement and obtain improved results. While not considering
-Transformer attentions, \citet{jain2019attention} show that
-traditional attention mechanisms do not necessarily improve
-interpretability since softmax attention is vulnerable to an
-adversarial attack leading to wildly different model predictions for
-the same attention weights. Sparse attention may mitigate these
-issues; however, our work focuses mostly on a more mechanical aspect
-of interpretation by analyzing head behavior, rather than on
-explanations for predictions.
+\begin{sloppypar}
+    \paragraph*{Transformer interpretability.}
+    The original Transformer paper~\citep{vaswani2017attention} shows
+    attention visualizations, from which some speculation can be made of
+    the roles the several attention heads have.
+    \citet{marecek-rosa-2018-extracting} study the syntactic abilities of
+    the Transformer self-attention, while \citet{raganato2018analysis}
+    extract dependency relations from the attention weights.
+    \citet{bert-rediscovers} find that the self-attentions in
+    BERT~\citep{devlin2018bert} follow a sequence of processes that
+    resembles a classical NLP pipeline. Regarding redundancy of heads,
+    \citet{specialized} develop a method that is able to prune heads of
+    the multi-head attention module and make an empirical study of the
+    role that each head has in self-attention (positional, syntactic and
+    rare words). \citet{li2018multi} also aim to reduce head redundancy
+    by adding a regularization term to the loss that maximizes head
+    disagreement and obtain improved results. While not considering
+    Transformer attentions, \citet{jain2019attention} show that
+    traditional attention mechanisms do not necessarily improve
+    interpretability since softmax attention is vulnerable to an
+    adversarial attack leading to wildly different model predictions for
+    the same attention weights. Sparse attention may mitigate these
+    issues; however, our work focuses mostly on a more mechanical aspect
+    of interpretation by analyzing head behavior, rather than on
+    explanations for predictions.
+\end{sloppypar}
 
 \section{Adaptively Sparse Transformers with \texorpdfstring{{\boldmath $\alpha$}-\entmaxtext}{alpha-entmax}}
 \label{sec:adaptive}
@@ -451,15 +453,17 @@ $\alpha$ values, we compare the empirical attention weight density
 (the average number of tokens receiving non-zero attention) within
 each module, against sparse Transformers with fixed $\alpha=1.5$.
 
-\figref{fig:hist_densities} shows that, with fixed $\alpha=1.5$, heads
-tend to be sparse and similarly-distributed in all three attention
-modules. With learned $\alpha$, there are two notable changes: (i) a
-prominent mode corresponding to fully dense probabilities, showing
-that our models learn to combine sparse and dense attention, and (ii)
-a distinction between the encoder self-attention -- whose background
-distribution tends toward extreme sparsity -- and the other two
-modules, who exhibit more uniform background distributions. This
-suggests that perhaps entirely sparse Transformers are suboptimal.
+\begin{sloppypar}
+    \figref{fig:hist_densities} shows that, with fixed $\alpha=1.5$, heads
+    tend to be sparse and similarly-distributed in all three attention
+    modules. With learned $\alpha$, there are two notable changes: (i) a
+    prominent mode corresponding to fully dense probabilities, showing
+    that our models learn to combine sparse and dense attention, and (ii)
+    a distinction between the encoder self-attention -- whose background
+    distribution tends toward extreme sparsity -- and the other two
+    modules, who exhibit more uniform background distributions. This
+    suggests that perhaps entirely sparse Transformers are suboptimal.
+\end{sloppypar}
 
 The fact that the decoder seems to prefer denser attention
 distributions might be attributed to it being auto-regressive, only
