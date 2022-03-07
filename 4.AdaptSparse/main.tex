@@ -1,6 +1,24 @@
 \fancychapter{Adaptively Sparse Transformers}
 \label{cap:adaptsparse}
 
+In the previous chapter, we used transfer learning as a way
+to weakly supervise a Transformer model on a low-resource task.
+While good results are achieved with this approach, the
+architecture of the Transformer is largely uninterpretable,
+which can be unappealing if one wishes to understand the
+reasons behind the strengths and shortcomings of the model.
+
+To this end, we introduce in the present chapter an
+approach that uses \textbf{learnable sparsity} on each
+of the Transformer's attention heads. In the context
+of this thesis, this contribution leads to neural models
+that are more \textbf{transparent} in their decisions.
+This increased transparency will prove useful to be able to
+more easily interpret the roles that each attention head
+plays in the overall model.
+
+\textit{This chapter is based on \citet{correia2019adaptively}.}
+
 \section{Motivation and Previous Work}
 
 At the heart of the Transformer architecture
@@ -597,7 +615,7 @@ sets $\alpha=1.96$ for this head.
 
 \paragraph*{BPE-merging head.}
 Due to the sparsity of our models, we are able to identify other head
-specializations, easily identifying which heads should be further analysed.
+specializations, easily identifying which heads should be further analyzed.
 In \figref{fig:head_bpe} we show one such head where the $\alpha$ value
 is particularly high (in the encoder, layer 1, head 4 depicted in
 \figref{fig:learning_alpha}). We found that this head most often looks at
