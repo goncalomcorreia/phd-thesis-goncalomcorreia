@@ -1,7 +1,24 @@
 \fancychapter{Adaptively Sparse Transformers}
 \label{cap:adaptsparse}
 
-\section{Motivation and Previous Work}
+In the previous chapter, we used transfer learning as a way
+to weakly supervise a Transformer model on a low-resource task.
+While good results are achieved with this approach, the
+architecture of the Transformer is largely uninterpretable,
+which can be unappealing if one wishes to understand the
+reasons behind the strengths and shortcomings of the model.
+
+To this end, we introduce in the present chapter an approach that
+uses \textbf{learnable sparsity} on each of the Transformer's
+attention heads. In the context of this thesis, this contribution
+leads to neural models that are more \textbf{transparent} in their
+decisions. This increased transparency will prove useful in order to
+be able to more easily interpret the roles that each attention head
+plays in the overall model.
+
+\textit{This chapter is based on \citet{correia2019adaptively}.}
+
+\section{Motivation}
 
 At the heart of the Transformer architecture
 (\secref{sec:transformer_bg}) lie \emph{multi-head attention}
@@ -53,9 +70,9 @@ Our contributions are the following:
           and adaptivity of our proposed model.
 \end{itemize}
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.66\columnwidth]{Figures/comparison.pdf}
+    \includegraphics[width=0.95\columnwidth]{Figures/comparison.pdf}
     \caption{Attention distributions of different self-attention heads for the
         time step of the token ``over'', shown to compare our model to other
         related work. While the sparse
@@ -67,6 +84,8 @@ Our contributions are the following:
         tokens to attend adaptively.}
     \label{fig:comparison}
 \end{figure}
+
+\section{Previous Work}
 
 \paragraph*{Sparse attention.}
 Prior work has developed sparse attention mechanisms, including
@@ -97,30 +116,32 @@ to be denser on average when compared to the ones in the first
 layers, while their work has found that lower layers tend to have a
 shorter attention span compared to higher layers.
 
-\paragraph*{Transformer interpretability.}
-The original Transformer paper~\citep{vaswani2017attention} shows
-attention visualizations, from which some speculation can be made of
-the roles the several attention heads have.
-\citet{marecek-rosa-2018-extracting} study the syntactic abilities of
-the Transformer self-attention, while \citet{raganato2018analysis}
-extract dependency relations from the attention weights.
-\citet{bert-rediscovers} find that the self-attentions in
-BERT~\citep{devlin2018bert} follow a sequence of processes that
-resembles a classical NLP pipeline. Regarding redundancy of heads,
-\citet{specialized} develop a method that is able to prune heads of
-the multi-head attention module and make an empirical study of the
-role that each head has in self-attention (positional, syntactic and
-rare words). \citet{li2018multi} also aim to reduce head redundancy
-by adding a regularization term to the loss that maximizes head
-disagreement and obtain improved results. While not considering
-Transformer attentions, \citet{jain2019attention} show that
-traditional attention mechanisms do not necessarily improve
-interpretability since softmax attention is vulnerable to an
-adversarial attack leading to wildly different model predictions for
-the same attention weights. Sparse attention may mitigate these
-issues; however, our work focuses mostly on a more mechanical aspect
-of interpretation by analyzing head behavior, rather than on
-explanations for predictions.
+\begin{sloppypar}
+    \paragraph*{Transformer interpretability.}
+    The original Transformer paper~\citep{vaswani2017attention} shows
+    attention visualizations, from which some speculation can be made of
+    the roles the several attention heads have.
+    \citet{marecek-rosa-2018-extracting} study the syntactic abilities of
+    the Transformer self-attention, while \citet{raganato2018analysis}
+    extract dependency relations from the attention weights.
+    \citet{bert-rediscovers} find that the self-attentions in
+    BERT~\citep{devlin2018bert} follow a sequence of processes that
+    resembles a classical NLP pipeline. Regarding redundancy of heads,
+    \citet{specialized} develop a method that is able to prune heads of
+    the multi-head attention module and make an empirical study of the
+    role that each head has in self-attention (positional, syntactic and
+    rare words). \citet{li2018multi} also aim to reduce head redundancy
+    by adding a regularization term to the loss that maximizes head
+    disagreement and obtain improved results. While not considering
+    Transformer attentions, \citet{jain2019attention} show that
+    traditional attention mechanisms do not necessarily improve
+    interpretability since softmax attention is vulnerable to an
+    adversarial attack leading to wildly different model predictions for
+    the same attention weights. Sparse attention may mitigate these
+    issues; however, our work focuses mostly on a more mechanical aspect
+    of interpretation by analyzing head behavior, rather than on
+    explanations for predictions.
+\end{sloppypar}
 
 \section{Adaptively Sparse Transformers with \texorpdfstring{{\boldmath $\alpha$}-\entmaxtext}{alpha-entmax}}
 \label{sec:adaptive}
@@ -231,9 +252,7 @@ All or some of the $\alpha$ values can be tied if desired, but we
 keep them independent for analysis purposes.
 
 \begin{table*}[ht]
-
     \begin{center}
-        \small
         \begin{tabular}{lrrrr}
             \toprule
             activation
@@ -309,26 +328,27 @@ learned internal mechanics of the self-attention heads.
 
 \section{Analysis}
 
-We conduct an analysis for the higher-resource dataset WMT 2014
-English $\rightarrow$ German of the attention in the sparse adaptive
-Transformer model ($\alpha$-\entmaxtext) at multiple levels: we
-analyze high-level statistics as well as individual head behavior.
-Moreover, we make a qualitative analysis of the interpretability
-capabilities of our models.
+We conduct high-level analysis of the learned attention heads of the
+sparse adaptive Transformer model ($\alpha$-\entmaxtext) trained on
+the 4 datasets. We then present, for the higher-resource dataset WMT
+2014 English $\rightarrow$ German, a more detailed analysis of the
+attention at the individual head behavior. Moreover, we make a
+qualitative analysis of the interpretability capabilities of our
+models.
 
 \subsection{High-Level Statistics}
 \label{sec:stats}
 
-\begin{wrapfigure}[15]{r}{0.5\columnwidth}
+\begin{figure}[ht]
     \centering
-    \includegraphics[width=0.5\columnwidth]{Figures/learning_alpha.pdf}
+    \includegraphics[width=0.85\columnwidth]{Figures/learning_alpha.pdf}
     \caption{\label{fig:learning_alpha}
         Trajectories of $\alpha$ values for a subset of the heads during
         training. Initialized at random, most heads become denser in the
         beginning, before converging. This suggests that dense attention may
         be more beneficial while the network is still uncertain, being
         replaced by sparse attention afterwards.}
-\end{wrapfigure}
+\end{figure}
 
 \paragraph*{What kind of {\boldmath $\alpha$} values are learned?}
 \figref{fig:learning_alpha} shows the learning trajectories of the
@@ -353,20 +373,68 @@ and context attention only learn to distribute these parameters in a
 single mode. We show next that this is reflected in the average
 density of attention weight vectors as well.
 
-\begin{figure}[t]
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.6\columnwidth]{Figures/hist_alphas.pdf}
-    \caption{%
-        \label{fig:hist_alphas}%
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/hist_alphas_ro.pdf}
+        \caption{%
+            \label{fig:hist_alphas_ro}%
+            WMT 2016 \langp{ro}{en}.}
+    \end{subfigure}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/hist_alphas_ja.pdf}
+        \caption{%
+            \label{fig:hist_alphas_ja}%
+            KFTT \langp{ja}{en}.}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/hist_alphas.pdf}
+        \caption{%
+            \label{fig:hist_alphas_en}%
+            WMT 2014 \langp{en}{de}.}
+    \end{subfigure}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/hist_alphas_de.pdf}
+        \caption{%
+            \label{fig:hist_alphas_de}%
+            IWSLT 2017 \langp{de}{en}.}
+    \end{subfigure}
+    \caption{
         Distribution of learned $\alpha$ values per attention block.
         While the encoder self-attention has a bimodal distribution
         of values of $\alpha$,
         the decoder self-attention and context attention have a single mode.}
+    \label{fig:hist_alphas}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.6\columnwidth]{Figures/hist_densities.pdf}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/hist_densities_ro.pdf}
+        \caption{%
+            \label{fig:hist_densities_ro}%
+            WMT 2016 \langp{ro}{en}.}
+    \end{subfigure}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/hist_densities_ja.pdf}
+        \caption{%
+            \label{fig:hist_densities_ja}%
+            KFTT \langp{ja}{en}.}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/hist_densities.pdf}
+        \caption{%
+            \label{fig:hist_densities_en}%
+            WMT 2014 \langp{en}{de}.}
+    \end{subfigure}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/hist_densities_de.pdf}
+        \caption{%
+            \label{fig:hist_densities_de}%
+            IWSLT 2017 \langp{de}{en}.}
+    \end{subfigure}
     \caption{%
         \label{fig:hist_densities}
         Distribution of attention densities (average number of tokens
@@ -387,15 +455,17 @@ $\alpha$ values, we compare the empirical attention weight density
 (the average number of tokens receiving non-zero attention) within
 each module, against sparse Transformers with fixed $\alpha=1.5$.
 
-\figref{fig:hist_densities} shows that, with fixed $\alpha=1.5$, heads
-tend to be sparse and similarly-distributed in all three attention
-modules. With learned $\alpha$, there are two notable changes: (i) a
-prominent mode corresponding to fully dense probabilities, showing
-that our models learn to combine sparse and dense attention, and (ii)
-a distinction between the encoder self-attention -- whose background
-distribution tends toward extreme sparsity -- and the other two
-modules, who exhibit more uniform background distributions. This
-suggests that perhaps entirely sparse Transformers are suboptimal.
+\begin{sloppypar}
+    \figref{fig:hist_densities} shows that, with fixed $\alpha=1.5$, heads
+    tend to be sparse and similarly-distributed in all three attention
+    modules. With learned $\alpha$, there are two notable changes: (i) a
+    prominent mode corresponding to fully dense probabilities, showing
+    that our models learn to combine sparse and dense attention, and (ii)
+    a distinction between the encoder self-attention -- whose background
+    distribution tends toward extreme sparsity -- and the other two
+    modules, who exhibit more uniform background distributions. This
+    suggests that perhaps entirely sparse Transformers are suboptimal.
+\end{sloppypar}
 
 The fact that the decoder seems to prefer denser attention
 distributions might be attributed to it being auto-regressive, only
@@ -412,9 +482,33 @@ more variance in individual head behavior, to clearly-identified
 dense and sparse heads, and overall to different tendencies compared
 to the fixed case of $\alpha=1.5$.
 
-\begin{figure}[t]
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.6\columnwidth]{Figures/head_density_per_layer.pdf}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/head_density_per_layer_ro.pdf}
+        \caption{%
+            \label{fig:head_density_per_layer_ro}%
+            WMT 2016 \langp{ro}{en}.}
+    \end{subfigure}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/head_density_per_layer_ja.pdf}
+        \caption{%
+            \label{fig:head_density_per_layer_ja}%
+            KFTT \langp{ja}{en}.}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/head_density_per_layer.pdf}
+        \caption{%
+            \label{fig:head_density_per_layer_en}%
+            WMT 2014 \langp{en}{de}.}
+    \end{subfigure}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/head_density_per_layer_de.pdf}
+        \caption{%
+            \label{fig:head_density_per_layer_de}%
+            IWSLT 2017 \langp{de}{en}.}
+    \end{subfigure}
     \caption{%
         \label{fig:head_density_per_layer}
         Head density per layer for fixed and learned $\alpha$. Each line
@@ -423,9 +517,33 @@ to the fixed case of $\alpha=1.5$.
     }
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.6\columnwidth]{Figures/js_divs.pdf}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/js_divs_ro.pdf}
+        \caption{%
+            \label{fig:js_divs_ro}%
+            WMT 2016 \langp{ro}{en}.}
+    \end{subfigure}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/js_divs_ja.pdf}
+        \caption{%
+            \label{fig:js_divs_ja}%
+            KFTT \langp{ja}{en}.}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/js_divs.pdf}
+        \caption{%
+            \label{fig:js_divs_en}%
+            WMT 2014 \langp{en}{de}.}
+    \end{subfigure}
+    \begin{subfigure}[b]{.49\linewidth}
+        \includegraphics[width=\linewidth]{Figures/js_divs_de.pdf}
+        \caption{%
+            \label{fig:js_divs_de}%
+            IWSLT 2017 \langp{de}{en}.}
+    \end{subfigure}
     \caption{%
         \label{fig:js_divs}
         Jensen-Shannon Divergence between heads at each layer. Measures the
@@ -459,8 +577,16 @@ diversity seems to peak in the middle layers of the encoder
 self-attention and context attention, while this is not the case for
 the decoder self-attention.
 
-The statistics shown in this section can be found for the other
-language pairs in \appref{app:plots_lps}.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\columnwidth]{Figures/head_prev.pdf}
+    \caption{
+        Self-attention from the most confidently previous-position head in
+        each model. The learned parameter in the $\alpha$-\entmaxtext model
+        is $\alpha=1.91$. Quantitatively more confident, visual inspection
+        confirms that the adaptive head behaves more consistently.}
+    \label{fig:head_prev}
+\end{figure}
 
 \subsection{Identifying Head Specializations}
 
@@ -495,18 +621,58 @@ sets $\alpha=1.96$ for this head.
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.6\columnwidth]{Figures/head_prev.pdf}
-    \caption{
-        Self-attention from the most confidently previous-position head in
-        each model. The learned parameter in the $\alpha$-\entmaxtext model
-        is $\alpha=1.91$. Quantitatively more confident, visual inspection
-        confirms that the adaptive head behaves more consistently.}
-    \label{fig:head_prev}
+    \includegraphics[width=0.95\columnwidth]{Figures/head_bpe}
+    \caption{%layer 5+1 / head 6+1, alpha=1.33.
+        BPE-merging head $(\alpha=1.91)$ discovered in the
+        $\alpha$-\entmaxtext model. Found in the first encoder layer,
+        this head learns to discover some subword units and combine their
+        information, leaving most words intact. It places $99.09\%$ of
+        its probability mass within the same BPE cluster as the current
+        token: more than any head in any other model.}
+    \label{fig:head_bpe}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}[b]{0.95\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{Figures/head_interro.pdf}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.95\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{Figures/head_interro_not.pdf}
+    \end{subfigure}
+    \caption{%layer 0+1 head 2+1 alpha=1.05
+        Interrogation-detecting heads in the three models. The top sentence
+        is interrogative while the bottom one is declarative but includes the
+        interrogative word ``what''. In the top example, these {\it
+                interrogation heads} assign a high probability to the question mark
+        in the time step of the interrogative word (with $\geq 97.0\%$
+        probability), while in the bottom example since there is no question
+        mark, the same head does not assign a high probability to the last
+        token in the sentence during the interrogative word time step.
+        Surprisingly, this head prefers a low $\alpha=1.05$, as can be seen
+        from the dense weights. This allows the head to identify the noun
+        phrase ``Armani Polo" better.}
+    \label{fig:head_interro}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[
+        width=0.95\columnwidth]{Figures/sparsity_difference.pdf}
+    \caption{%layer 5+1 / head 6+1, alpha=1.33.
+        Example of two sentences of similar length where the same head
+        ($\alpha=1.33$) exhibits different sparsity. The longer phrase in the
+        example on the right ``a sexually transmitted disease'' is handled
+        with higher confidence, leading to more sparsity.
+    }
+    \label{fig:sparsity_difference}
 \end{figure}
 
 \paragraph*{BPE-merging head.}
 Due to the sparsity of our models, we are able to identify other head
-specializations, easily identifying which heads should be further analysed.
+specializations, easily identifying which heads should be further analyzed.
 In \figref{fig:head_bpe} we show one such head where the $\alpha$ value
 is particularly high (in the encoder, layer 1, head 4 depicted in
 \figref{fig:learning_alpha}). We found that this head most often looks at
@@ -529,57 +695,6 @@ the softmax model that are able to obtain a score over $80\%$, while
 for $1.5$-\entmaxtext and $\alpha$-\entmaxtext there are two heads
 in each ($83.3\%$ and $85.6\%$ for $1.5$-\entmaxtext and $88.5\%$ and
 $89.8\%$ for $\alpha$-\entmaxtext).
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.5\columnwidth]{Figures/head_bpe}
-    \caption{%layer 5+1 / head 6+1, alpha=1.33.
-        BPE-merging head $(\alpha=1.91)$ discovered in the
-        $\alpha$-\entmaxtext model. Found in the first encoder layer,
-        this head learns to discover some subword units and combine their
-        information, leaving most words intact. It places $99.09\%$ of
-        its probability mass within the same BPE cluster as the current
-        token: more than any head in any other model.}
-    \label{fig:head_bpe}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \begin{subfigure}[b]{0.49\columnwidth}
-        \centering
-        \includegraphics[width=\columnwidth]{Figures/head_interro.pdf}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49\columnwidth}
-        \centering
-        \includegraphics[width=\columnwidth]{Figures/head_interro_not.pdf}
-    \end{subfigure}
-    \caption{%layer 0+1 head 2+1 alpha=1.05
-        Interrogation-detecting heads in the three models. The top sentence
-        is interrogative while the bottom one is declarative but includes the
-        interrogative word ``what''. In the top example, these {\it
-                interrogation heads} assign a high probability to the question mark
-        in the time step of the interrogative word (with $\geq 97.0\%$
-        probability), while in the bottom example since there is no question
-        mark, the same head does not assign a high probability to the last
-        token in the sentence during the interrogative word time step.
-        Surprisingly, this head prefers a low $\alpha=1.05$, as can be seen
-        from the dense weights. This allows the head to identify the noun
-        phrase ``Armani Polo" better.}
-    \label{fig:head_interro}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[
-        width=0.6\columnwidth]{Figures/sparsity_difference.pdf}
-    \caption{%layer 5+1 / head 6+1, alpha=1.33.
-        Example of two sentences of similar length where the same head
-        ($\alpha=1.33$) exhibits different sparsity. The longer phrase in the
-        example on the right ``a sexually transmitted disease'' is handled
-        with higher confidence, leading to more sparsity.
-    }
-    \label{fig:sparsity_difference}
-\end{figure}
 
 \paragraph*{Interrogation head.}
 On the other hand, in \figref{fig:head_interro} we show a head for which our
@@ -605,11 +720,12 @@ for sentences of similar length.
 
 \section{Final Remarks and Chapter Summary}
 
-We contribute a novel strategy for adaptively sparse attention, and,
-in particular, for adaptively sparse Transformers. We present the
-first empirical analysis of Transformers with sparse attention
-mappings (\ie, \entmaxtext), showing potential in both translation
-accuracy as well as in model interpretability.
+In the present chapter, we contributed with a novel strategy for
+\textbf{learnable sparse} attention, and, in particular, for adaptively
+sparse Transformers. We presented the first empirical analysis of
+Transformers with sparse attention mappings (\ie, \entmaxtext),
+showing potential in both translation accuracy as well as in model
+interpretability and \textbf{transparency}.
 
 In particular, we analyzed how the attention heads in the proposed
 adaptively sparse Transformer can specialize more and with higher
@@ -617,11 +733,5 @@ confidence. Our adaptivity strategy relies only on gradient-based
 optimization, side-stepping costly per-head hyper-parameter searches.
 Further speed-ups are possible by leveraging more parallelism in the
 bisection algorithm for computing $\alpha$-\entmaxtext.
-
-Finally, some of the automatically-learned behaviors of our
-adaptively sparse Transformers -- for instance, the
-near-deterministic positional heads or the subword joining head --
-may provide new ideas for designing static variations of the
-Transformer.
 
 \cleardoublepage
