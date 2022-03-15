@@ -588,7 +588,7 @@ the decoder self-attention.
     \label{fig:head_prev}
 \end{figure}
 
-\subsection{Identifying Head Specializations}
+\subsection{Identifying Head Specializations}\label{sec:spec}
 
 Previous work pointed out some specific roles played by
 different heads in the softmax Transformer
@@ -719,16 +719,96 @@ for sentences of similar length.
 \section{Subsequent Work}
 
 \citet{correia2019adaptively} is, at the moment of writing, the most
-influential work present in this thesis. It is part of a line of work
-that sparked interest in the topic of making Transformers more
-efficient through sparsity (blabla, inter alia), using sparsity to
-allow for Transformers to use longer contexts more effecively
-(blabla, inter alia), and having Transformers with easier
-interpretability and more transparency (blabla, inter alia). It is
-also part of a growing line of work surrounding sparse probability
-distributions (blabla, inter alia).
+influential work in this thesis. It is part of an early line of work
+on Transformers that sparked interest in making this model more
+efficient~\citep[\textit{inter
+        alia}]{daras2020SMYRFEfficientAttention,
+    li2020SACAcceleratingStructuring, merrill2021EffectsParameterNorm,
+    roy2021EfficientContentBasedSparse}, using sparsity to allow for
+Transformers to use longer contexts more
+effectively~\citep[\textit{inter alia}]{jiang2020LongDocumentRanking,
+    qiu2020BlockwiseSelfAttentionLong, sukhbaatar2021NotAllMemories}, and
+being able to understand Transformers better~\citep[\textit{inter
+        alia}]{you2020HardCodedGaussianAttention,
+    rogers2020PrimerBERTologyWhat, pande2021headshypothesisunifying}.
+This Transformer variant and $\alpha$-\entmaxtext have also proved
+useful in medical applications~\citep{guo2020LearningLatentForests,
+    yun2021SpecTrSpectralTransformer}.
 
 Particularly connected to the present work,
+\citet{treviso2021PredictingAttentionSparsity} tackles the quadratic
+complexity that remains in our approach, as we had focused more on
+the interpretability benefits of sparsity and not on its potential
+computational benefits.
+\citet{treviso2021PredictingAttentionSparsity} propose
+\emph{Sparsefinder}, a method that predicts in advance the sparsity
+pattern of $\alpha$-\entmaxtext, by projecting queries and keys into
+a lower dimensional space, turning our approach into a
+computationally efficient alternative to the original Transformer.
+
+Still on the topic of computational efficiency,
+\citet{ji2021DistributionSparsityInferencetime} focuses on inducing
+sparsity on the attention heads only at inference time to avoid
+unecessary training of new models and wasting of computational
+resources. In order to achieve this, they propose a pruning and
+quantization technique that does not lead to decreased performance.
+To push the sparsity to the limit,
+\citet{xu2021LearningHardRetrieval} propose a hard retrieval approach
+that is able to make each attention mechanism attend to only a single
+token. This approach also leads to similar performance to the
+original Transformer but ends up having a 1.43 times faster decoding
+performance in translation tasks.
+
+Regarding the concept of Sparse Transformers,
+\citet{yun2020ConnectionsareExpressive} unify several works that
+sparsify Transformers in a single framework.
+This unified framework is constructed through conditions based on the
+sparsity pattern and the probability map. Once such conditions are
+satisfied, the authors prove that some Sparse Transformers (of which
+our approach is included) are universal approximators of any
+continuous sequence-to-sequence function. Furthermore, they show that
+when these Sparse Transformers have only $\mathcal{O}(n)$ connections (which is
+in contrast to the constant $\mathcal{O}(n^2)$ connections of dense
+Transformers), they still hold the same universal approximation
+properties.
+
+\citet{zhang2021SparseAttentionLinear} proposed another approach to
+induce sparsity in each attention head of the Transformer. In this
+work, instead of replacing the softmax with entmax, the authors
+replace it with the ReLU activation. When compared to our approach,
+Rectified Linear Attention (ReLA) obtains faster training and
+decoding time, while achieving close performance in translation
+tasks. In their analysis, they followed our methodology and found
+that their method had higher JS Divergence than our own, suggesting
+that attention heads using ReLA tend to be more diverse in where they
+attend at each layer. Furthermore, ReLA is also able to assign null
+attention for some queries, that is, to effectively deactivate an
+attention head for a specific query, as it is able to assign zero
+values to all tokens. Their analysis shows that the rate at which
+null attention happens increases in deeper layers, which correlates
+with our own analysis that deeper layers contain less information.
+Moreover, \citet{zhang2021SparsifyingEncoderOutputs} achieves
+sparsity by pruning entire sections of the encoder outputs in the
+cross-attention of the decoder. This leads to a significant speed-up
+during decoding. It drops whole sections from the source encodings to
+speed up decoding, and the authors find that the tokens that end up
+being dropped are often uninformative tokens, while the retained ones
+are relatively rare.
+
+On the topic of interpretability and understanding the inner workings
+of Transformers, inspired by our analysis along with other
+works~\citep{voita2019AnalyzingMultiHeadSelfAttention} that find that
+encoder self-attention heads learn fixed patterns
+(\secref{sec:spec}), \citet{raganato2020FixedEncoderSelfAttentiona}
+fixes the attention pattern of all but one head in each layer,
+letting only a single head in each layer learn its attention. Those
+fixed patterns include the positional heads that focus on the
+current, previous, and next token and the BPE-merging head that we
+found. The parameter footprint of the model drastically decreases
+thanks to these simplifications, and the authors show empirically
+that translation quality does not drop significantly and even that,
+in low-resource scenarios, this approach improves translation
+performance.
 
 \section{Final Remarks and Chapter Summary}
 
@@ -744,6 +824,10 @@ adaptively sparse Transformer can specialize more and with higher
 confidence. Our adaptivity strategy relies only on gradient-based
 optimization, side-stepping costly per-head hyper-parameter searches.
 Further speed-ups are possible by leveraging more parallelism in the
-bisection algorithm for computing $\alpha$-\entmaxtext.
+bisection algorithm for computing $\alpha$-\entmaxtext. Given the
+impact of our work, we believe that approaches that sparsify
+Transformers will continue to increase in the future, with the
+objective of improving the architecture's efficiency and
+transparency.
 
 \cleardoublepage
