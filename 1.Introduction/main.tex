@@ -4,6 +4,8 @@
 \fancychapter{Introduction}
 \label{cap:int}
 
+\doublespacing
+
 The success of well known deep learning
 models~\citep{convnet,devlin2018bert,brown2020language} rely on a
 rich parameterization through the use of numerous neural network
@@ -32,7 +34,7 @@ interest are \emph{discrete} latent variables, which can recover
 categorical and structured encodings of hidden aspects of the data,
 leading to compact representations~\citep{KingmaEtAl2014SSVAE} and,
 in some cases, superior explanatory power~\citep{titov2008joint,
-    Bastings2019}.
+      Bastings2019}.
 
 Latent variables in machine translation were widely used before the
 success of deep learning models and consequently NMT. Typically, the
@@ -61,12 +63,12 @@ can be used as semi-supervision of the final NMT model. Our contributions
 allow for future NMT models to have:
 
 \begin{itemize}
-    \item {\bf Inductive bias}: incorporated into the computational
-          graph through the structured latent variables;
-    \item {\bf Data efficiency}: thanks to the decomposition of a
-          hard task into easier sub-tasks;
-    \item {\bf Interpretability}: due to the explanatory power of
-          latent variables with a discrete structure.
+      \item {\bf Inductive bias}: incorporated into the computational
+            graph through the structured latent variables;
+      \item {\bf Data efficiency}: thanks to the decomposition of a
+            hard task into easier sub-tasks;
+      \item {\bf Interpretability}: due to the explanatory power of
+            latent variables with a discrete structure.
 \end{itemize}
 
 \input{1.Introduction/1.motivation.tex}
@@ -75,3 +77,5 @@ allow for future NMT models to have:
 \input{1.Introduction/4.roadmap.tex}
 
 \cleardoublepage
+
+\singlespacing

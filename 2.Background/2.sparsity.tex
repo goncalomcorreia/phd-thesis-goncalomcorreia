@@ -143,6 +143,104 @@ particularly appealing in the context of multi-head attention
 mechanisms, where we shall show in \secref{sec:stats} that different
 heads tend to learn different sparsity behaviors.
 
+\section*{Regularized Fenchel-Young prediction functions}
+\begin{definition}[\citealt{blondel2019learning}]\label{def:rpf}
+
+    Let $\Omega \colon \simplex^d \to \RR \cup \{\infty\}$ be a strictly convex
+    regularization function. We define the prediction function $\amap_{\Omega}$ as
+    \begin{equation}
+        \amap_{\Omega}(\x) = \argmax_{\p \in \simplex^d}
+        \big(\p^\top\x - \Omega(\p)\big)
+        \label{eq:amap}
+    \end{equation}
+\end{definition}
+
+\section*{Characterizing the {\boldmath $\alpha$-\entmaxtext} mapping}\label{sec:bgform}
+
+\begin{lemma}[\citealt{entmax}]
+    \label{lemma:tsallis_reduction}%
+    For any $\x$, there exists a unique $\tau^\star$ such that
+    \begin{equation}\label{eq:entmax_form_app}
+        \aentmax(\x)
+        = [(\alpha - 1){\x} - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
+    \end{equation}
+\end{lemma}
+\begin{proof}
+    From the definition of $\aentmax$,
+    \begin{equation}
+        \aentmax(\bm{z}) \coloneqq
+        \argmax_{\p \in \simplex^d} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
+    \end{equation}
+    we may easily identify it with a regularized prediction function
+    (Def.~\ref{def:rpf}):
+    \[\aentmax(\x) \equiv \amap_{-\HHt_{\alpha}}(\x).\]
+    We first note that for all $\p \in \triangle^d$,
+    \begin{equation}
+        -(\alpha-1) \HHt_\alpha(\p) = \frac{1}{\alpha} \sum_{i=1}^d p_i^\alpha + \text{const}.
+    \end{equation}
+    From the constant invariance and
+    scaling properties of $\amap_{\Omega}$
+    \citep[Proposition~1, items~4--5]{blondel2019learning},
+    \[\amap_{-\HHt_\alpha}(\x)
+        = \amap_{\Omega}((\alpha - 1)\x),
+        \quad\text{with}\quad
+        \Omega(\p) =
+        \sum_{j=1}^{d} g(\pp_j),
+        \quad
+        g(t) = \frac{t^\alpha}{\alpha}.
+    \]
+    Using \citet[Proposition~5]{blondel2019learning}, noting that
+    $g'(t) = t^{\alpha - 1}$ and $(g')^{-1}(u) =  u^{\nicefrac{1}{\alpha-1}}$,
+    yields
+    \begin{equation}\label{eq:rootform}
+        \amap_{\Omega}(\x) = [\x - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}},
+        \quad\text{and therefore}\quad
+        \aentmax(\x) = [(\alpha-1)\x - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
+    \end{equation}
+    Since $\HHt_\alpha$ is strictly convex on the simplex, $\aentmax$ has a unique
+    solution $\p^\star$. \eqnref{eq:rootform}
+    implicitly defines a one-to-one mapping between $\p^\star$ and $\tau^\star$
+    as long as $\p^\star \in \simplex$,
+    therefore $\tau^\star$ is also unique.
+\end{proof}
+
+\section*{Connections to softmax and sparsemax}\label{sec:softmax}
+The Euclidean projection onto the simplex, sometimes referred to, in the context of
+neural attention, as sparsemax~\citep{sparsemax},
+is defined as
+\begin{equation}
+    \sparsemax(\x) \coloneqq \argmin_{\p \in \simplex} \| \p - \x \|_2^2.
+\end{equation}
+The solution can be characterized through the
+unique threshold $\thresh$ such that $\sum_i
+    \sparsemax(\x)_i = 1$ and \citet{Held1974}
+\begin{equation}
+    \sparsemax(\x) = [\x - \tau \bm{1}]_+~.
+\end{equation}
+Thus, each coordinate of the sparsemax solution is a piecewise-linear function.
+Visibly, this expression is recovered when setting $\alpha=2$ in the
+$\alpha$-\entmaxtext expression (\eqnref{eq:entmax_form_supp}); for other
+values of $\alpha$, the exponent induces curvature.
+
+On the other hand, the well-known softmax is usually defined through the
+expression
+\begin{equation}\label{eq:softmax-supp}
+    \softmax(\x)_i \coloneqq \frac{\exp(\xx_i)}{\sum_j \exp(\xx_j)},
+\end{equation}
+which can be shown to be the unique solution of the optimization problem
+\begin{equation}
+    \softmax(\x)_i =
+    \argmax_{\p \in \simplex} \p^\top\x + \HHs(\p),
+\end{equation}
+where $\HHs(\p) \coloneqq -\sum_i \pp_i \log \pp_i$ is the Shannon entropy.
+Indeed, setting the gradient to $0$ yields the condition
+$\log \pp_i = \xx_j - \nu_i - \tau - 1$, where $\thresh$ and $\nu > 0$ are Lagrange
+multipliers for the simplex constraints $\sum_i \pp_i = 1$ and $\pp_i \geq 0$,
+respectively. Since the \lhs is only finite for $\pp_i>0$,
+we must have $\nu_i=0$ for all $i$, by complementary
+slackness. Thus, the solution must have the form $\pp_i =
+    \nicefrac{\exp(\xx_i)}{Z}$, yielding \eqnref{eq:softmax-supp}.
+
 \subsection{SparseMAP}\label{sec:smap_bg}
 
 Theoretically, the approaches described in \secref{sec:sparsemax_bg}

@@ -1,6 +1,8 @@
 \fancychapter{Efficient Marginalization of Discrete and Structured Latent Variables via Sparsity}
 \label{cap:sparsemarg}
 
+\doublespacing
+
 In this chapter, we focus on the objective of making neural models
 more \textbf{compact}. We will propose a novel approach to train
 discrete and structured latent variable models that achieves an exact
@@ -561,12 +563,14 @@ This efficient sampling and entropy computation relies on an independence
 assumption; in general, we may not have access to such efficient
 computation.
 
-Training this VAE to minimize the negative ELBO corresponds to
-$\ell(x, z; \theta_\ell) \defeq - \log \frac{p(x, z | \phi)}{q(z | x,
-        \lambda)} $; we use a uniform prior $p(z)=1/|\ZZ|=1/{2^D}$. This
-objective does not constrain $\pi(z| x,\theta_\pi) \defeq q(z \mid x,
-    \lambda)$ to the Gibbs parameterization, and thus to apply our
-methods we will differ from it.
+\begin{sloppypar}
+    Training this VAE to minimize the negative ELBO corresponds to
+    $\ell(x, z; \theta_\ell) \defeq - \log \frac{p(x, z | \phi)}{q(z | x,
+            \lambda)} $; we use a uniform prior $p(z)=1/|\ZZ|=1/{2^D}$. This
+    objective does not constrain $\pi(z| x,\theta_\pi) \defeq q(z \mid x,
+        \lambda)$ to the Gibbs parameterization, and thus to apply our
+    methods we will differ from it.
+\end{sloppypar}
 
 \paragraph*{Top-{\boldmath $k$} sparsemax parameterization.} As pointed
 out in \secref{sec:structured}, we cannot explicitly handle the
@@ -654,32 +658,36 @@ validation set. For the Gumbel models, we applied the same schedule
 and grid search to the temperature as described in \secref{sec:gen}.
 We used the Adam optimizer.
 
-\paragraph*{Comparisons.} This time, exact marginalization under a
-dense parameterization of $q (z | x, \lambda)$ is truly intractable,
-so we can only compare our method to stochastic gradient estimators.
-We have unbiased SFE-based estimators (SFE with moving average
-baseline, SFE+, and NVIL), and biased reparameterized gradient
-estimators (Gumbel-Softmax and ST Gumbel-Softmax). As there is no
-supervision for the latent code, we cannot compare the methods in
-terms of accuracy or task success. Instead, we display the trained
-models in the rate-distortion (RD)
-plane~\citep{Alemi2018}\footnote{Distortion is the expected value of
-    the reconstruction negative log-likelihood, while rate is the average
-    KL divergence from the prior to the approximate posterior.} and also
-report bits-per-dimension of $x$, estimated with importance sampling,
-on held-out data.
+\begin{sloppypar}
+    \paragraph*{Comparisons.} This time, exact marginalization under a
+    dense parameterization of $q (z | x, \lambda)$ is truly intractable,
+    so we can only compare our method to stochastic gradient estimators.
+    We have unbiased SFE-based estimators (SFE with moving average
+    baseline, SFE+, and NVIL), and biased reparameterized gradient
+    estimators (Gumbel-Softmax and ST Gumbel-Softmax). As there is no
+    supervision for the latent code, we cannot compare the methods in
+    terms of accuracy or task success. Instead, we display the trained
+    models in the rate-distortion (RD)
+    plane~\citep{Alemi2018}\footnote{Distortion is the expected value of
+        the reconstruction negative log-likelihood, while rate is the average
+        KL divergence from the prior to the approximate posterior.} and also
+    report bits-per-dimension of $x$, estimated with importance sampling,
+    on held-out data.
+\end{sloppypar}
 
-Bits-per-dimension is the negative logarithm of marginal likelihood
-normalized per number of pixels in the image, thus we need to assess
-or estimate the marginal likelihood of observations. For dense
-parameterizations, the usual option is importance sampling (IS) using
-the trained approximate posterior as importance distribution: \ie,
-$\log p(x|\phi) \overset{\text{IS}}{\approx} \log \left(\frac{1}{S}
-    \sum_{s=1}^S \frac{p(z^{(s)}, x|\phi)}{q(z^{(s)} | x, \lambda)}
-    \right)$ with $z^{(s)} \sim q(z|x, \lambda)$. The result is a
-stochastic lower bound which converges to the true log-marginal in
-the limit as $S \to \infty$. With a sparse posterior approximation we
-can split the marginalization
+\begin{sloppypar}
+    Bits-per-dimension is the negative logarithm of marginal likelihood
+    normalized per number of pixels in the image, thus we need to assess
+    or estimate the marginal likelihood of observations. For dense
+    parameterizations, the usual option is importance sampling (IS) using
+    the trained approximate posterior as importance distribution: \ie,
+    $\log p(x|\phi) \overset{\text{IS}}{\approx} \log \left(\frac{1}{S}
+        \sum_{s=1}^S \frac{p(z^{(s)}, x|\phi)}{q(z^{(s)} | x, \lambda)}
+        \right)$ with $z^{(s)} \sim q(z|x, \lambda)$. The result is a
+    stochastic lower bound which converges to the true log-marginal in
+    the limit as $S \to \infty$. With a sparse posterior approximation we
+    can split the marginalization
+\end{sloppypar}
 
 \begin{equation}
     \log p(x|\phi) = \log \left( \sum_{z \in \bar \ZZ}
@@ -849,3 +857,5 @@ that our method can be used to address the challenges of training
 these sorts of models in a variety of applications, particularly NLP.
 
 \cleardoublepage
+
+\singlespacing
