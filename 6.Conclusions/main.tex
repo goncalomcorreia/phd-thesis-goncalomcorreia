@@ -1,5 +1,5 @@
 \fancychapter{Conclusions}
-\label{cap:conclusions}
+\label{chap:conclusions}
 
 \cleardoublepage
 \doublespacing
@@ -10,7 +10,50 @@ interesting directions for future work.
 
 \section{Summary of Contributions and Discussion}
 
+Over the course of this thesis, we have developed models and
+techniques that aim to make neural models more compact, transparent,
+and data efficient.
 
+In \chapref{chap:ape}, we achieved \textbf{data efficiency} by
+leveraging the \textbf{transfer learning} power of a pre-trained
+language model to avoid the need for producing a large synthetic
+dataset, in the context of a real-world application: Automatic
+Post-Editing.
+
+In \chapref{chap:adaptsparse}, we proposed a model with increased
+\textbf{transparency} by letting it \textbf{learn its own sparsity}.
+The chosen application was Neural Machine Translation, and we showed
+how the sparsity can help to interpret the various roles of each
+attention head in the model.
+
+Finally, in \chapref{chap:sparsemarg}, we once again leveraged
+\textbf{learnable sparsity} by introducing a new method to train
+latent variable models with discrete or structured nodes. We show the
+efficacy of our method in several applications: semi-supervised
+learning, emergent communication, and unsupervised learning of
+bit-vector representations. This method achieves better performance
+than standard methodologies for training discrete latent variable
+models and as such aids in the development of more \textbf{compact}
+neural models.
+
+A common theme in this thesis is sparsity, particularly
+sparse probability distributions. We have followed in the footsteps
+of work started by \citet{sparsemax} and proposed novel uses of
+these sparse distributions and promising alternatives to them.
+In all works described, we have shown how, in different applications,
+we can let neural models learn how much sparsity they need; be it
+in the context of an attention mechanism, or in the context of
+the number of relevant latent assignments during training.
+
+On another front, we tackle some forms of \textbf{weak supervision}.
+On one hand, we use transfer learning and minimize the amount of data
+required to train an APE model in \chapref{chap:ape}. On the other
+hand, we also applied our method of \chapref{chap:sparsemarg} to
+obtain improved performance on a semi-supervised learning task.
+Additionally, in \secref{sec:subsequent_work_adapt} we saw how our
+discovered attention head roles can be used to fix attention patterns
+in a Transformer, increasing inductive bias in the
+process~\citep{raganato2020FixedEncoderSelfAttentiona}.
 
 \section{Open Problems and Limitations}
 
@@ -61,12 +104,12 @@ This proposed work aims to make use of the previous work shown in
 previous sections. Automatic Post-Editing, which was discussed in
 % \secref{sec:ape_bg} and \secref{cap:ape}, will be useful in designing the
 editing component of this NMT system and the transfer learning
-techniques discussed in \secref{cap:ape} might prove useful to leverage
+techniques discussed in \secref{chap:ape} might prove useful to leverage
 monolingual data. In line with the work discussed in
-\secref{cap:adaptsparse}, we hope to use sparsity in our models to
+\secref{chap:adaptsparse}, we hope to use sparsity in our models to
 improve interpretability of the deep neural model and also to use
 sparsity in order to improve efficiency in latent variable training,
-as discussed in \secref{cap:sparsemarg}.
+as discussed in \secref{chap:sparsemarg}.
 
 % \section{Translating by Editing a Draft}
 % \label{sec:draftedits}

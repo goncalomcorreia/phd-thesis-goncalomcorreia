@@ -6,6 +6,7 @@
 \newcommand*{\lhs}{\textit{l.\hspace{.07em}h\hspace{.07em}.s.}\@\xspace}
 \newcommand*{\rhs}{\textit{r.\hspace{.07em}h\hspace{.07em}.s.}\@\xspace}
 \newcommand{\eqnref}[1]{Equation~\ref{#1}}
+\newcommand{\chapref}[1]{Chapter~\ref{#1}}
 \newcommand{\secref}[1]{\S\ref{#1}}
 \newcommand{\figref}[1]{Figure~\ref{#1}}
 \newcommand{\tableref}[1]{Table~\ref{#1}}
@@ -87,20 +88,20 @@
 
 \newenvironment{itemizesquish}
 {\begin{list}{\labelitemi}
-{\setlength{\itemsep}{0em}\setlength{\labelwidth}
-{0.5em}\setlength{\leftmargin}
-{\labelwidth}\addtolength{\leftmargin}
-{\labelsep}}}{\end{list}}
+        {\setlength{\itemsep}{0em}\setlength{\labelwidth}
+            {0.5em}\setlength{\leftmargin}
+            {\labelwidth}\addtolength{\leftmargin}
+            {\labelsep}}}{\end{list}}
 \newenvironment{enumeratesquish}
 {\begin{list}{\addtocounter{enumi}{1}\labelenumi}
-{\setlength{\itemsep}{0em}\setlength{\labelwidth}
-{0.5em}\setlength{\leftmargin}
-{\labelwidth}\addtolength{\leftmargin}
-{\labelsep}}}{\end{list}\setcounter{enumi}{0}}
+        {\setlength{\itemsep}{0em}\setlength{\labelwidth}
+            {0.5em}\setlength{\leftmargin}
+            {\labelwidth}\addtolength{\leftmargin}
+            {\labelsep}}}{\end{list}\setcounter{enumi}{0}}
 
 \newcommand{\textover}[3][l]{%
- % #1 is the alignment, default l
- % #2 is the text to be printed
- % #3 is the text for setting the width
- \makebox[\widthof{#3}][#1]{#2}%
- }
+    % #1 is the alignment, default l
+    % #2 is the text to be printed
+    % #3 is the text for setting the width
+    \makebox[\widthof{#3}][#1]{#2}%
+}
