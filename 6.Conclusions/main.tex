@@ -57,6 +57,34 @@ process~\citep{raganato2020FixedEncoderSelfAttentiona}.
 
 \section{Open Problems and Limitations}
 
+In the pursuit of diligent research, we briefly discuss some of the
+open problems and limitations of the work presented in this thesis.
+We seek to not diminish any of these limitations, but rather present
+them fairly. We will also discuss the ethical ramifications of our
+work in a later section (\secref{sec:impact}).
+
+As previously stated, sparsity is a prominent theme in this work.
+That sparsity is achieved through probability normalization functions
+such as sparsemax, $\alpha$-\entmaxtext, and SparseMAP. While
+sparsity can lead to increased efficiency, we do not fully take
+advantage of this in this work, particularly in the publicly released
+code. For example, for $\alpha$-\entmaxtext, further speed-ups are
+possible by leveraging more parallelism in the bisection algorithm
+for computing it.
+
+In \chapref{chap:ape}, we have used a large pre-trained model to
+circumvent the need to train MT models to produce a large synthetic
+dataset and then train an APE model on it. Although we believe
+this to be a way to spare resources, we do not wish to underplay
+the resources used to train the pre-trained model itself.
+
+While we have shown promising results in \chapref{chap:sparsemarg},
+we are aware that the experiments we conducted were performed on toy
+datasets. While this may overemphasize the success of the work, we
+have seen in \secref{sec:subsequent} that our method has already been
+successfully applied to applications that have real-world datasets.
+We hope to continue seeing this trend in the future.
+
 \section{Future Directions}
 
 \begin{itemize}
@@ -65,7 +93,7 @@ process~\citep{raganato2020FixedEncoderSelfAttentiona}.
     \item structured latent variables applications in NLP: enumeration can make it easier to learn
 \end{itemize}
 
-\section{Broader Impact}
+\section{Broader Impact}\label{sec:impact}
 
 We discuss here the broader impact of our work. Discussion in this
 section is predominantly speculative, as the methods described in
