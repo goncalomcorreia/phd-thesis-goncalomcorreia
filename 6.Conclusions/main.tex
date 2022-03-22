@@ -87,11 +87,42 @@ We hope to continue seeing this trend in the future.
 
 \section{Future Directions}
 
-\begin{itemize}
-    \item semi-supervision of latent discrete variables and few-shot learning
-    \item non-differentiability of the latent discrete variables learning signal
-    \item structured latent variables applications in NLP: enumeration can make it easier to learn
-\end{itemize}
+We further list in this section exciting directions for future work
+that draw inspiration from the methods proposed in this thesis.
+We encourage researchers in the field to explore these directions
+and extend the ideas presented.
+
+\paragraph{Semi-supervised Learning.} Some forms of weak
+supervision were explored in this work. In particular, we have shown
+promising results in \chapref{chap:sparsemarg} by introducing a new
+method to train discrete latent variable models, which can be used to
+train semi-supervised models (\secref{sec:gen}). We believe that our
+method can be used in real-world applications where supervision is
+limited and that it will lead to better results than standard
+methods. For example, in NLP, there are many applications where a
+relaxation of the discrete space is not possible~\citep{Lee2019} and
+where we could only rely on high variance methods if we wished to
+train a latent variable model. We can now circumvent this limitation
+by using our training method.
+
+\paragraph{Non-differentiability of the LVM learning signal.} We note
+how, in \eqnref{eq:fit}, the training of the parameters that learn
+$\pi(z|x;\theta)$ is decoupled from the training of the parameters of
+the generative model of the downstream loss: when marginalizing the
+latent variables, the downstream loss only scales the gradients
+computed from $\pi(z|x;\theta)$. This means that our method can still
+be applied when the downstream loss component does not have any
+trainable parameters. Furthermore, that component in \eqnref{eq:fit}
+can be replaced by any function, even non-differentiable, akin to a
+reward signal. One example of a real-world application is prompting
+of large pre-trained language models. In this line of work, the
+pre-trained model is assumed to already have the knowledge required
+to handle the task at hand stored in its parameters and only a prompt
+is required to generate the desired output. We suggest to frame this
+problem as a latent variable model and interpret the natural language
+prompt as a discrete latent variable. Using the property we just
+described, the downstream task can be optimized via any
+differentiable or non-differentiable reward signal.
 
 \section{Broader Impact}\label{sec:impact}
 
