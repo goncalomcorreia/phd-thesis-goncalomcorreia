@@ -1,20 +1,60 @@
 \section{Contributions and Thesis Statement}
 \label{sec:int_contributions}
 
-In this thesis, we explore the possibilities
-of interpretable structured latent variables
-in NMT. We have the following goals:
+We will now summarize the contributions of this thesis, which will
+address the open questions left to answer in the previous section.
 
 \begin{itemize}
-      \item Designing a NMT model capable of creating a
-            draft translation of the final target sentence,
-            that will be used as a template for the final translation.
-      \item Disentangle the latent representation of the
-            draft from the latent representation of the semantic meaning
-            shared between the source and target sentence.
-      \item Using monolingual data of the source and/or target language
-            for semi-supervision of the model.
-      \item Designing an efficient method for document-level or in-domain
-            NMT that uses a latent summary to condense the overall document or domain
-            into only the relevant sections for the current sentence.
+
+      \item \textbf{We use weak supervision by leveraging transfer learning
+                  for data efficient sequence-to-sequence models.}
+            We show how to leverage a pre-trained large Transformer
+            encoder to perform a sequence-to-sequence task on a very
+            small dataset. We explore different avenues of parameter
+            sharing and initialization in order to make this
+            possible.
+
+
+      \item \textbf{We propose {\boldmath $\alpha$}-\entmaxtext{} with
+                  learnable {\boldmath $\alpha$}, a new sparse probability
+                  normalization function that learns its own sparsity.}
+            We derive the gradient of $\alpha$ in
+            $\alpha$-\entmaxtext{}~\citep{entmax}. By letting a
+            Transformer learn through this gradient the $\alpha$ of
+            each attention head, the attention heads can dynamically
+            change their own sparsity during training. This way, each
+            attention head can accommodate its sparsity to the role
+            it will play in the overall model.
+
+      \item \textbf{We conduct an extensive analysis on the increased
+                  transparency of Transformer models that use {\boldmath
+                              $\alpha$}-\entmaxtext{} as its normalization function in the
+                  attention mechanism.}
+            Besides studying the distribution of sparsity
+            throughout all attention heads in the Transformer, we also identify
+            examples of sharper attention head behavior than what was found in
+            previous work, along with the disentanglement of new found behaviors
+            thanks to our proposed sparsity.
+
+      \item \textbf{We propose a new method to train discrete and
+                  structured latent variable models, based on the
+                  efficiency of marginalizing expectations using
+                  sparsity.}
+            Thanks to this method, we can train these families of
+            latent variable models without recurring to any Monte Carlo
+            estimation or relaxations of the discreteness into the
+            continuous space. In particular, in the unstructured
+            case, our method relies on the sparsemax activation
+            function. In the structured case, we propose to either
+            use SparseMAP~\citep{niculae2018sparsemap} or the
+            novel top-$k$ sparsemax.
+
+      \item \textbf{We provide open-source code for each of the
+                  methods we have proposed.}
+            The respective repositories can be found in each
+            of the chapters.
+
+
 \end{itemize}
+
+
