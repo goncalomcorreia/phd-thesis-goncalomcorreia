@@ -2,7 +2,7 @@
 \label{chap:ape}
 
 \cleardoublepage
-\doublespacing
+\setstretch{1.5}
 
 In the following chapter, we will focus on this thesis' goal of
 paving the way for more \textbf{data efficient} models. In order to
@@ -39,13 +39,13 @@ from scratch. Interfaces where human translators can post-edit and
 improve the quality of MT
 sentences~\citep{Alabau2014,Federico2014,Denkowski2015,Hokamp2018}
 are a common data source for APE models, since they provide {\bf
-    triplets} of {\it source} sentences ({\tt src}), {\it machine
-    translation} outputs ({\tt mt}), and {\it human post-edits} ({\tt
-    pe}).
+        triplets} of {\it source} sentences ({\tt src}), {\it machine
+        translation} outputs ({\tt mt}), and {\it human post-edits} ({\tt
+        pe}).
 
 Unfortunately, human post-edits are typically scarce. Existing APE
 systems circumvent this by generating {\bf artificial
-    triplets}~\citep{junczys2016log, negri2018escape}. However, this
+        triplets}~\citep{junczys2016log, negri2018escape}. However, this
 requires access to a high quality MT system, similar to (or better
 than) the one used in the black-box MT itself. This spoils the
 motivation of APE as an alternative to large-scale MT training in the
@@ -55,14 +55,14 @@ the resulting large dataset, may well exceed the time to train a MT
 system from scratch.
 
 \begin{sloppypar}
-  When the current work was published, the state of the art in APE used
-  a Transformer~\citep{vaswani2017attention} variant with {\bf two encoders},
-  for the {\tt src} and {\tt mt}, and {\bf one decoder}, for {\tt pe}.
-  This system was named the Dual-Source
-  Transformer~\citep{junczys2018ms, tebbifakhr2018multi}. When
-  concatenating human post-edited data and artificial triplets, these
-  systems greatly improved the MT baseline. However, little successes
-  are known using only the true data created by the human post-editors.
+    When the current work was published, the state of the art in APE used
+    a Transformer~\citep{vaswani2017attention} variant with {\bf two encoders},
+    for the {\tt src} and {\tt mt}, and {\bf one decoder}, for {\tt pe}.
+    This system was named the Dual-Source
+    Transformer~\citep{junczys2018ms, tebbifakhr2018multi}. When
+    concatenating human post-edited data and artificial triplets, these
+    systems greatly improved the MT baseline. However, little successes
+    are known using only the true data created by the human post-editors.
 \end{sloppypar}
 
 Meanwhile, there had been many successes of {\bf transfer learning}
@@ -75,8 +75,8 @@ word-level tasks. However, a language generation task such as APE
 presents additional challenges.
 
 In this chapter, we build upon the successes above and show that {\bf
-    transfer learning is an effective and time-efficient strategy for
-    APE}, using a pre-trained BERT model. This is an appealing strategy
+        transfer learning is an effective and time-efficient strategy for
+        APE}, using a pre-trained BERT model. This is an appealing strategy
 in practice: while large language models like BERT are expensive to
 train, this step is only done once and covers many languages,
 reducing engineering efforts substantially. In contrast, artificial
@@ -94,16 +94,16 @@ a new state of the art at the time.
 
 Our main contributions are the following:
 \begin{itemize}
-  \item We combine the ability of BERT to
-        handle {\bf sentence pair inputs} together with its pre-trained
-        multilingual model, to use both the {\tt src} and {\tt mt} in a
-          {\bf cross-lingual encoder}, that takes a multilingual
-        sentence pair as input.
-  \item We show how pre-trained BERT models can also be used and
-        fine-tuned as the {\bf decoder} in a language generation task.
-  \item We make a thorough empirical evaluation of different ways of
-        coupling BERT models in an APE system, comparing different options
-        of parameter sharing, initialization, and fine-tuning.
+    \item We combine the ability of BERT to
+          handle {\bf sentence pair inputs} together with its pre-trained
+          multilingual model, to use both the {\tt src} and {\tt mt} in a
+              {\bf cross-lingual encoder}, that takes a multilingual
+          sentence pair as input.
+    \item We show how pre-trained BERT models can also be used and
+          fine-tuned as the {\bf decoder} in a language generation task.
+    \item We make a thorough empirical evaluation of different ways of
+          coupling BERT models in an APE system, comparing different options
+          of parameter sharing, initialization, and fine-tuning.
 \end{itemize}
 
 \section{Previous Work}
@@ -128,7 +128,7 @@ BERT.
 
 Our work makes use of the recent advances in transfer learning for
 NLP~\citep{peters2018deep, howard2018universal, radford2018improving,
-  devlin2018bert}. Pre-training these large language models has largely
+    devlin2018bert}. Pre-training these large language models has largely
 improved the state of the art of the GLUE
 benchmark~\citep{wang2018glue}. Particularly, our work uses the BERT
 pre-trained model and makes use of the representations obtained not
@@ -165,7 +165,7 @@ language inference, which involve two sentences. In the case of APE,
 there is also a pair of input sentences ({\tt src}, {\tt mt}) which
 are in different languages. Since one of the released BERT models was
 jointly pre-trained on 104 languages,\footnote{
-  \url{https://github.com/google-research/bert/blob/master/multilingual.md}}
+    \url{https://github.com/google-research/bert/blob/master/multilingual.md}}
 we use this multilingual BERT pre-trained model to encode the
 bilingual input pair of APE.
 
@@ -177,11 +177,11 @@ embeddings when the {\tt mt} starts, since it is not a continuation
 of {\tt src}.
 
 \begin{figure}[ht!]
-  \centering
-  \includegraphics[width=0.9\textwidth]{Figures/bert-ape-diagram.pdf}
-  \caption{\textbf{Dual-Source BERT.}
-    Dashed lines show shared parameters in our best configuration.}
-  \label{fig:transformer_diagram}
+    \centering
+    \includegraphics[width=0.9\textwidth]{Figures/bert-ape-diagram.pdf}
+    \caption{\textbf{Dual-Source BERT.}
+        Dashed lines show shared parameters in our best configuration.}
+    \label{fig:transformer_diagram}
 \end{figure}
 
 \subsection{BERT as a Decoder}\label{sec:ape_bert_decoder}
@@ -207,62 +207,62 @@ We experiment with the following strategies for coupling BERT
 pre-trained models in the decoder:
 
 \begin{itemize}
-  \item \textbf{Transformer.} A Transformer decoder as described in
-        \citet{vaswani2017attention} without any shared parameters,
-        with the BERT\textsubscript{BASE} dimensions and randomly
-        initialized weights.
-  \item \textbf{Pre-trained BERT.} This initializes the decoder with
-        the pre-trained BERT model. The only component initialized randomly
-        is the context attention (CA) layer, which is absent in BERT. Unlike
-        in the original BERT model---which only encodes sentences---a mask in
-        the self-attention is required to prevent the model from looking to
-        subsequent tokens in the target sentence.
-  \item \textbf{ BERT initialized context attention.} Instead of a
-        random initialization, we initialize the context attention layers
-        with the weights of the corresponding BERT self-attention layers.
-  \item \textbf{Shared self-attention}. Instead of just having the same
-        initialization, the self-attentions (SA) in the encoder and decoder
-        are tied during training.
-  \item \textbf{Context attention shared with self-attention.} We take
-        a step further and \emph{tie} the context attention and self
-        attention weights---making all the attention transformation matrices
-        (self and context) in the encoder and decoder tied.
-  \item \textbf{Shared feed-forward.} We tie the feed-forward weights
-        (FF) between the encoder and decoder.
+    \item \textbf{Transformer.} A Transformer decoder as described in
+          \citet{vaswani2017attention} without any shared parameters,
+          with the BERT\textsubscript{BASE} dimensions and randomly
+          initialized weights.
+    \item \textbf{Pre-trained BERT.} This initializes the decoder with
+          the pre-trained BERT model. The only component initialized randomly
+          is the context attention (CA) layer, which is absent in BERT. Unlike
+          in the original BERT model---which only encodes sentences---a mask in
+          the self-attention is required to prevent the model from looking to
+          subsequent tokens in the target sentence.
+    \item \textbf{ BERT initialized context attention.} Instead of a
+          random initialization, we initialize the context attention layers
+          with the weights of the corresponding BERT self-attention layers.
+    \item \textbf{Shared self-attention}. Instead of just having the same
+          initialization, the self-attentions (SA) in the encoder and decoder
+          are tied during training.
+    \item \textbf{Context attention shared with self-attention.} We take
+          a step further and \emph{tie} the context attention and self
+          attention weights---making all the attention transformation matrices
+          (self and context) in the encoder and decoder tied.
+    \item \textbf{Shared feed-forward.} We tie the feed-forward weights
+          (FF) between the encoder and decoder.
 \end{itemize}
 
 \begin{table}[t]
-  \centering
-  \begin{tabular}{lcc}
-    \toprule
-                                                       & TER$\downarrow$ & BLEU$\uparrow$ \\
-    \midrule
-    Transformer decoder                                & 20.33           & 69.31          \\
-    Pre-trained BERT                                   & 20.83           & 69.11          \\
-    \hspace{1ex}\textcolor{gray}{\textit{with}}
-    CA $\leftarrow$ SA                                 & 18.91           & 71.81          \\
-    \textover[r]
-    {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
-    \textover[r]
-    {SA $\leftrightarrow$}
-    {CA $\leftarrow$} Encoder SA                       & \textbf{18.44}  & \textbf{72.25} \\
-    \textover[r]
-    {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
-    \textover[r]
-    {CA $\leftrightarrow$}{CA $\leftarrow$} SA         & 18.75           & 71.83          \\
-    \textover[r]
-    {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
-    \textover[r]
-    {FF $\leftrightarrow$}{CA $\leftarrow$} Encoder FF & 19.04           & 71.53          \\
-    \bottomrule
-  \end{tabular}
-  \caption{
-    Ablation study of decoder configurations, by gradually having more
-    shared parameters between the encoder and decoder (trained without
-    synthetic data). $\leftrightarrow$ denotes parameter tying and
-    $\leftarrow$ an initialization.
-  }
-  \label{tab:ablation_smt}
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+                                                           & TER$\downarrow$ & BLEU$\uparrow$ \\
+        \midrule
+        Transformer decoder                                & 20.33           & 69.31          \\
+        Pre-trained BERT                                   & 20.83           & 69.11          \\
+        \hspace{1ex}\textcolor{gray}{\textit{with}}
+        CA $\leftarrow$ SA                                 & 18.91           & 71.81          \\
+        \textover[r]
+        {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
+        \textover[r]
+        {SA $\leftrightarrow$}
+        {CA $\leftarrow$} Encoder SA                       & \textbf{18.44}  & \textbf{72.25} \\
+        \textover[r]
+        {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
+        \textover[r]
+        {CA $\leftrightarrow$}{CA $\leftarrow$} SA         & 18.75           & 71.83          \\
+        \textover[r]
+        {\hspace{1ex}\textcolor{gray}{\textit{and}}}{\hspace{1ex}\textit{with}}
+        \textover[r]
+        {FF $\leftrightarrow$}{CA $\leftarrow$} Encoder FF & 19.04           & 71.53          \\
+        \bottomrule
+    \end{tabular}
+    \caption{
+        Ablation study of decoder configurations, by gradually having more
+        shared parameters between the encoder and decoder (trained without
+        synthetic data). $\leftrightarrow$ denotes parameter tying and
+        $\leftarrow$ an initialization.
+    }
+    \label{tab:ablation_smt}
 \end{table}
 
 \section{Experiments} \label{sec:experiments}
@@ -285,7 +285,7 @@ of the final training data. We segment words with
 WordPiece~\citep{wu2016google}, with the same vocabulary used in the
 Multilingual BERT. At training time, we discard triplets with 200+
 tokens in the combination of {\tt src} and {\tt mt} or 100+ tokens in
-  {\tt pe}. For evaluation, we use TER~\citep{snover2006study} and
+    {\tt pe}. For evaluation, we use TER~\citep{snover2006study} and
 tokenized BLEU~\citep{papineni2002bleu}.
 
 \paragraph*{Training Details.}
@@ -305,74 +305,74 @@ best TER on the development set, and apply beam search with a beam
 size of 8 and average length penalty.
 
 \begin{landscape}
-  \begin{table*}[t]
-    \centering
-    \begin{tabular}{lccccccc}
-      \toprule
-                                                       &                & \multicolumn{2}{c}{test 2016} &
-      \multicolumn{2}{c}{test 2017}                    &
-      \multicolumn{2}{c}{test 2018}                                                                                                      \\
-      \cmidrule{3-4} \cmidrule{5-6}  \cmidrule{7-8}
-      Model                                            & Train Size     & TER$\downarrow$               & BLEU$\uparrow$ &
-      TER$\downarrow$                                  & BLEU$\uparrow$ & TER$\downarrow$               & BLEU$\uparrow$                 \\
-      \midrule
-      MT baseline (Uncorrected)                        &                &
-      24.76                                            & 62.11          & 24.48                         & 62.49          & 24.24 & 62.99 \\
-      \midrule
-      \citet{berard2017lig}                            &
-      \multicolumn{1}{c}{23K}                          &
-      22.89                                            & ---            & 23.08                         & 65.57          & ---   & ---   \\
-      \midrule
-      \citet{junczys2018ms}                            &
-      \multicolumn{1}{c}{\multirow{2}{*}{5M}}          &
-      18.92                                            & 70.86          & 19.49                         & 69.72          & ---   & ---   \\
-      \citet{junczys2018ms}$\times 4$                  &
-      \multicolumn{1}{c}{}                             &
-      18.86                                            & 71.04          & 19.03                         & 70.46          & ---   & ---   \\
-      \midrule
-      \citet{tebbifakhr2018multi}                      &
-      \multicolumn{1}{c}{\multirow{3}{*}{8M}}          &
-      ---                                              & ---            & ---                           & ---            & 18.62 & 71.04 \\
-      \citet{junczys2018ms}                            &
-      \multicolumn{1}{c}{}                             &
-      17.81                                            & 72.79          & 18.10                         & 71.72          & ---   & ---   \\
-      \citet{junczys2018ms}$\times 4$                  &
-      \multicolumn{1}{c}{}                             &
-      17.34                                            & 73.43          & 17.47                         & 72.84          & 18.00 & 72.52 \\
-      \midrule
-      \midrule
-      Dual-Source Transformer$^\dagger$                &
-      \multicolumn{1}{c}{\multirow{4}{*}{23K}}         &
-      27.80                                            & 60.76          & 27.73                         & 59.78          & 28.00 & 59.98 \\
-      BERT Enc.\,+\,Transformer Dec. (\emph{Ours})     &
-      \multicolumn{1}{c}{}                             &
-      20.23                                            & 68.98          & 21.02                         & 67.47          & 20.93 & 67.60 \\
-      BERT Enc.\,+\,BERT Dec. (\emph{Ours})            &
-      \multicolumn{1}{c}{}                             &
-      18.88                                            & 71.61          & 19.03                         & 70.66          & 19.34 & 70.41 \\
-      BERT Enc.\,+\,BERT Dec. $\times 4$ (\emph{Ours}) &
-      \multicolumn{1}{c}{}                             &
-      \textbf{18.05}                                   & \textbf{72.39} & \textbf{18.07}                &
-      \textbf{71.90}                                   & \textbf{18.91} & \textbf{70.94}                                                 \\
-      \midrule
-      BERT Enc.\,+\,BERT Dec. (\emph{Ours})            &
-      \multicolumn{1}{c}{\multirow{2}{*}{8M}}          &
-      16.91                                            & 74.29          & 17.26                         & 73.42          & 17.71 & 72.74 \\
-      BERT Enc.\,+\,BERT Dec. $\times 4$ (\emph{Ours}) &
-      \multicolumn{1}{c}{}                             &
-      \textbf{16.49}                                   & \textbf{74.98} & \textbf{16.83}                &
-      \textbf{73.94}                                   & \textbf{17.15} & \textbf{73.60}                                                 \\
-      \bottomrule
-    \end{tabular}
-    \caption{Results on the WMT 2016--18 APE shared task datasets. Our
-      single models trained on the 23K dataset took only 3h20m to converge
-      on a single Nvidia GeForce GTX 1080 GPU, while results for models
-      trained on 8M triplets take approximately 2 days on the same GPU.
-      Models marked with ``$\times 4$'' are ensembles of 4 models.
-      Dual-Source Transformer$^\dagger$ is a comparable re-implementation
-      of \citet{junczys2018ms}.}
-    \label{tab:results_smt}
-  \end{table*}
+    \begin{table*}[t]
+        \centering
+        \begin{tabular}{lccccccc}
+            \toprule
+                                                             &                & \multicolumn{2}{c}{test 2016} &
+            \multicolumn{2}{c}{test 2017}                    &
+            \multicolumn{2}{c}{test 2018}                                                                                                      \\
+            \cmidrule{3-4} \cmidrule{5-6}  \cmidrule{7-8}
+            Model                                            & Train Size     & TER$\downarrow$               & BLEU$\uparrow$ &
+            TER$\downarrow$                                  & BLEU$\uparrow$ & TER$\downarrow$               & BLEU$\uparrow$                 \\
+            \midrule
+            MT baseline (Uncorrected)                        &                &
+            24.76                                            & 62.11          & 24.48                         & 62.49          & 24.24 & 62.99 \\
+            \midrule
+            \citet{berard2017lig}                            &
+            \multicolumn{1}{c}{23K}                          &
+            22.89                                            & ---            & 23.08                         & 65.57          & ---   & ---   \\
+            \midrule
+            \citet{junczys2018ms}                            &
+            \multicolumn{1}{c}{\multirow{2}{*}{5M}}          &
+            18.92                                            & 70.86          & 19.49                         & 69.72          & ---   & ---   \\
+            \citet{junczys2018ms}$\times 4$                  &
+            \multicolumn{1}{c}{}                             &
+            18.86                                            & 71.04          & 19.03                         & 70.46          & ---   & ---   \\
+            \midrule
+            \citet{tebbifakhr2018multi}                      &
+            \multicolumn{1}{c}{\multirow{3}{*}{8M}}          &
+            ---                                              & ---            & ---                           & ---            & 18.62 & 71.04 \\
+            \citet{junczys2018ms}                            &
+            \multicolumn{1}{c}{}                             &
+            17.81                                            & 72.79          & 18.10                         & 71.72          & ---   & ---   \\
+            \citet{junczys2018ms}$\times 4$                  &
+            \multicolumn{1}{c}{}                             &
+            17.34                                            & 73.43          & 17.47                         & 72.84          & 18.00 & 72.52 \\
+            \midrule
+            \midrule
+            Dual-Source Transformer$^\dagger$                &
+            \multicolumn{1}{c}{\multirow{4}{*}{23K}}         &
+            27.80                                            & 60.76          & 27.73                         & 59.78          & 28.00 & 59.98 \\
+            BERT Enc.\,+\,Transformer Dec. (\emph{Ours})     &
+            \multicolumn{1}{c}{}                             &
+            20.23                                            & 68.98          & 21.02                         & 67.47          & 20.93 & 67.60 \\
+            BERT Enc.\,+\,BERT Dec. (\emph{Ours})            &
+            \multicolumn{1}{c}{}                             &
+            18.88                                            & 71.61          & 19.03                         & 70.66          & 19.34 & 70.41 \\
+            BERT Enc.\,+\,BERT Dec. $\times 4$ (\emph{Ours}) &
+            \multicolumn{1}{c}{}                             &
+            \textbf{18.05}                                   & \textbf{72.39} & \textbf{18.07}                &
+            \textbf{71.90}                                   & \textbf{18.91} & \textbf{70.94}                                                 \\
+            \midrule
+            BERT Enc.\,+\,BERT Dec. (\emph{Ours})            &
+            \multicolumn{1}{c}{\multirow{2}{*}{8M}}          &
+            16.91                                            & 74.29          & 17.26                         & 73.42          & 17.71 & 72.74 \\
+            BERT Enc.\,+\,BERT Dec. $\times 4$ (\emph{Ours}) &
+            \multicolumn{1}{c}{}                             &
+            \textbf{16.49}                                   & \textbf{74.98} & \textbf{16.83}                &
+            \textbf{73.94}                                   & \textbf{17.15} & \textbf{73.60}                                                 \\
+            \bottomrule
+        \end{tabular}
+        \caption{Results on the WMT 2016--18 APE shared task datasets. Our
+            single models trained on the 23K dataset took only 3h20m to converge
+            on a single Nvidia GeForce GTX 1080 GPU, while results for models
+            trained on 8M triplets take approximately 2 days on the same GPU.
+            Models marked with ``$\times 4$'' are ensembles of 4 models.
+            Dual-Source Transformer$^\dagger$ is a comparable re-implementation
+            of \citet{junczys2018ms}.}
+        \label{tab:results_smt}
+    \end{table*}
 \end{landscape}
 
 \paragraph*{Initialization and Parameter Sharing.}
@@ -401,7 +401,7 @@ Finally, \tableref{tab:results_smt} shows our results on the WMT
 2016--18 test sets. The model named \emph{BERT Enc.\,+\,BERT Dec.}
 corresponds to the best setting found in
 \tableref{tab:ablation_smt}, while \emph{BERT Enc.\,+\,Transformer
-  Dec.} only uses BERT in the encoder. We show results for single
+    Dec.} only uses BERT in the encoder. We show results for single
 models and ensembles of 4 independent models.
 
 Using the small shared task dataset only (23K triplets), our single
@@ -427,7 +427,7 @@ After our publication~\citep{Correia2019}, many works have since been
 published exploring the use of large pre-trained language models for
 generation purposes (e.g.
 \citep{zhang2019PretrainingBasedNaturalLanguage,
-  chen2020DistillingKnowledgeLearned}), and our work shown in this
+    chen2020DistillingKnowledgeLearned}), and our work shown in this
 chapter was one of the first to do so. % maybe too on the nose?
 
 Most closely related to our work, and co-authored by the writer of
