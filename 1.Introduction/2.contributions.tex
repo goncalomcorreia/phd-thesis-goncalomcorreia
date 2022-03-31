@@ -30,7 +30,7 @@ address the open questions left to answer in the previous section.
                   transparency of Transformer models that use {\boldmath
                               $\alpha$}-\entmaxtext{} as its normalization function in the
                   attention mechanism.}
-            Besides studying the distribution of sparsity
+            Besides studying the distribution of sparsity and respective $\alpha$ values
             throughout all attention heads in the Transformer, we also identify
             examples of sharper attention head behavior than what was found in
             previous work, along with the disentanglement of new found behaviors
@@ -57,4 +57,17 @@ address the open questions left to answer in the previous section.
 
 \end{itemize}
 
-
+\paragraph{Thesis Statement.} The primary claim of this thesis is
+that, unlike what is insisted in numerous previous work, neural
+models have the capability of being data-efficient, transparent, and
+compact: one only needs to look through a different lens that is
+capable of leveraging weak supervision, sparsity, and latent
+representations. A simple application of neural models to the current
+problem at hand is not sufficient to have these properties: for
+data-efficiency, we find that we need to allow parameter sharing,
+careful initialization, and powerful transfer learning capabilities
+in order to succeed at a low-resource generation task; for
+transparency, we can allow the model to have sparsity and learn it
+according to its needs at training time; and for compactness, we can
+leverage discrete latent variable models in a better way than what
+was previously possible by using an exact but efficient gradient.
