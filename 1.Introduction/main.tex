@@ -14,10 +14,10 @@ layers. Along with huge amounts of datapoints, this allows for these
 models to learn good vector representations that consequently permit
 these models to excel in their respective tasks. However, these
 models are often highly overparameterized and their interpretation is
-difficult. Moreover, they require very expensive computing power,
-which causes understandable environmental
-concerns~\citep{Strubell2019}. In natural language processing (NLP),
-one such model is the Transformer
+difficult due to an underlying opaqueness of the model. Moreover,
+they require very expensive computing power, which causes
+understandable environmental concerns~\citep{Strubell2019}. In
+natural language processing (NLP), one such model is the Transformer
 architecture~\citep{vaswani2017attention} which has quickly risen to
 prominence through its performance, leading to improvements in the
 state of the art of neural machine
@@ -30,52 +30,68 @@ On the other hand, neural latent variable models are powerful and
 expressive tools for finding patterns in high-dimensional data, such
 as images or text~\citep{Kim2018,Kingma+2014:VAE,RezendeEtAl14VAE}.
 These models have powerful structural biases that guide the model's
-training, leading to models that are more transparent. Of particular
+training, leading to models that are more compact. Of particular
 interest are \emph{discrete} latent variables, which can recover
 categorical and structured encodings of hidden aspects of the data,
 leading to compact representations~\citep{KingmaEtAl2014SSVAE} and,
 in some cases, superior explanatory power~\citep{titov2008joint,
-      Bastings2019}.
+      Bastings2019}. However, more often than not, training models with
+discrete latent nodes is a difficult task, due to the need to rely on
+high-variance methods~\citep{Williams1992} or relaxations into the
+continuous space~\citep{GumbelSoftmax,Concrete} to train them.
 
-Latent variables in machine translation were widely used before the
-success of deep learning models and consequently NMT. Typically, the
-latent variables in these models were of structured nature, such as
-representing alignments of phrases in the source and target
-sentence~\citep{brown-etal-1993-mathematics}. These structured
-models ended up being abandoned in NMT in favour of a direct
-decomposition of the model distribution via chain rule without making
-any Markov assumptions, which was enabled by advances in
-architectures and optimization procedures.
+In this thesis, we will address the issues mentioned above of overuse
+of datapoints, opaqueness, and the difficulties in training compact
+versions of neural models. To obtain the solutions presented, we will
+rely on forms of \textbf{weak supervision} and, most importantly, on
+\textbf{sparsity}.
 
-Recently, variational
-methods have paved the way for latent variables to be used in NMT,
-although usually using a continuous latent variable to represent the
-semantic space of the
-translation~\citep{zhang2016VariationalNeuralMachine}.
-We propose to incorporate structured latent variables into NMT. We
-focus on the use of these latent variables as a way to incrementally
-guide the model into decomposing translation as a sequence of
-subtasks, \eg first encountering a suitable draft translation from
-memory and then editing that draft to create the final target
-translated sentence, rather than translating from source to target in
-one step. Thanks to a probabilistic framework, our methods allow
-monolingual data from the source and/or target language, such that it
-can be used as semi-supervision of the final NMT model. Our contributions
-allow for future NMT models to have:
+When this project began in 2018, the use of large pre-trained
+language models was very much in an infant state.
+ELMo~\citep{peters2018deep} had just been released, closely followed
+by BERT~\citep{devlin2018bert}, and practicioners were just starting
+to use these models in their research to improve the state-of-the-art
+of tasks in NLP. The Transformer
+arquitecture~\citep{vaswani2017attention} was also a promising model
+that had just started to pick up a lot of steam and replacing the
+recurrent neural network (RNN) sequence-to-sequence models that were
+prominent in the NMT literature at the
+time~\citep{bahdanau2014neural}. During the course of this project,
+there has been remarkable progress in neural network and NLP
+research; for example, pre-trained language model literature has
+evolved from proposing simply encoders that provide rich contextual
+representations, to also providing decoders that deliver extremely
+realistic text~\citep[GPT-3;][]{brown2020language} and
+encoder-decoder models that allow for any task to be posed as a
+natural language prompt~\citep{raffel2020Exploringlimitstransfer}.
 
-\begin{itemize}
-      \item {\bf Inductive bias}: incorporated into the computational
-            graph through the structured latent variables;
-      \item {\bf Data efficiency}: thanks to the decomposition of a
-            hard task into easier sub-tasks;
-      \item {\bf Interpretability}: due to the explanatory power of
-            latent variables with a discrete structure.
-\end{itemize}
+The approaches found in the present thesis are, in part, a product of
+the aforementioned research efforts. As we will see in the following
+chapters, we introduced a way to use large pre-trained encoders in
+generation tasks before large pre-trained decoder and encoder-decoder
+models were developed, we tackled the opaqueness of the, at the time,
+recently proposed and barely understood Transformer arquitecture, and
+pioneered a new paradigm in discrete latent variable model training.
 
-\input{1.Introduction/1.motivation.tex}
-\input{1.Introduction/2.contributions.tex}
-\input{1.Introduction/3.publications.tex}
-\input{1.Introduction/4.roadmap.tex}
+We also note that this thesis has strong roots on a line of
+literature that has been proposing new methods to induce sparsity
+within the computational graphs of neural networks. Before this
+thesis, the foundations had been laid by the study of sparse
+normalization functions~\citep{sparsemax,fusedmax,entmax} and their
+applications~\citep{maruf2019selective,malaviya2018sparse}, and also
+their uses in structured
+prediction~\citep{niculae2018sparsemap,sparsemapcg}. During the
+course of this project, we have extended this line of work by
+tackling some of the abovementioned issues with our own
+sparsity-induced solutions. We have also created new foundations for
+others to extend upon our work and create their own sparse approaches
+to new and challenging
+problems~\citep{treviso2021PredictingAttentionSparsity,
+      farinhas2022SparseCommunicationMixed}.
+
+\input{1.Introduction/contributions.tex}
+\input{1.Introduction/publications.tex}
+\input{1.Introduction/roadmap.tex}
 
 \cleardoublepage
 \singlespacing
