@@ -256,7 +256,7 @@ here, we refer the reader to the works referenced above. For all
 Gumbel baselines, we relax the sample into the continuous space but
 assume a discrete distribution when computing the entropy of $\pi(z
     \mid x, \theta)$, as suggested as one implementation option in
-\citet{Concrete}. Our code is publicly available~\footnote{
+\citet{Concrete}. Our code is publicly available\footnote{
     \href{https://github.com/deep-spin/sparse-marginalization-lvm}{\tt
         https://github.com/deep-spin/sparse-marginalization-lvm}} and was
 largely inspired by the structure and implementations found in
@@ -396,7 +396,7 @@ deterministic gradients, we compare to stochastic gradients:
     \item Gumbel-Softmax, which relaxes the random variable to the simplex;
     \item ST Gumbel-Softmax, which discretizes the relaxation in
           the forward pass, but ignores the discretization function in the
-          backward pass.\footnote{\label{note:GS} For Gumbel-Softmax (with and
+          backward pass.\footnote{For Gumbel-Softmax (with and
               without ST), we follow \citet{GumbelSoftmax} and substitute
               $\KL(\pi(z|x, \theta_\pi) \| p(z))$ in the ELBO by the $\KL$
               divergence of $\Cat(\softmax(\s))$ from a discrete uniform prior.
