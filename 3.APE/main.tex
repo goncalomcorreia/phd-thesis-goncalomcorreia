@@ -9,15 +9,18 @@ paving the way for more \textbf{data efficient} models. In order to
 achieve this, we use weak supervion in the form of transfer learning.
 
 When the article shown in this chapter was published, the use of
-pre-trained transformers % TODO: refer this section in background
-in NLP in generation tasks had not been explored as much as it has
-been in recent years. % TODO: may cite T5 as an example of seq2seq
-For instance, the work that proposed
-BERT~\citep{devlin2018bert} had only been recently released and NLP
-researchers were quickly interested in using it in a variety of
-tasks. However, as BERT and other similar models were transformer
-encoders, it was not straightforward to consider them to be used
-as a sequence-to-sequence model. % TODO: refer this section in background
+pre-trained transformers % TODO: refer this section in background in
+NLP in generation tasks had not been explored as much as it has been
+in recent years. % TODO: may cite T5 as an example of seq2seq For
+instance, the work that proposed BERT~\citep{devlin2018bert} had only
+been recently released and NLP researchers were quickly interested in
+using it in a variety of tasks. Currently, other variants of
+pre-trained transformers have been released, such as
+GPT-3~\citep{brown2020language} and
+T5~\citep{raffel2020Exploringlimitstransfer}, which are able to
+generate natural language. However, as BERT was a transformer
+encoder, it was not straightforward to consider it to be used as a
+generation model.
 
 In this work, we presented a simple and effective
 solution to this problem, using the scarcity of Automatic Post-Editing
@@ -101,7 +104,7 @@ Our main contributions are the following:
           sentence pair as input.
     \item We show how pre-trained BERT models can also be used and
           fine-tuned as the {\bf decoder} in a language generation task.
-    \item We make a thorough empirical evaluation of different ways of
+    \item We make a thorough empirical evaluation and ablation of different ways of
           coupling BERT models in an APE system, comparing different options
           of parameter sharing, initialization, and fine-tuning.
 \end{itemize}
@@ -126,14 +129,14 @@ sentence. Instead of relying on edit operations, our approach
 mitigates the small amount of data with transfer learning through
 BERT.
 
-Our work makes use of the recent advances in transfer learning for
+Our work makes use of the key advances in transfer learning for
 NLP~\citep{peters2018deep, howard2018universal, radford2018improving,
     devlin2018bert}. Pre-training these large language models has largely
 improved the state of the art of the GLUE
-benchmark~\citep{wang2018glue}. Particularly, our work uses the BERT
-pre-trained model and makes use of the representations obtained not
-only in the encoder but also on the decoder in a language generation
-task.
+benchmark~\citep{wang2018glue}. Particularly, our work uses
+BERT~\citep{devlin2018bert} and makes use of the representations
+obtained not only in the encoder but also on the decoder in a
+generation task.
 
 More closely related to our work, \citet{lample2019xlm}
 pre-trained a BERT-like language model using parallel data, which
@@ -179,8 +182,7 @@ of {\tt src}.
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=0.9\textwidth]{Figures/bert-ape-diagram.pdf}
-    \caption{\textbf{Dual-Source BERT.}
-        Dashed lines show shared parameters in our best configuration.}
+    \caption{Dual-Source BERT. Dashed lines show shared parameters in our best configuration.}
     \label{fig:transformer_diagram}
 \end{figure}
 
@@ -231,6 +233,45 @@ pre-trained models in the decoder:
           (FF) between the encoder and decoder.
 \end{itemize}
 
+\section{Experiments} \label{sec:experiments}
+
+We now describe our experimental results. Our models were implemented
+on a fork of OpenNMT-py~\citep{klein2017opennmt} using HuggingFace's
+transformers
+library.\footnote{\url{https://github.com/huggingface/transformers}}
+Our model's implementation is publicly
+available.\footnote{\url{https://github.com/deep-spin/OpenNMT-APE}}
+
+\paragraph*{Datasets.}
+We use the data from the WMT 2018 APE shared
+task~\citep{Chatterjee2018} (English-German SMT), which consists of
+23,000 triplets for training, 1,000 for validation, and 2,000 for
+testing. In some experiments, we also use the eSCAPE
+corpus~\citep{negri2018escape}, which comprises about 8M sentences;
+when doing so, we oversample 35x the shared task data to cover $10\%$
+of the final training data. We segment words with
+WordPiece~\citep{wu2016google}, as used in the
+Multilingual BERT. At training time, we discard triplets with 200+
+tokens in the combination of {\tt src} and {\tt mt} or 100+ tokens in
+    {\tt pe}. For evaluation, we use TER~\citep{snover2006study} and
+tokenized BLEU~\citep{papineni2002bleu}.
+
+\paragraph*{Training Details.}
+We use Adam~\citep{kingma2014adam} with a triangular learning rate
+schedule that increases linearly during the first 5,000 steps until
+$5\times 10^{-5}$ and has a linear decay afterwards. When using BERT
+components, we use a $\ell_2$ weight decay of $0.01$. We apply
+dropout~\citep{srivastava2014dropout} with $p_{\text{drop}}=0.1$ to all
+layers and use label smoothing with
+$\epsilon=0.1$~\citep{pereyra2017regularizing}. For the small data
+experiments, we use a batch size of 1024 tokens and save checkpoints
+every 1,000 steps; when using the eSCAPE corpus, we increase this to
+2048 tokens and 10,000 steps. The checkpoints are created with the
+exponential moving average strategy of \citet{junczys2018marian}
+with a decay of $10^{-4}$. At test time, we select the model with
+best TER on the development set, and apply beam search with a beam
+size of 8 and average length penalty.
+
 \begin{table}[t]
     \centering
     \begin{tabular}{lcc}
@@ -265,44 +306,26 @@ pre-trained models in the decoder:
     \label{tab:ablation_smt}
 \end{table}
 
-\section{Experiments} \label{sec:experiments}
-
-We now describe our experimental results. Our models were implemented
-on a fork of OpenNMT-py~\citep{klein2017opennmt} using HuggingFace's
-transformers
-library.\footnote{\url{https://github.com/huggingface/transformers}}
-Our model's implementation is publicly
-available.\footnote{\url{https://github.com/deep-spin/OpenNMT-APE}}
-
-\paragraph*{Datasets.}
-We use the data from the WMT 2018 APE shared
-task~\citep{Chatterjee2018} (English-German SMT), which consists of
-23,000 triplets for training, 1,000 for validation, and 2,000 for
-testing. In some of our experiments, we also use the eSCAPE
-corpus~\citep{negri2018escape}, which comprises about 8M sentences;
-when doing so, we oversample 35x the shared task data to cover $10\%$
-of the final training data. We segment words with
-WordPiece~\citep{wu2016google}, with the same vocabulary used in the
-Multilingual BERT. At training time, we discard triplets with 200+
-tokens in the combination of {\tt src} and {\tt mt} or 100+ tokens in
-    {\tt pe}. For evaluation, we use TER~\citep{snover2006study} and
-tokenized BLEU~\citep{papineni2002bleu}.
-
-\paragraph*{Training Details.}
-We use Adam~\citep{kingma2014adam} with a triangular learning rate
-schedule that increases linearly during the first 5,000 steps until
-$5\times 10^{-5}$ and has a linear decay afterwards. When using BERT
-components, we use a $\ell_2$ weight decay of $0.01$. We apply
-dropout~\citep{srivastava2014dropout} with $p_{\text{drop}}=0.1$ to all
-layers and use label smoothing with
-$\epsilon=0.1$~\citep{pereyra2017regularizing}. For the small data
-experiments, we use a batch size of 1024 tokens and save checkpoints
-every 1,000 steps; when using the eSCAPE corpus, we increase this to
-2048 tokens and 10,000 steps. The checkpoints are created with the
-exponential moving average strategy of \citet{junczys2018marian}
-with a decay of $10^{-4}$. At test time, we select the model with
-best TER on the development set, and apply beam search with a beam
-size of 8 and average length penalty.
+\paragraph*{Initialization and Parameter Sharing.}
+\tableref{tab:ablation_smt} compares the different decoder
+strategies described in \secref{sec:ape_bert_decoder} on the WMT 2018
+validation set. The best results were achieved by sharing the
+self-attention between encoder and decoder, and by initializing (but
+not sharing) the context attention with the same weights as the
+self-attention. Regarding the self-attention sharing, we hypothesize
+that its benefits are due to both encoder and decoder sharing a
+common language in their input (in the {\tt mt} and {\tt pe}
+sentence, respectively). Future work will investigate if this is
+still beneficial when the source and target languages are less
+similar. On the other hand, the initialization of the context
+attention with BERT's self-attention weights is essential to reap the
+benefits of BERT representations in the decoder---without it, using
+BERT decreases performance when compared to a regular transformer
+decoder. This might be due to the fact that context attention and
+self-attention share the same neural block architecture (multi-head
+attention) and thus the context attention benefits from the
+pre-trained BERT's better weight initialization. No benefit was
+observed from sharing the feed-forward weights.
 
 \begin{landscape}
     \begin{table*}[t]
@@ -374,27 +397,6 @@ size of 8 and average length penalty.
         \label{tab:results_smt}
     \end{table*}
 \end{landscape}
-
-\paragraph*{Initialization and Parameter Sharing.}
-\tableref{tab:ablation_smt} compares the different decoder
-strategies described in \secref{sec:ape_bert_decoder} on the WMT 2018
-validation set. The best results were achieved by sharing the
-self-attention between encoder and decoder, and by initializing (but
-not sharing) the context attention with the same weights as the
-self-attention. Regarding the self-attention sharing, we hypothesize
-that its benefits are due to both encoder and decoder sharing a
-common language in their input (in the {\tt mt} and {\tt pe}
-sentence, respectively). Future work will investigate if this is
-still beneficial when the source and target languages are less
-similar. On the other hand, the initialization of the context
-attention with BERT's self-attention weights is essential to reap the
-benefits of BERT representations in the decoder---without it, using
-BERT decreases performance when compared to a regular transformer
-decoder. This might be due to the fact that context attention and
-self-attention share the same neural block architecture (multi-head
-attention) and thus the context attention benefits from the
-pre-trained BERT's better weight initialization. No benefit was
-observed from sharing the feed-forward weights.
 
 \paragraph*{Final Results and Analysis.}
 Finally, \tableref{tab:results_smt} shows our results on the WMT
@@ -487,19 +489,18 @@ where, in the input, instead of \texttt{src} and a tentative
 \texttt{mt} output, they concatenate a question with meta-data that
 indicates how the system should generate a response in terms of
 emotion and intimacy. As in our APE case, they also achieve good
-performance from a low-resource dataset. Even more generally,
+performance on a low-resource dataset. Even more generally,
 \citet{huang2021TransferLearningSequence} identifies APE as a part of
 a family of generation tasks in which there are multiple inputs.
 Inspired by our approach, they also tackle the low-resource nature of
 these tasks by leveraging weak supervision through transfer learning.
-To mitigate catastrophic forgetting between pre-training and
-fine-tuning, they propose a \emph{gradual fine-tuning} approach, in
-which they do an additional fine-tuning stage to adapt the
-pre-trained language model to a single-source sequence-to-sequence
-task, before finally fine-tuning on the multiple-source
-sequence-to-sequence task. They achieve increased performance on
-low-resource datasets, not only for APE, but also for multi-source
-translation and document-level translation.
+To mitigate catastrophic forgetting, they propose a \emph{gradual
+    fine-tuning} approach, in which they do an additional fine-tuning
+stage to adapt the pre-trained language model to a single-source
+sequence-to-sequence task, before finally fine-tuning on the
+multiple-source sequence-to-sequence task. They achieve increased
+performance on low-resource datasets, not only for APE, but also for
+multi-source translation and document-level translation.
 
 \section{Final Remarks and Chapter Summary}
 
