@@ -15,11 +15,14 @@ semi-supervised, which can further increase the inductive bias and
 thus the compactness of the model.
 
 The exactness of the gradient of our approach is achieved through
-marginalization. It will turn out to be efficient thanks to
-parameterizing the distribution over categories or structures with
-\textbf{sparsity}. This sparsity will \textbf{adapt} over time,
-increasing as the training progresses due to the model being more
-confident on latent variable assignments.
+marginalization. As we shall see, it turns out to be efficient thanks
+to parameterizing the distribution over categories or structures with
+\textbf{sparsity}. Therefore, while in the previous chapter we have
+used sparsity for increased transparency, we will now use sparsity
+for increased efficiency. Albeit in a different way than in the
+previous chapter, this sparsity will too be \textbf{learned} over
+time, increasing as the training progresses due to the model being
+more confident on latent variable assignments.
 
 \textit{This chapter is based on \citet{correia2020procneurips}.}
 
@@ -36,9 +39,8 @@ estimates. The two most common strategies for MC gradient estimation
 are the score function
 estimator~\citep[SFE;][]{rubinstein1976monte,paisley2012variational},
 which suffers from high variance, or surrogate methods that rely on
-the continuous relaxation of the latent variable, like
-straight-through~\citep{STE} or
-Gumbel-Softmax~\citep{Concrete,GumbelSoftmax} which potentially
+the continuous relaxations, like straight-through~\citep{STE} or
+Gumbel-Softmax~\citep{Concrete,GumbelSoftmax}, which potentially
 reduce variance but introduce bias and modeling assumptions.
 
 In this work, we take a step back and ask: Can we avoid sampling
@@ -54,7 +56,7 @@ to the corresponding terms in the sum evaluating trivially to zero,
 allowing us to disregard potentially expensive computations.
 
 \paragraph*{Contributions.} We introduce a general strategy for
-learning deep models with discrete latent variables that hinges on
+learning discrete latent variable models that hinges on
 learning a sparse distribution over the possible assignments. In the
 unstructured categorical case our strategy relies on the sparsemax
 activation function, presented in~\secref{sec:categorical}, while in the
@@ -87,8 +89,8 @@ computational advantage to be gained by sparsity, and on the contrast
 between our novel training method and common sampling-based methods.
 
 \paragraph*{Reducing sampling noise.} The sampling procedure found in
-SFE is a great source of variance in models that build upon this
-method. To reduce this variance, many works have proposed
+SFE is a great source of variance in models that use it.
+To reduce this variance, many works have proposed
 baselines~\citep{Williams1992,MuProp,CV2013}. VIMCO~\citep{VIMCO} is
 a multi-sample estimator which exploits variance reduction via
 input-dependent baselines as well as a lower bound on marginal
@@ -145,7 +147,8 @@ $z$.
 
 We rethink this standard parameterization, proposing a
 \textbf{sparse} mapping from scores to the simplex. In particular, we
-substitute softmax by sparsemax~\citep{sparsemax}, described in
+substitute the softmax activation function by
+sparsemax~\citep{sparsemax}, described in
 \secref{sec:sparsity_background}.
 
 Our main insight is that with a sparse parameterization of $\pi$, we
@@ -187,15 +190,17 @@ sparsemax (\secref{sec:topksparse}) and \smap (\secref{sec:smap}).
 
 Recall that the sparsemax operator (\eqnref{eq:sparsemax}) is simply
 the Euclidean projection onto the $|\ZZ|$-dimensional probability
-simplex. While this projection has a propensity to be sparse, there
-is no upper bound on the number of non-zeros of the resulting
-distribution. When $\ZZ$ is large, one possibility is to add a
-cardinality constraint $\|\pv\|_0 \le k$ for some prescribed $k \in
-    \mathbb{N}$. The resulting problem becomes
+simplex. While there is a propensity for sparsity, there is no upper
+bound on the number of non-zeros of the resulting distribution. When
+$\ZZ$ is large, one possibility is to add a cardinality constraint
+$\|\pv\|_0 \le k$ for some prescribed $k \in \mathbb{N}$. The
+resulting problem becomes
+
 \begin{equation}\label{eq:topk_sparsemax}
     \sparsemaxk(\s) \coloneqq
     \argmin_{\pv \in \simplex^{|\ZZ|}, \, \|\pv\|_0 \le k} \| \pv - \s \|_2^2,
 \end{equation}
+
 which is known as a \emph{sparse projection onto the simplex} and has
 been studied in detail by \citet{kyrillidis2013sparse} and used to
 smooth structured prediction
@@ -209,9 +214,9 @@ $k$-dimensional sparsemax operator.
 
 Formally, $\sparsemaxk = \sparsemax(\topk(\s))$. Being a composition
 of operators, its Jacobian becomes a product of matrices and hence
-simple to compute (the Jacobian of $\topk$ is a diagonal matrix whose
-diagonal is a multi-hot vector indicating the top-$k$ elements of
-$\s$).
+simple to compute.\footnote{the Jacobian of $\topk$ is a diagonal matrix whose
+    diagonal is a multi-hot vector indicating the top-$k$ elements of
+    $\s$}
 
 To apply the top-$k$ sparsemax to a large or combinatorial set $\ZZ$,
 all we need is a primitive to compute the top-$k$ entries of
@@ -326,14 +331,18 @@ reparameterization, and the expectation over $z$ is computed in
 closed-form, that is, assessing all $K$ terms of the sum for a
 sampled $h$. Under the notation in \secref{sec:lvm},
 we let $\theta_\ell = \{\lambda, \phi\}$ and define
-%$\pi(z|x, \theta_\pi) \defeq q(z|x, \lambda)$ and
-\begin{equation}
-    \ell(x, z; \theta_\ell) \defeq
-    - \mathbb E_{q(h|z,  \lambda)}\left[ \log p(x \mid z, h, \phi) \right] -
-    \log \frac{p(z)}{\pi(z \mid x, \theta_\pi)} +
-    \KL\left[q(h \mid x, z, \lambda) \,\,\|\,\, p(h)\right],
-    \label{eq:elbonotation}
-\end{equation}
+$\pi(z|x, \theta_\pi) \defeq q(z|x, \lambda)$ and
+
+\begin{align}
+    \begin{split}
+        \ell(x, z; \theta_\ell) \defeq
+        & - \mathbb E_{q(h|z,  \lambda)}\left[ \log p(x \mid z, h, \phi) \right] \\
+        & - \log \frac{p(z)}{\pi(z \mid x, \theta_\pi)}                          \\
+        & + \KL\left[q(h \mid x, z, \lambda) \,\,\|\,\, p(h)\right],
+        \label{eq:elbonotation}
+    \end{split}
+\end{align}
+
 which turns \eqnref{eq:fit} into the (negative) evidence lower bound
 (ELBO). To update $q(h | x, z, \lambda)$, we use the
 reparameterization trick to obtain gradients through a sampled $h$.
@@ -391,9 +400,8 @@ deterministic gradients, we compare to stochastic gradients:
               similar, the difference being that the baseline in SFE+ does not
               require additional parameters nor it introduces additional
               objectives.}
-    \item Sum-and-sample, a Rao-Blackwellized
-          version of SFE~\citep{RB19};
-    \item Gumbel-Softmax, which relaxes the random variable to the simplex;
+    \item Sum-and-sample~\citep{RB19};
+    \item Gumbel-Softmax, which relaxes the random variable to the interior of the simplex;
     \item ST Gumbel-Softmax, which discretizes the relaxation in
           the forward pass, but ignores the discretization function in the
           backward pass.\footnote{For Gumbel-Softmax (with and
@@ -487,8 +495,7 @@ estimators as well as exact marginalization under a dense softmax
 parameterization of $p (z \mid v_y, \theta_\pi)$. Again, we have
 unbiased (SFE with moving average baseline, SFE+, and NVIL) and
 biased (Gumbel-Softmax and ST Gumbel-Softmax) estimators. For SFE we
-also experiment with a 0/1 loss, rather than negative log-likelihood
-(NLL).
+also experiment using a 0/1 loss.
 
 \begin{table}[t]
     \begin{center}
@@ -645,19 +652,18 @@ explicitly.
 
 \paragraph*{Data and architecture.} We use
 Fashion-MNIST~\citep{fmnist}, consisting of $28 \times 28$, 256-level
-gray-scale images of clothes. It contains 60,000 datapoints for
-training and 10,000 datapoints for testing. We perform model
-selection on the last 10,000 datapoints of the training split. The
-decoder uses an independent categorical distribution for each pixel,
-$p(x \mid z, \phi) = \prod_{i=1}^{28} \prod_{j=1}^{28} p(x_{ij} \mid
-    z, \phi)$. For top-$k$ sparsemax, we choose $k=10$. In this
-experiment, we have set the generative and inference network to
-consist of one hidden layer with 128 nodes, using ReLU activations.
-We have searched a learning rate doing grid search (0.0005, 0.001,
-0.002) and chosen the model based on the ELBO performance on the
-validation set. For the Gumbel models, we applied the same schedule
-and grid search to the temperature as described in \secref{sec:gen}.
-We used the Adam optimizer.
+gray-scale images of clothes. It contains 60K datapoints for training
+and 10K datapoints for testing. We perform model selection on the
+last 10K datapoints of the training split. The decoder uses an
+independent categorical distribution for each pixel, $p(x \mid z,
+    \phi) = \prod_{i=1}^{28} \prod_{j=1}^{28} p(x_{ij} \mid z, \phi)$.
+For top-$k$ sparsemax, we choose $k=10$. We have set the generative
+and inference network to consist of one hidden layer with 128 nodes,
+using ReLU activations. We have searched a learning rate doing grid
+search (0.0005, 0.001, 0.002) and chosen the model based on the ELBO
+performance on the validation set. For the Gumbel models, we applied
+the same schedule and grid search to the temperature as described in
+\secref{sec:gen}. We used the Adam optimizer.
 
 \begin{sloppypar}
     \paragraph*{Comparisons.} This time, exact marginalization under a
@@ -696,8 +702,8 @@ We used the Adam optimizer.
     \right)
 \end{equation}
 
-into one part that handles outcomes in the support $\bar \ZZ$ of the
-sparse posterior approximation and another part that handles the
+\noindent into one part that handles outcomes in the support $\bar \ZZ$ of the
+sparse posterior approximation and another that handles the
 outcomes in the complement set $\ZZ \setminus \bar \ZZ$. We compute
 the first part exactly and estimate the second part via rejection
 sampling from $p(z)$.
@@ -792,13 +798,12 @@ not too problematic.
 \section{Subsequent Work}
 \label{sec:subsequent}
 
-While \citet{correia2020procneurips} is the most recent contribution
-shown in the present thesis, it has already proved to be a relevant
+\citet{correia2020procneurips} proved to be a relevant
 contribution to the field of discrete and structured latent variable
 modelling. In particular, and most closely related to our work,
 \citet{chen2021EvidentialSoftmaxSparse} added another method to the
 family of efficient marginalization techniques that we started in
-\citet{correia2020procneurips}. They introduce a new normalizing
+\citet{correia2020procneurips}. They introduce a new
 function called \emph{ev-softmax} that has its origins in evidential
 theory and evidential sparsification~\citep{itkina2020evidential}.
 The properties of this function are more similar to \emph{softmax}
