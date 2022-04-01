@@ -6,9 +6,9 @@
 
 To wrap up the present thesis, we review the main contributions
 developed in this work, and discuss their impact, limitations, and
-interesting directions for future work.
+potential directions for future work.
 
-\section{Summary of Contributions and Discussion}
+\section{Summary of Contributions}
 
 Over the course of this thesis, we have developed models and
 techniques that aim to make neural models more compact, transparent,
@@ -22,7 +22,7 @@ Post-Editing.
 
 In \chapref{chap:adaptsparse}, we proposed a model with increased
 \textbf{transparency} by letting it \textbf{learn its own sparsity}.
-The chosen application was Neural Machine Translation, and we showed
+The chosen application was NMT, and we showed
 how the sparsity can help to interpret the various roles of each
 attention head in the model.
 
@@ -59,7 +59,7 @@ process~\citep{raganato2020FixedEncoderSelfAttentiona}.
 
 In the pursuit of diligent research, we briefly discuss some of the
 open problems and limitations of the work presented in this thesis.
-We seek to not diminish any of these limitations, but rather present
+We seek not to diminish any of these limitations, but rather present
 them fairly.
 %
 % We will also discuss the ethical ramifications of our
@@ -69,10 +69,13 @@ As previously stated, sparsity is a prominent theme in this work.
 That sparsity is achieved through probability normalization functions
 such as sparsemax, $\alpha$-\entmaxtext, and SparseMAP. While
 sparsity can lead to increased efficiency, we do not fully take
-advantage of this in this work, particularly in the publicly released
+advantage of this in the present thesis or in the publicly released
 code. For example, for $\alpha$-\entmaxtext, further speed-ups are
-possible by leveraging more parallelism in the bisection algorithm
-for computing it.
+possible, with careful engineering, by leveraging more parallelism in
+the bisection algorithm for computing it.
+This is a relevant research direction, as it is now possible to
+exploit recent generations of GPU architectures which are more
+sparse-friendly than before.
 
 In \chapref{chap:ape}, we have used a large pre-trained model to
 circumvent the need to train MT models to produce a large synthetic
@@ -90,9 +93,9 @@ We hope to continue seeing this trend in the future.
 \section{Future Directions}
 
 We further list in this section exciting directions for future work
-that draw inspiration from the methods proposed in this thesis.
-We encourage researchers in the field to explore these directions
-and extend the ideas presented.
+that draw inspiration from the methods proposed in this thesis. We
+hope this might inspire other researchers in the field to explore
+these directions and extend the ideas presented.
 
 \paragraph{Semi-supervised Learning.} Some forms of weak
 supervision were explored in this work. In particular, we have shown
@@ -120,8 +123,8 @@ reward signal. One example of a real-world application is prompting
 of large pre-trained language models. In this line of work, the
 pre-trained model is assumed to already have the knowledge required
 to handle the task at hand stored in its parameters and only a prompt
-is required to generate the desired output. We suggest to frame this
-problem as a latent variable model and interpret the natural language
+is required to generate the desired output. This problem could be
+framed as a latent variable model and interpret the natural language
 prompt as a discrete latent variable. Using the property we just
 described, the downstream task can be optimized via any
 differentiable or non-differentiable reward signal.
