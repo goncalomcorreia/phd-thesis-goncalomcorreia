@@ -17,7 +17,7 @@ attention heads. In the context of this thesis, this contribution
 leads to neural models that are more \textbf{transparent} in their
 decisions. This increased transparency will prove useful in order to
 be able to more easily interpret the roles that each attention head
-plays in the overall model.
+ends up playing in the overall model.
 
 \textit{This chapter is based on \citet{correia2019adaptively}.}
 
@@ -33,10 +33,10 @@ tokens~\citep{tang2018why,raganato2018analysis,
     marecek-rosa-2018-extracting,bert-rediscovers,specialized}.
 
 The attention distribution of each head in the Transformer is
-predicted typically using the \textbf{softmax} normalizing transform.
+predicted typically using the \textbf{softmax} normalizing transformation.
 As a result, all context words have non-zero attention weight. Recent
 work on single attention architectures suggest that using sparse
-normalizing transforms in attention mechanisms such as sparsemax --
+normalizing transformations in attention mechanisms such as sparsemax --
 which can yield exactly zero probabilities for irrelevant words --
 may improve performance and
 interpretability~\citep{malaviya2018sparse,deng2018latent,entmax}.
@@ -47,8 +47,8 @@ peaked distributions.
 
 \begin{sloppypar}
     Recent works have proposed sparse
-    Transformers~\citep{openai_sparse_transf} and adaptive span
-    Transformers~\citep{Sukhbaatar2019}. However, the ``sparsity" of those
+    transformers~\citep{openai_sparse_transf} and adaptive span
+    transformers~\citep{Sukhbaatar2019}. However, the ``sparsity" of those
     models only limits the attention to a contiguous span of past tokens,
     while in this work we propose a \textbf{highly adaptive} Transformer
     model that is capable of attending to a sparse set of words that are
@@ -114,44 +114,39 @@ propose an adaptive attention span for Transformer language models.
 While their work has each head learn a different contiguous span of
 context tokens to attend to, our work finds different sparsity
 patterns in the same span. Interestingly, some of their findings
-mirror ours -- we found that attention heads in the last layers tend
+mirror ours---we found that attention heads in the last layers tend
 to be denser on average when compared to the ones in the first
 layers, while their work has found that lower layers tend to have a
-shorter attention span compared to higher layers.
+shorter attention span than higher layers.
 
-\begin{sloppypar}
-    \paragraph*{Transformer interpretability.}
-    The original Transformer paper~\citep{vaswani2017attention} shows
-    attention visualizations, from which some speculation can be made of
-    the roles the several attention heads have.
-    \citet{marecek-rosa-2018-extracting} study the syntactic abilities of
-    the Transformer self-attention, while \citet{raganato2018analysis}
-    extract dependency relations from the attention weights.
-    \citet{bert-rediscovers} find that the self-attentions in
-    BERT~\citep{devlin2018bert} follow a sequence of processes that
-    resembles a classical NLP pipeline. Regarding redundancy of heads,
-    \citet{specialized} develop a method that is able to prune heads of
-    the multi-head attention module and make an empirical study of the
-    role that each head has in self-attention (positional, syntactic and
-    rare words). \citet{li2018multi} also aim to reduce head redundancy
-    by adding a regularization term to the loss that maximizes head
-    disagreement and obtain improved results. While not considering
-    Transformer attentions, \citet{jain2019attention} show that
-    traditional attention mechanisms do not necessarily improve
-    interpretability since softmax attention is vulnerable to an
-    adversarial attack leading to wildly different model predictions for
-    the same attention weights. Sparse attention may mitigate these
-    issues; however, our work focuses mostly on a more mechanical aspect
-    of interpretation by analyzing head behavior, rather than on
-    explanations for predictions.
-\end{sloppypar}
+\paragraph*{Transformer interpretability.} The original Transformer
+paper~\citep{vaswani2017attention} shows attention visualizations,
+from which some speculation can be made of the roles the several
+attention heads have. \citet{marecek-rosa-2018-extracting} study the
+syntactic abilities of the Transformer self-attention, while
+\citet{raganato2018analysis} extract dependency relations from the
+attention weights. \citet{bert-rediscovers} find that the
+self-attentions in BERT~\citep{devlin2018bert} follow a sequence of
+processes that resembles a classical NLP pipeline. Regarding
+redundancy of heads, \citet{specialized} develop a method that is
+able to prune heads of the multi-head attention module and make an
+empirical study of the role that each head has in self-attention
+(positional, syntactic and rare words). \citet{li2018multi} also aim
+to reduce head redundancy by adding a regularization term to the loss
+that maximizes head disagreement and obtain improved results. While
+not considering Transformer attentions, \citet{jain2019attention}
+show that traditional attention mechanisms do not necessarily improve
+interpretability since softmax attention is vulnerable to an
+adversarial attack leading to wildly different model predictions for
+the same attention weights. Sparse attention may mitigate these
+issues; however, our work focuses mostly on a more mechanical aspect
+of interpretation by analyzing head behavior, rather than on
+explanations for predictions.
 
-\section{Adaptively Sparse Transformers with \texorpdfstring{{\boldmath $\alpha$}-\entmaxtext}{alpha-entmax}}
+\section{Adaptively Sparse Transformers}
 \label{sec:adaptive}
 
-We now propose a novel Transformer\footnote{Details on the
-    Transformer architecture can be found in
-    \secref{sec:transformer_bg}.} architecture wherein we simply replace
+We now propose a novel Transformer architecture wherein we simply replace
 softmax with $\alpha$-\entmaxtext{}, described in
 \secref{sec:entmax_bg}, in the attention heads. Concretely, we
 replace the row normalization $\amap$ in \eqnref{eq:att_scaled_dot}
@@ -217,33 +212,33 @@ shape away from softmax and toward sparse mappings like sparsemax.
 The proof uses implicit function differentiation and is given in \appref{app:alpha_grad}.
 
 Proposition~\ref{prop:grad_alpha} provides the remaining missing
-piece needed for training adaptively sparse Transformers. In the
+piece needed for training adaptively sparse transformers. In the
 following section, we evaluate this strategy on neural machine
 translation, and analyze the behavior of the learned attention heads.
 
 \section{Experiments}
-We apply our adaptively sparse Transformers on four machine translation tasks.
+We apply our adaptively sparse transformers on four MT tasks.
 For comparison, a natural baseline is the standard Transformer
 architecture using the softmax transform in its multi-head attention mechanisms.
 We consider two other model variants in our experiments that make use of different
 normalizing transformations:
 
 \begin{itemize}
-    \item \textbf{1.5-\entmaxtext:} a Transformer with sparse \entmaxtext
+    \item \textbf{1.5-\entmaxtext:} a transformer with sparse \entmaxtext
           attention with fixed $\alpha=1.5$ for all heads. This is a novel model,
-          since 1.5-\entmaxtext{} had only been proposed for
+          since 1.5-\entmaxtext{} had only been used on
           RNN-based NMT models~\citep{entmax}, but never
-          in Transformers, where attention modules are not just one single
-          component of the seq2seq model but rather an integral part of all of
+          in transformers, where attention modules are not just one single
+          component of the model but rather an integral part of all of
           the model components.%
     \item \textbf{\boldmath $\alpha$-\entmaxtext:} an \textbf{adaptive}
-          Transformer with sparse \entmaxtext attention with a different,
+          transformer with sparse \entmaxtext attention with a different,
           learned $\alpha_{i,j}^t$ for each head.
 \end{itemize}
 
-The adaptive model has an additional scalar parameter per attention head per
-layer for each of the three attention mechanisms (encoder self-attention,
-context attention, and decoder self-attention), \ie,
+The adaptive model has an additional scalar parameter per attention
+head for each of the three attention mechanisms (encoder
+self-attention, context attention, and decoder self-attention), \ie,
 \begin{equation}
     \big \{ a_{i,j}^{t} \in \reals:~
     i \in \{1, \dots, L\},~
@@ -253,6 +248,50 @@ context attention, and decoder self-attention), \ie,
 and we set $\alpha_{i,j}^t = 1 + \sigmoid(a_{i,j}^t) \in ]1, 2[$.
 All or some of the $\alpha$ values can be tied if desired, but we
 keep them independent for analysis purposes.
+
+\paragraph*{Datasets.} Our models were trained on 4 machine
+translation datasets of different number of training instances
+(sentence pairs):
+
+\begin{itemize}[itemsep=.5ex,leftmargin=2ex]
+    \item IWSLT 2017 German$\rightarrow$English
+          \citep[\langp{de}{en},][]{cettolooverview}: ~200K.
+    \item KFTT Japanese$\rightarrow$English
+          \citep[\langp{ja}{en},][]{neubig11kftt}: ~300K.
+    \item WMT 2016 Romanian$\rightarrow$English
+          \citep[\langp{ro}{en},][]{bojar2016findings}: ~600K.
+    \item WMT 2014 English$\rightarrow$German
+          \citep[\langp{en}{de},][]{bojar2014findings}: ~4.5M.
+\end{itemize}
+
+All of these datasets were preprocessed with byte-pair
+encoding~\citep[BPE;][]{sennrich2016neural}, using joint
+segmentations of 32k merge operations.
+
+\paragraph*{Training.}
+We follow the dimensions of the Transformer-Base model of
+\citet{vaswani2017attention}: The number of layers is $L=6$ and
+number of heads is $H=8$ in the encoder self-attention, the context
+attention, and the decoder self-attention. We use a mini-batch size
+of 8192 tokens and warm up the learning rate linearly until 20k
+steps, after which it decays according to an inverse square root
+schedule. All models were trained until convergence of validation
+accuracy, and evaluation was done at each 10k steps for
+\langp{ro}{en} and \langp{en}{de} and at each 5k steps for
+\langp{de}{en} and \langp{ja}{en}. The end-to-end computational
+overhead of our methods, when compared to standard softmax, is
+relatively small; in training tokens per second, the models using
+$\alpha$-\entmaxtext and $1.5$-\entmaxtext are, respectively, $75\%$
+and $90\%$ the speed of the softmax model.
+
+\paragraph*{Results.}
+We report test set tokenized BLEU~\citep{papineni2002bleu} results in
+\tableref{table:mt}. We can see that replacing softmax by
+\entmaxtext{} does not hurt performance in any of the datasets;
+indeed, sparse attention transformers tend to have slightly higher
+BLEU, but their sparsity leads to a better potential for analysis. In
+the next section, we make use of this potential by exploring the
+learned internal mechanics of the self-attention heads.
 
 \begin{table*}[ht]
     \begin{center}
@@ -286,49 +325,6 @@ keep them independent for analysis purposes.
         WMT 2014 \langp{en}{de}, respectively.\label{table:mt}}
 \end{table*}
 
-\paragraph*{Datasets.} Our models were trained on 4 machine
-translation datasets of different training sizes:
-
-\begin{itemize}[itemsep=.5ex,leftmargin=2ex]
-    \item IWSLT 2017 German $\rightarrow$ English
-          \citep[\langp{de}{en},][]{cettolooverview}: ~200K sentence pairs.
-    \item KFTT Japanese $\rightarrow$ English
-          \citep[\langp{ja}{en},][]{neubig11kftt}: ~300K sentence pairs.
-    \item WMT 2016 Romanian $\rightarrow$ English
-          \citep[\langp{ro}{en},][]{bojar2016findings}: ~600K sentence pairs.
-    \item WMT 2014 English $\rightarrow$ German
-          \citep[\langp{en}{de},][]{bojar2014findings}: ~4.5M sentence pairs.
-\end{itemize}
-
-All of these datasets were preprocessed with byte-pair
-encoding~\citep[BPE;][]{sennrich2016neural}, using joint
-segmentations of 32k merge operations.
-
-\paragraph*{Training.}
-We follow the dimensions of the Transformer-Base model of
-\citet{vaswani2017attention}: The number of layers is $L=6$ and
-number of heads is $H=8$ in the encoder self-attention, the context
-attention, and the decoder self-attention. We use a mini-batch size
-of 8192 tokens and warm up the learning rate linearly until 20k
-steps, after which it decays according to an inverse square root
-schedule. All models were trained until convergence of validation
-accuracy, and evaluation was done at each 10k steps for
-\langp{ro}{en} and \langp{en}{de} and at each 5k steps for
-\langp{de}{en} and \langp{ja}{en}. The end-to-end computational
-overhead of our methods, when compared to standard softmax, is
-relatively small; in training tokens per second, the models using
-$\alpha$-\entmaxtext and $1.5$-\entmaxtext are, respectively, $75\%$
-and $90\%$ the speed of the softmax model.
-
-\paragraph*{Results.}
-We report test set tokenized BLEU~\citep{papineni2002bleu} results in
-\tableref{table:mt}. We can see that replacing softmax by
-\entmaxtext{} does not hurt performance in any of the datasets;
-indeed, sparse attention Transformers tend to have slightly higher
-BLEU, but their sparsity leads to a better potential for analysis. In
-the next section, we make use of this potential by exploring the
-learned internal mechanics of the self-attention heads.
-
 \section{Analysis}
 
 We conduct high-level analysis of the learned attention heads of the
@@ -344,7 +340,7 @@ models.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.85\columnwidth]{Figures/learning_alpha.pdf}
+    \includegraphics[width=0.95\columnwidth]{Figures/learning_alpha.pdf}
     \caption{\label{fig:learning_alpha}
         Trajectories of $\alpha$ values for a subset of the heads during
         training. Initialized at random, most heads become denser in the
@@ -358,7 +354,7 @@ models.
 $\alpha$ parameters of a selected subset of heads. We generally
 observe a tendency for the randomly-initialized $\alpha$ parameters
 to decrease initially, suggesting that softmax-like behavior may be
-preferable while the model is still very uncertain. After around one
+preferable while the model is still uncertain. After around one
 thousand steps, some heads change direction and become sparser,
 perhaps as they become more confident and specialized. This shows
 that the initialization of $\alpha$ does not predetermine its
@@ -456,7 +452,7 @@ matrices in \eqnref{eq:head} to learn re-scalings so as to make
 attention sparser or denser. To visualize the impact of adaptive
 $\alpha$ values, we compare the empirical attention weight density
 (the average number of tokens receiving non-zero attention) within
-each module, against sparse Transformers with fixed $\alpha=1.5$.
+each module, against sparse transformers with fixed $\alpha=1.5$.
 
 \begin{sloppypar}
     \figref{fig:hist_densities} shows that, with fixed $\alpha=1.5$, heads
@@ -467,7 +463,7 @@ each module, against sparse Transformers with fixed $\alpha=1.5$.
     a distinction between the encoder self-attention -- whose background
     distribution tends toward extreme sparsity -- and the other two
     modules, who exhibit more uniform background distributions. This
-    suggests that perhaps entirely sparse Transformers are suboptimal.
+    suggests that perhaps entirely sparse transformers are suboptimal.
 \end{sloppypar}
 
 The fact that the decoder seems to prefer denser attention
@@ -574,9 +570,9 @@ base-adjusted based on the dimension of $\bm{p}$ such that $JS \leq
 higher this metric is, the more the heads are taking different roles
 in the model.
 
-\figref{fig:js_divs} shows that both sparse Transformer variants show
+\figref{fig:js_divs} shows that both sparse transformer variants show
 more diversity than the traditional softmax one. Interestingly,
-diversity seems to peak in the middle layers of the encoder
+diversity seems to often peak in the middle layers of the encoder
 self-attention and context attention, while this is not the case for
 the decoder self-attention.
 
@@ -721,17 +717,16 @@ for sentences of similar length.
 
 \section{Subsequent Work}\label{sec:subsequent_work_adapt}
 
-\citet{correia2019adaptively} is, at the moment of writing, the most
-influential work in this thesis. It is part of an early line of work
-on Transformers that sparked interest in making this model more
+\citet{correia2019adaptively} is part of an early line of work
+on transformers that sparked interest in making this model more
 efficient~\citep[\textit{inter
         alia}]{daras2020SMYRFEfficientAttention,
     li2020SACAcceleratingStructuring, merrill2021EffectsParameterNorm,
     roy2021EfficientContentBasedSparse}, using sparsity to allow for
-Transformers to use longer contexts more
+transformers to use longer contexts more
 effectively~\citep[\textit{inter alia}]{jiang2020LongDocumentRanking,
     qiu2020BlockwiseSelfAttentionLong, sukhbaatar2021NotAllMemories}, and
-being able to understand Transformers better~\citep[\textit{inter
+being able to understand transformers better~\citep[\textit{inter
         alia}]{you2020HardCodedGaussianAttention,
     rogers2020PrimerBERTologyWhat, pande2021headshypothesisunifying}.
 This Transformer variant and $\alpha$-\entmaxtext have also proved
@@ -762,17 +757,17 @@ token. This approach also leads to similar performance to the
 original Transformer but ends up having a 1.43 times faster decoding
 performance in translation tasks.
 
-Regarding the concept of Sparse Transformers,
+Regarding the concept of Sparse transformers,
 \citet{yun2020ConnectionsareExpressive} unify several works that
-sparsify Transformers in a single framework.
+sparsify transformers in a single framework.
 This unified framework is constructed through conditions based on the
 sparsity pattern and the probability map. Once such conditions are
-satisfied, the authors prove that some Sparse Transformers (of which
+satisfied, the authors prove that some sparse transformers (of which
 our approach is included) are universal approximators of any
 continuous sequence-to-sequence function. Furthermore, they show that
-when these Sparse Transformers have only $\mathcal{O}(n)$ connections (which is
+when these sparse transformers have only $\mathcal{O}(n)$ connections (which is
 in contrast to the constant $\mathcal{O}(n^2)$ connections of dense
-Transformers), they still hold the same universal approximation
+transformers), they still hold the same universal approximation
 properties.
 
 \citet{zhang2021SparseAttentionLinear} proposed another approach to
@@ -799,7 +794,7 @@ being dropped are often uninformative tokens, while the retained ones
 are relatively rare.
 
 On the topic of interpretability and understanding the inner workings
-of Transformers, inspired by our analysis along with other
+of transformers, inspired by our analysis along with other
 works~\citep{voita2019AnalyzingMultiHeadSelfAttention} that find that
 encoder self-attention heads learn fixed patterns
 (\secref{sec:spec}), \citet{raganato2020FixedEncoderSelfAttentiona}
@@ -817,19 +812,18 @@ performance.
 
 In the present chapter, we contributed with a novel strategy for
 \textbf{learnable sparse} attention, and, in particular, for adaptively
-sparse Transformers. We presented the first empirical analysis of
-Transformers with sparse attention mappings (\ie, \entmaxtext),
+sparse transformers. We presented the first empirical analysis of
+transformers with sparse attention mappings (\ie, \entmaxtext),
 showing potential in both translation accuracy as well as in model
 interpretability and \textbf{transparency}.
 
-In particular, we analyzed how the attention heads in the proposed
-adaptively sparse Transformer can specialize more and with higher
-confidence. Our adaptivity strategy relies only on gradient-based
-optimization, side-stepping costly per-head hyper-parameter searches.
-Given the impact of our work, we believe that approaches that
-sparsify Transformers will continue to increase in the future, with
-the objective of improving the architecture's efficiency and
-transparency.
+In particular, we analyzed how the attention heads in the adaptively
+sparse transformer can specialize more and with higher confidence.
+Our adaptivity strategy relies only on gradient-based optimization,
+side-stepping costly per-head hyperparameter searches. Given the
+impact of our work, we believe that similar approaches will continue
+to increase in the future, with the objective of improving neural
+model's efficiency and transparency.
 
 \cleardoublepage
 

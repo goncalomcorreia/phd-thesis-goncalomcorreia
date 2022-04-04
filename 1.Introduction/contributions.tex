@@ -8,7 +8,7 @@ address the open questions left to answer in the previous section.
 
       \item \textbf{We use weak supervision by leveraging transfer learning
                   for data efficient sequence-to-sequence models.}
-            We show how to leverage a pre-trained large Transformer
+            We show how to leverage a pre-trained large transformer
             encoder to perform a sequence-to-sequence task on a very
             small dataset. We explore different avenues of parameter
             sharing and initialization in order to make this
@@ -20,18 +20,18 @@ address the open questions left to answer in the previous section.
                   normalization function that learns its own sparsity.}
             We derive the gradient of $\alpha$ in
             $\alpha$-\entmaxtext{}~\citep{entmax}. By letting a
-            Transformer learn through this gradient the $\alpha$ of
+            transformer learn through this gradient the $\alpha$ of
             each attention head, the attention heads can dynamically
             change their own sparsity during training. This way, each
             attention head can accommodate its sparsity to the role
             it will play in the overall model.
 
       \item \textbf{We conduct an extensive analysis on the increased
-                  transparency of Transformer models that use {\boldmath
+                  transparency of transformer models that use {\boldmath
                               $\alpha$}-\entmaxtext{} as its normalization function in the
                   attention mechanism.}
             Besides studying the distribution of sparsity and respective $\alpha$ values
-            throughout all attention heads in the Transformer, we also identify
+            throughout all attention heads in the transformer, we also identify
             examples of sharper attention head behavior than what was found in
             previous work, along with the disentanglement of new found behaviors
             thanks to our proposed sparsity.
