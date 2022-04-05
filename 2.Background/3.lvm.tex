@@ -83,7 +83,7 @@ $\zsamp$, but can be done with the Score Function
 Estimator~\citep[SFE;][]{rubinstein1976monte,paisley2012variational}:
 $\nabla_{\theta_\pi} \mathcal L_x(\theta) \approx \ell(x, \zsamp;
     \theta_\ell) ~ \nabla_{\theta_\pi} \log \pi(\zsamp | x, \theta_\pi)$,
-also known as \textsc{reinforce}~\citep{Williams1992}. The SFE is
+also known as {\fonttextsc \textsc{REINFORCE}}~\citep{Williams1992}. The SFE is
 powerful and general, making no assumptions on the form of $z$ or
 $\ell$, requiring only a sampling oracle and a way to assess
 gradients of $\log \pi(\zsamp | x, \theta_\pi)$. However, it comes

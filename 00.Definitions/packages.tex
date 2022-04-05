@@ -14,8 +14,7 @@
 % chooses T1-fonts and allows correct automatic hyphenation.
 %\usepackage[T1]{fontenc}
 %\usepackage[latin1]{inputenc}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}
 %\usepackage{lmodern} %will change font type
 
 % Package ulem.
@@ -137,8 +136,10 @@
 % Long live Linux :D
 \usepackage[hidelinks,plainpages=false,breaklinks]{hyperref}
 \hypersetup{
-  colorlinks=false,
-  citecolor=red,
+  colorlinks=true,
+  linkcolor=linksgreen,
+  citecolor=linksgreen,
+  urlcolor=linksgreen,
   breaklinks=true,
   bookmarksnumbered=true,
   bookmarksopen=true,
@@ -189,7 +190,7 @@
 \usepackage{inconsolata}
 \usepackage{nicefrac}
 \usepackage{empheq}
-\usepackage{url}
+\usepackage{xurl}
 \usepackage{xspace}
 \usepackage{enumitem}
 \usepackage{tikz}
@@ -209,7 +210,9 @@
 % \usepackage{ebgaramond}
 % baskerville
 \usepackage{librebaskerville}
-% Computer Modern Roman Fibonacci
-% \renewcommand*\rmdefault{cmfib}
+\usepackage[T1]{fontenc}
+\usepackage{anyfontsize}
+% \usepackage{microtype}
 
-\usepackage{microtype}
+% mdframe for definitions
+\usepackage{mdframed}

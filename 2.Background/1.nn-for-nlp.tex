@@ -3,7 +3,7 @@
 
 \subsection{Foundations}
 
-\subsection{Sequence-to-Sequence Models and Transformers}
+\subsection{Sequence-to-Sequence Models}
 \label{sec:transformer_bg}
 
 Sequence-to-sequence (seq2seq) models are the broad, main family of models
@@ -23,6 +23,8 @@ seq2seq models have in common the following blocks:
 
 In the following section, we will expand on the current
 state-of-the-art seq2seq architecture.
+
+\subsection{Transformer}
 
 The Transformer~\citep{vaswani2017attention} is a
 seq2seq model which maps an input sequence to
@@ -54,7 +56,7 @@ representations.
 The $\amap$ mapping normalizes row-wise using \textbf{softmax},
 $\amap(\bm{Z})_{ij} = \softmax(\bm{z}_i)_j$, where
 %
-\begin{equation}\label{eq:softmax}
+\begin{equation}
     \softmax(\bm{z}) = \frac{\exp(z_j)}{\sum_{j'} \exp(z_{j'})}.
 \end{equation}
 %
@@ -62,6 +64,13 @@ In words, the \emph{keys} are used to compute a relevance score
 between each item and query. Then, normalized attention weights are computed
 using softmax, and these are used to weight the \emph{values} of each item at each
 query context.
+
+\begin{definition}
+    The normalization function \textbf{softmax} is defined as
+    \begin{equation}\label{eq:softmax}
+        \softmax(\bm{z}) = \frac{\exp(z_j)}{\sum_{j'} \exp(z_{j'})}.
+    \end{equation}
+\end{definition}
 
 However, for complex tasks, different parts of a sequence may be relevant in
 different ways, motivating \emph{multi-head attention} in transformers.
