@@ -353,11 +353,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% REDEFINE ABSTRACT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{keywords}{\vspace*{3cm}
+\newenvironment{keywords}{\vspace*{1cm}
     {\parindent \z@ \raggedright \normalfont
-        \hspace*{0\p@}\huge\bfseries Keywords
-        \par\nobreak
-        \vspace*{1cm}
+        \hspace*{0\p@}\bfseries Keywords:
     }
 }
 
@@ -377,13 +375,12 @@
 	\pdfbookmark{Resumo}{Resumo}
 	\chapter*{Resumo}}
 
-\newenvironment{palavraschave}{\vspace*{3cm}
+    \newenvironment{palavraschave}{\vspace*{1cm}
     {\parindent \z@ \raggedright \normalfont
-        \hspace*{0\p@}\huge\bfseries Palavras Chave
-        \par\nobreak
-        \vspace*{1cm}
+        \hspace*{0\p@}\bfseries Palavras-chave:
     }
 }
+
 
 \newenvironment{notation}{%
     \typeout{Notation}
