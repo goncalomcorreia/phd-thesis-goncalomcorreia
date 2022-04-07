@@ -2,7 +2,7 @@
 \label{chap:sparsemarg}
 
 \cleardoublepage
-\setstretch{1.5}
+\setstretch{1.25}
 
 In this chapter, we focus on the objective of making neural models
 more \textbf{compact}. We will propose a novel approach to train
@@ -278,32 +278,33 @@ EGG~\citep{Kharitonov2019} and was built upon it.
 
 \begin{table}[t]
     \centering
+    \tlfstyle
     \begin{tabular}{lrr}
         \toprule
         Method &
         Accuracy (\%)
-               & Dec. calls                                                                 \\
+               & Decoder calls                                                \\
         \midrule
 
-        \multicolumn{3}{l}{\emph{Monte Carlo}}                                              \\
+        \multicolumn{3}{l}{\emph{Monte Carlo}}                                \\
         SFE
-               & $94.75${\tiny\color{gray}$\pm .002$} & $1$                                 \\
+               & 94.75{\color{gray}$\pm$ .002} & 1                            \\
         SFE$+$
-               & $96.53${\tiny\color{gray}$\pm .001$} & $2$                                 \\
+               & 96.53{\color{gray}$\pm$ .001} & 2                            \\
         NVIL
-               & $96.01${\tiny\color{gray}$\pm .002$} & $1$                                 \\
+               & 96.01{\color{gray}$\pm$ .002} & 1                            \\
         Sum\&Sample
-               & $96.73${\tiny\color{gray}$\pm .001$} & $2$                                 \\
+               & 96.73{\color{gray}$\pm$ .001} & 2                            \\
         Gumbel
-               & $95.46${\tiny\color{gray}$\pm .001$} & $1$                                 \\
+               & 95.46{\color{gray}$\pm$ .001} & 1                            \\
         ST Gumbel
-               & $86.35${\tiny\color{gray}$\pm .006$} & $1$                                 \\
+               & 86.35{\color{gray}$\pm$ .006} & 1                            \\
         \spacerule
-        \multicolumn{3}{l}{\emph{Marginalization}}                                          \\
+        \multicolumn{3}{l}{\emph{Marginalization}}                            \\
         Dense
-               & $96.93${\tiny\color{gray}$\pm .001$} & $10$                                \\
+               & 96.93{\color{gray}$\pm$ .001} & 10                           \\
         Sparse {\small \color{gray}{(proposed)}}
-               & $96.87${\tiny\color{gray}$\pm .001$} & $1.01${\tiny\color{gray}$\pm 0.01$} \\
+               & 96.87{\color{gray}$\pm$ .001} & 1.01{\color{gray}$\pm$ 0.01} \\
         \bottomrule
     \end{tabular}
     \caption{\label{tab:ssvaeelbo}
@@ -332,7 +333,7 @@ closed-form, that is, assessing all $K$ terms of the sum for a
 sampled $h$. Under the notation in \secref{sec:lvm},
 we let $\theta_\ell = \{\lambda, \phi\}$ and define
 $\pi(z|x, \theta_\pi) \defeq q(z|x, \lambda)$ and
-
+%
 \begin{align}
     \begin{split}
         \ell(x, z; \theta_\ell) \defeq
@@ -342,7 +343,7 @@ $\pi(z|x, \theta_\pi) \defeq q(z|x, \lambda)$ and
         \label{eq:elbonotation}
     \end{split}
 \end{align}
-
+%
 which turns \eqnref{eq:fit} into the (negative) evidence lower bound
 (ELBO). To update $q(h | x, z, \lambda)$, we use the
 reparameterization trick to obtain gradients through a sampled $h$.
@@ -499,28 +500,29 @@ also experiment using a 0/1 loss.
 
 \begin{table}[t]
     \begin{center}
+        \tlfstyle
         \begin{tabular}{lr@{~}lr}
             \toprule
-            Method                                 & \multicolumn{2}{c}{Comm. succ. (\%)} & Dec. calls                             \\
+            Method                                 & \multicolumn{2}{c}{Communication success (\%)} & Decoder calls                   \\
             \midrule
-            {\emph{Monte Carlo}}                   &                                      &                                &       \\
-            SFE (NLL)                              & $33.05$                              & {\tiny\color{gray}$\pm 2.84$}  & $1$   \\
-            SFE (0/1)                              & $55.36$                              & {\tiny\color{gray}$\pm 2.92$}  & $1$   \\
-            SFE$+$ (0/1)                           & $44.32$                              & {\tiny\color{gray}$\pm 2.72$}  & $2$   \\
-            NVIL                                   & $37.04$                              & {\tiny\color{gray}$\pm 1.61$}  & $1$   \\
-            Gumbel                                 & $23.51$                              & {\tiny\color{gray}$\pm 16.19$} & $1$   \\
-            ST Gumbel                              & $27.42$                              & {\tiny\color{gray}$\pm 13.36$} & $1$   \\
+            {\emph{Monte Carlo}}                   &                                                &                           &     \\
+            SFE (NLL)                              & 33.05                                          & {\color{gray}$\pm$ 2.84}  & 1   \\
+            SFE (0/1)                              & 55.36                                          & {\color{gray}$\pm$ 2.92}  & 1   \\
+            SFE$+$ (0/1)                           & 44.32                                          & {\color{gray}$\pm$ 2.72}  & 2   \\
+            NVIL                                   & 37.04                                          & {\color{gray}$\pm$ 1.61}  & 1   \\
+            Gumbel                                 & 23.51                                          & {\color{gray}$\pm$ 16.19} & 1   \\
+            ST Gumbel                              & 27.42                                          & {\color{gray}$\pm$ 13.36} & 1   \\
             \spacerule
-            \emph{Marginalization}                 &                                      &                                &       \\
-            Dense                                  & $93.37$                              & {\tiny\color{gray}$\pm 0.42$}  & $256$ \\
+            \emph{Marginalization}                 &                                                &                           &     \\
+            Dense                                  & 93.37                                          & {\color{gray}$\pm$ 0.42}  & 256 \\
             Sparse {\small \color{gray}(proposed)} &
-            $93.35$                                & {\tiny\color{gray}$\pm 0.50$}        &
-            $3.13${\tiny\color{gray}$\pm 0.48$}                                                                                    \\
+            93.35                                  & {\color{gray}$\pm$ 0.50}                       &
+            3.13{\color{gray}$\pm$ 0.48}                                                                                              \\
             \bottomrule
         \end{tabular}
     \end{center}
     \caption{Emergent communication success test results,
-        averaged across 10 runs. Random guess baseline $6.25\%$.}
+        averaged across 10 runs. Random guess baseline 6.25\%.}
     \label{tab:symbol}
 \end{table}
 
@@ -628,21 +630,22 @@ explicitly.
 
 \begin{table}
     \centering
+    \tlfstyle
     \begin{tabular}{lrr}
         \toprule
         Method            & $D=32$ & $D=128$       \\
         \midrule
         \multicolumn{3}{l}{\emph{Monte Carlo}}     \\
-        SFE               & $3.74$ & $3.77$        \\
-        SFE$+$            & $3.61$ & $3.59$        \\
-        NVIL              & $3.65$ & $3.60$        \\
-        Gumbel            & $3.57$ & $3.49$        \\
-        ST Gumbel         & $3.53$ & $3.55$        \\
+        SFE               & 3.74   & 3.77          \\
+        SFE$+$            & 3.61   & 3.59          \\
+        NVIL              & 3.65   & 3.60          \\
+        Gumbel            & 3.57   & 3.49          \\
+        ST Gumbel         & 3.53   & 3.55          \\
         \spacerule
         \multicolumn{3}{l}{\emph{Marginalization}} \\
-        Top-$k$ sparsemax & $3.62$ & $3.61$        \\
-        \smap             & $3.72$ & $3.67$        \\
-        \smap (w/ budget) & $3.64$ & $3.66$        \\
+        Top-$k$ sparsemax & 3.62   & 3.61          \\
+        \smap             & 3.72   & 3.67          \\
+        \smap (w/ budget) & 3.64   & 3.66          \\
         \bottomrule
     \end{tabular}
     \vspace{5pt}
@@ -737,10 +740,10 @@ this mismatch disappears, making the gradient computation exact.
         $D=32$ (left) / $D=128$ (right).\label{fig:structcalls}}
 \end{figure}
 
-Remarkably, this happens for $D=32$\,---\,the support of
+Remarkably, this happens for $D\!=\!32$\,---\,the support of
 $\sparsemaxk$ is smaller than $k$, giving the true gradient to
 $q(z\mid x, \lambda)$ for most of the training. This no longer
-happens for $D=128$, for which it remains with full support
+happens for $D\!=\!128$, for which it remains with full support
 throughout, due to the much larger search space. On the other hand,
 \smap solutions become very sparse from the start in both cases,
 while still obtaining good performance. There is, therefore, a
@@ -763,13 +766,13 @@ estimators have for 100 epochs.
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Figures/elbo-bit-vector.pdf}
-        \caption{Negative ELBO over training epochs.}
+        \caption{Neg. ELBO over training epochs.}
         \label{fig:elbo_bit_epochs}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Figures/elbo-calls.pdf}
-        \caption{Negative ELBO over decoder calls.}
+        \caption{Neg. ELBO over decoder calls.}
         \label{fig:elbo_bit_calls}
     \end{subfigure}
     \caption{Performance on the validation set
