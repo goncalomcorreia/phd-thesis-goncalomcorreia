@@ -1,5 +1,5 @@
-# Learnable Sparsity and Weak Supervision for Compact, Transparent, and Data Efficient Neural Models - Gonçalo M. Correia's PhD Thesis
+# Learnable Sparsity and Weak Supervision for Data-Efficient, Transparent, and Compact Neural Models - Gonçalo M. Correia's Ph.D. Thesis
 
 Template based on: https://github.com/FilipeMar/DoctoralThesisIST
 
-To compile, run `make`.
+To compile, run `make.`

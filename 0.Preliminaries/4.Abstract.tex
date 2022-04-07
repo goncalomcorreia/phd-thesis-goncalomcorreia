@@ -1,5 +1,43 @@
+\newgeometry{top=0cm, bottom=2.5cm, inner=2.5cm, outer=2.5cm}
+\onehalfspacing
+\changefontsize{12pt}
 \begin{abstract}
 
-The Objective of this Work ... (English)
+    This thesis proposes new techniques for improving neural network
+    models' data efficiency, transparency, and compactness, primarily
+    applied to natural language processing. Thanks to our proposed
+    advances in sparsity and weak supervision, we challenge the
+    belief that neural models are not capable of exhibiting such
+    characteristics.
+
+    For data efficiency, we propose to leverage the transfer learning
+    capabilities of large neural encoder models into data-hungry
+    sequence-to-sequence tasks. We apply our method to Automatic
+    Post-Editing (APE) to demonstrate its effectiveness. We fine-tune
+    a pre-trained neural encoder model on both the encoder and
+    decoder of an APE system, exploring several parameter sharing
+    strategies. We obtain competitive results with models trained on
+    larger artificial datasets by training on only a small dataset.
+
+    For transparency, we propose to replace the softmax on attention
+    mechanisms of neural models with $\alpha$-entmax: a
+    differentiable generalization of softmax that allows low-scoring
+    words to receive precisely zero weight. Moreover, we derive a
+    method to learn the $\alpha$ parameter automatically---which
+    controls the shape and sparsity of $\alpha$-entmax. On neural machine
+    translation, we show that our adaptive approach improves
+    interpretability when compared to \textit{vanilla} softmax
+    approaches.
+
+    For compactness, we propose a new technique to train discrete
+    latent variable models more effectively. Traning these models is
+    often challenging due to needing to rely on high-variance
+    sampling strategies or continuous relaxations. Instead, we propose to use
+    differentiable sparse mappings to parameterize the latent
+    discrete distributions. Sparsity will enable efficient
+    marginalization as an alternative to previous techniques. We
+    obtain good performance on three latent variable model
+    applications while still achieving the practicality of
+    sampling-based approximations.
 
 \end{abstract}
