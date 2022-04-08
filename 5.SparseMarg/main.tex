@@ -65,7 +65,7 @@ sparsemax, presented in~\secref{sec:structured}. Unlike existing
 approaches, our strategies involve neither MC estimation nor any
 relaxation of the discrete latent variable to the continuous space.
 We demonstrate our strategy on three different applications: a
-semisupervised generative model, an emergent communication game, and
+semi-supervised generative model, an emergent communication game, and
 a bit-vector variational autoencoder. We provide a thorough analysis
 and comparison to MC methods, and\,---\,when feasible\,---\,to exact
 marginalization. Our approach is consistently a top performer,
@@ -244,7 +244,7 @@ $|\bar\ZZ| = \mathcal{O}(D)$ terms.
 \section{\label{sec:applications}Experimental Analysis}
 
 We next demonstrate the applicability of our proposed strategies by
-tackling three tasks: a deep generative model with semisupervision
+tackling three tasks: a deep generative model with semi-supervision
 (\secref{sec:gen}), an emergent communication two-player game over a
 discrete channel (\secref{sec:comm}), and a variational autoencoder with
 latent binary factors (\secref{sec:bernvae}).
@@ -263,7 +263,7 @@ assume a discrete distribution when computing the entropy of $\pi(z
 largely inspired by the structure and implementations found in
 EGG~\citep{Kharitonov2019} and was built upon it.
 
-\subsection{Semisupervised Variational Auto-encoder (VAE)}\label{sec:gen}
+\subsection{Semi-Supervised Variational Auto-Encoder}\label{sec:gen}
 
 \begin{figure}[htbp]
     \centering
@@ -307,7 +307,7 @@ EGG~\citep{Kharitonov2019} and was built upon it.
         Average test results and standard errors over 10 runs for semi-supervised VAE on MNIST.}
 \end{table}
 
-We consider the semisupervised VAE of \citet{KingmaEtAl2014SSVAE},
+We consider the semi-supervised Variational Auto-Encoder (VAE) of \citet{KingmaEtAl2014SSVAE},
 which models the joint probability $p(z,h,x|\phi)=p(z)p(h)p(x|z,h)$, where
 $x$ is an observation (an MNIST image), $h$ is a continuous latent
 variable with a $n$-dimensional standard Gaussian prior, and $z$ is a
@@ -370,7 +370,7 @@ temperature of the Gumbel models was annealed according to $\tau =
 For these models, we also did a grid search over $r$ (1e-5, 1e-4) and
 over the frequency of updating $\tau$ every (500, 1000) steps.
 Optimization was done with Adam. For our method, in the labeled loss
-component of the semisupervised objective we used the sparsemax
+component of the semi-supervised objective we used the sparsemax
 loss~\citep{martins2016softmax}. Following \citet{RB19}, we pretrain
 the network with only labeled data prior to training with the whole
 training set. Likewise, for our method, we pretrained the network on
@@ -549,7 +549,7 @@ starts off dense while exploring, but quickly becomes very sparse
     \label{fig:nonzero_comm}
 \end{figure*}
 
-\subsection{Bit-Vector Variational Autoencoder}\label{sec:bernvae}
+\subsection{Bit-Vector Variational Auto-Encoder}\label{sec:bernvae}
 
 As described in \secref{sec:structured}, in many interesting problems,
 combinatorial interactions and constraints make $\ZZ$ exponentially
