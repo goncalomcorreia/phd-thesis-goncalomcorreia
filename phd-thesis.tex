@@ -39,32 +39,34 @@
 
 \setcounter{page}{1} \pagenumbering{roman} % --- Start with Roman numbering ---
 
-\baselineskip 18pt % line spacing: -12pt for single spacing
+% \baselineskip 18pt % line spacing: -12pt for single spacing
 %               -18pt for 1 1/2 spacing
 %               -24pt for double spacings}
 
 %%%% Initial Chapters
 \selectlanguage{english}
+\onehalfspacing
+\newgeometry{top=2.5cm, bottom=2.5cm, inner=2.5cm, outer=2.5cm}
 \input{0.Preliminaries/4.Abstract.tex}
 \input{0.Preliminaries/5.Keywords.tex}
 \selectlanguage{portuguese}
 \input{0.Preliminaries/4.Resumo.tex}
 \input{0.Preliminaries/5.PalavrasChave.tex}
-\input{0.Preliminaries/3.Acknowledgments.tex}
-\input{0.Preliminaries/2.citation.tex} % --- Citation (optional) ---
 %% Use Main document Language
-\selectlanguage{english}
 %% ------
+\selectlanguage{english}
+\input{0.Preliminaries/3.Acknowledgments.tex}
+\newgeometry{top=2.5cm, bottom=2.5cm, inner=4.0cm, outer=2.9cm}
+\singlespacing
+\input{0.Preliminaries/2.citation.tex} % --- Citation (optional) ---
 \input{0.Preliminaries/6.Tables.tex}
 \acresetall
 %% Remain list of table titles are set manualy
 %\input{0.Preliminaries/7.Acronym.tex}
 \input{0.Preliminaries/8.Notation.tex}
-%% Use Main document Language
-\selectlanguage{english}
+\cleardoublepage
 % Pages number is starting now with arabic style... until now it was on roman mode
 \pagenumbering{arabic} \setcounter{page}{1}
-\baselineskip 18pt
 %% Define the title of Chapter Table of Contents
 \mtcsettitle{minitoc}{Contents}
 %% ------
