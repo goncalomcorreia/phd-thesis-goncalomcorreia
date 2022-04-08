@@ -2,7 +2,7 @@
 \label{chap:adaptsparse}
 
 \cleardoublepage
-\setstretch{1.25}
+\onehalfspacing
 
 In the previous chapter, we used transfer learning as a way
 to weakly supervise a Transformer model on a low-resource task.
@@ -255,13 +255,13 @@ translation datasets of different number of training instances
 
 \begin{itemize}[itemsep=.5ex,leftmargin=2ex]
     \item IWSLT 2017 German$\rightarrow$English
-          \citep[\langp{DE}{EN},][]{cettolooverview}: ~200K.
+          \citep[\langp{de}{en},][]{cettolooverview}: ~200K.
     \item KFTT Japanese$\rightarrow$English
-          \citep[\langp{JA}{EN},][]{neubig11kftt}: ~300K.
+          \citep[\langp{ja}{en},][]{neubig11kftt}: ~300K.
     \item WMT 2016 Romanian$\rightarrow$English
-          \citep[\langp{RO}{EN},][]{bojar2016findings}: ~600K.
+          \citep[\langp{ro}{en},][]{bojar2016findings}: ~600K.
     \item WMT 2014 English$\rightarrow$German
-          \citep[\langp{EN}{DE},][]{bojar2014findings}: ~4.5M.
+          \citep[\langp{en}{de},][]{bojar2014findings}: ~4.5M.
 \end{itemize}
 
 All of these datasets were preprocessed with byte-pair
@@ -277,8 +277,8 @@ of 8192 tokens and warm up the learning rate linearly until 20k
 steps, after which it decays according to an inverse square root
 schedule. All models were trained until convergence of validation
 accuracy, and evaluation was done at each 10k steps for
-\langp{RO}{EN} and \langp{EN}{DE} and at each 5k steps for
-\langp{DE}{EN} and \langp{JA}{EN}. The end-to-end computational
+\langp{ro}{en} and \langp{en}{de} and at each 5k steps for
+\langp{de}{en} and \langp{ja}{en}. The end-to-end computational
 overhead of our methods, when compared to standard softmax, is
 relatively small; in training tokens per second, the models using
 $\alpha$-\entmaxtext and $1.5$-\entmaxtext are, respectively, $75\%$
@@ -299,8 +299,8 @@ learned internal mechanics of the self-attention heads.
         \begin{tabular}{lrrrr}
             \toprule
             activation
-             & \langp{DE}{EN} & \langp{JA}{EN}
-             & \langp{RO}{EN} & \langp{EN}{DE} \\
+             & \langp{de}{en} & \langp{ja}{en}
+             & \langp{ro}{en} & \langp{en}{de} \\
             \midrule
             $\softmax$
              & 29.79
@@ -321,9 +321,9 @@ learned internal mechanics of the self-attention heads.
         \end{tabular}
     \end{center}
     \caption{Machine translation tokenized BLEU test results
-        on IWSLT 2017 \langp{DE}{EN},
-        KFTT \langp{JA}{EN}, WMT 2016 \langp{RO}{EN} and
-        WMT 2014 \langp{EN}{DE}, respectively.\label{table:mt}}
+        on IWSLT 2017 \langp{de}{en},
+        KFTT \langp{ja}{en}, WMT 2016 \langp{ro}{en} and
+        WMT 2014 \langp{en}{de}, respectively.\label{table:mt}}
 \end{table*}
 
 \section{Analysis}
@@ -379,26 +379,26 @@ density of attention weight vectors as well.
         \includegraphics[width=\linewidth]{Figures/hist_alphas_ro.pdf}
         \caption{%
             \label{fig:hist_alphas_ro}%
-            WMT 2016 \langp{RO}{EN}.}
+            WMT 2016 \langp{ro}{en}.}
     \end{subfigure}
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/hist_alphas_ja.pdf}
         \caption{%
             \label{fig:hist_alphas_ja}%
-            KFTT \langp{JA}{EN}.}
+            KFTT \langp{ja}{en}.}
     \end{subfigure}
 
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/hist_alphas.pdf}
         \caption{%
             \label{fig:hist_alphas_en}%
-            WMT 2014 \langp{EN}{DE}.}
+            WMT 2014 \langp{en}{de}.}
     \end{subfigure}
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/hist_alphas_de.pdf}
         \caption{%
             \label{fig:hist_alphas_de}%
-            IWSLT 2017 \langp{DE}{EN}.}
+            IWSLT 2017 \langp{de}{en}.}
     \end{subfigure}
     \caption{
         Distribution of learned $\alpha$ values per attention block.
@@ -414,26 +414,26 @@ density of attention weight vectors as well.
         \includegraphics[width=\linewidth]{Figures/hist_densities_ro.pdf}
         \caption{%
             \label{fig:hist_densities_ro}%
-            WMT 2016 \langp{RO}{EN}.}
+            WMT 2016 \langp{ro}{en}.}
     \end{subfigure}
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/hist_densities_ja.pdf}
         \caption{%
             \label{fig:hist_densities_ja}%
-            KFTT \langp{JA}{EN}.}
+            KFTT \langp{ja}{en}.}
     \end{subfigure}
 
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/hist_densities.pdf}
         \caption{%
             \label{fig:hist_densities_en}%
-            WMT 2014 \langp{EN}{DE}.}
+            WMT 2014 \langp{en}{de}.}
     \end{subfigure}
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/hist_densities_de.pdf}
         \caption{%
             \label{fig:hist_densities_de}%
-            IWSLT 2017 \langp{DE}{EN}.}
+            IWSLT 2017 \langp{de}{en}.}
     \end{subfigure}
     \caption{%
         \label{fig:hist_densities}
@@ -488,26 +488,26 @@ to the fixed case of $\alpha=1.5$.
         \includegraphics[width=\linewidth]{Figures/head_density_per_layer_ro.pdf}
         \caption{%
             \label{fig:head_density_per_layer_ro}%
-            WMT 2016 \langp{RO}{EN}.}
+            WMT 2016 \langp{ro}{en}.}
     \end{subfigure}
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/head_density_per_layer_ja.pdf}
         \caption{%
             \label{fig:head_density_per_layer_ja}%
-            KFTT \langp{JA}{EN}.}
+            KFTT \langp{ja}{en}.}
     \end{subfigure}
 
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/head_density_per_layer.pdf}
         \caption{%
             \label{fig:head_density_per_layer_en}%
-            WMT 2014 \langp{EN}{DE}.}
+            WMT 2014 \langp{en}{de}.}
     \end{subfigure}
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/head_density_per_layer_de.pdf}
         \caption{%
             \label{fig:head_density_per_layer_de}%
-            IWSLT 2017 \langp{DE}{EN}.}
+            IWSLT 2017 \langp{de}{en}.}
     \end{subfigure}
     \caption{%
         \label{fig:head_density_per_layer}
@@ -523,26 +523,26 @@ to the fixed case of $\alpha=1.5$.
         \includegraphics[width=\linewidth]{Figures/js_divs_ro.pdf}
         \caption{%
             \label{fig:js_divs_ro}%
-            WMT 2016 \langp{RO}{EN}.}
+            WMT 2016 \langp{ro}{en}.}
     \end{subfigure}
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/js_divs_ja.pdf}
         \caption{%
             \label{fig:js_divs_ja}%
-            KFTT \langp{JA}{EN}.}
+            KFTT \langp{ja}{en}.}
     \end{subfigure}
 
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/js_divs.pdf}
         \caption{%
             \label{fig:js_divs_en}%
-            WMT 2014 \langp{EN}{DE}.}
+            WMT 2014 \langp{en}{de}.}
     \end{subfigure}
     \begin{subfigure}[b]{.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/js_divs_de.pdf}
         \caption{%
             \label{fig:js_divs_de}%
-            IWSLT 2017 \langp{DE}{EN}.}
+            IWSLT 2017 \langp{de}{en}.}
     \end{subfigure}
     \caption{%
         \label{fig:js_divs}

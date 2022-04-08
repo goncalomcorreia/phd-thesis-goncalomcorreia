@@ -2,7 +2,7 @@
 \label{chap:ape}
 
 \cleardoublepage
-\setstretch{1.25}
+\onehalfspacing
 
 In the following chapter, we will focus on this thesis' goal of
 paving the way for more \textbf{data-efficient} models. In order to
@@ -158,7 +158,7 @@ Representations from Transformers~\citep[BERT;][]{devlin2018bert}.
 This model obtains deep bidirectional representations by training a
 Transformer~\citep{vaswani2017attention} with a large-scale dataset
 in a masked language modeling task where the objective is to predict
-missing words in a sentence. We use the BERT\textsubscript{\textsc{BASE}}
+missing words in a sentence. We use the BERT\textsubscript{\textsc{base}}
 model, which is composed of $N\!\!=\!\!12$ self-attention layers, hidden size
 $K\!\!=\!\!768$, $H\!\!=\!\!12$ attention heads, and feed-forward inner layer size
 $F\!\!=\!\!3072$. In addition to the word and learned position embeddings,
@@ -211,7 +211,7 @@ pre-trained models in the decoder:
 \begin{itemize}
     \item \textbf{Transformer.} A transformer decoder as described in
           \citet{vaswani2017attention} without any shared parameters,
-          with the BERT\textsubscript{\textsc{BASE}} dimensions and randomly
+          with the BERT\textsubscript{\textsc{base}} dimensions and randomly
           initialized weights.
     \item \textbf{Pre-trained BERT.} This initializes the decoder with
           the pre-trained BERT model. The only component initialized randomly
