@@ -1,40 +1,39 @@
 \begin{abstract}
 
-    This thesis proposes new techniques for improving neural network
-    models' data efficiency, transparency, and compactness, primarily
-    applied to natural language processing. Thanks to our proposed
-    advances in sparsity and weak supervision, we challenge the
-    belief that neural models are not capable of exhibiting such
-    characteristics.
-
-    For data efficiency, we propose to leverage the transfer learning
-    capabilities of large neural encoder models into data-hungry
-    sequence-to-sequence tasks. We apply our method to Automatic
-    Post-Editing (APE) to demonstrate its effectiveness. We fine-tune
-    a pre-trained neural encoder model on both the encoder and
-    decoder of an APE system, exploring several parameter sharing
-    strategies. We obtain competitive results with models trained on
-    larger artificial datasets by training on only a small dataset.
-
-    For transparency, we propose to replace the softmax on attention
-    mechanisms of neural models with $\alpha$-entmax: a
-    differentiable generalization of softmax that allows low-scoring
-    words to receive precisely zero weight. Moreover, we derive a
-    method to learn the $\alpha$ parameter automatically---which
-    controls the shape and sparsity of $\alpha$-entmax. On neural machine
-    translation, we show that our adaptive approach improves
-    interpretability when compared to \textit{vanilla} softmax
-    approaches.
-
-    For compactness, we propose a new technique to train discrete
-    latent variable models more effectively. Traning these models is
-    often challenging due to needing to rely on high-variance
-    sampling strategies or continuous relaxations. Instead, we propose to use
-    differentiable sparse mappings to parameterize the latent
-    discrete distributions. Sparsity will enable efficient
-    marginalization as an alternative to previous techniques. We
-    obtain good performance on three latent variable model
-    applications while still achieving the practicality of
-    sampling-based approximations.
+    Neural network models have become ubiquitous in Machine Learning
+    literature. These models are compositions of differentiable
+    building blocks that result in dense representations of the
+    underlying data. To obtain good representations, conventional
+    neural models require many training data points. Moreover, those
+    representations, albeit giving a high performance on many tasks,
+    are largely uninterpretable. These models are often
+    overparameterized and give out representations that do not
+    compactly represent the data. To address these issues, we find
+    solutions in {\textbf sparsity} and various forms of {\textbf
+            weak supervision}. For {\textbf data-efficiency}, we leverage
+    transfer learning as a form of weak supervision. The proposed
+    model can perform similarly to models trained on millions of data
+    points on a sequence-to-sequence generation task, even though we
+    only train it on a few thousand. For {\textbf transparency}, we
+    propose a probability normalizing function that can learn its
+    sparsity. The model learns the sparsity it needs differentiably
+    and thus adapts it to the data according to the neural
+    component's role in the overall structure. We show that the
+    proposed model improves the interpretability of a popular machine
+    translation neural architecture compared to conventional
+    probability normalizing functions. Finally, for {\textbf
+            compactness}, we uncover a way to obtain exact gradients of
+    discrete and structured latent variable models efficiently. The
+    discrete nodes in these models can compactly represent implicit
+    clusters and structures in the data, but training them was often
+    complex and prone to failure since it required approximations
+    that rely on sampling or relaxations. We propose to train these
+    models with exact gradients by parameterizing discrete
+    distributions with sparse functions, both unstructured and
+    structured. We obtain good performance on three latent variable
+    model applications while still achieving the practicality of the
+    approximations mentioned above. Through these novel
+    contributions, we challenge the conventional wisdom that neural
+    models cannot have these three properties.
 
 \end{abstract}
