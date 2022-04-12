@@ -1,44 +1,80 @@
 \begin{resumo}
 
-    A presente tese cujo tema central consiste em melhorar a
-    eficiência na utilização de dados, a transparência, e a
-    compacidade de redes neuronais, propõe novos avanços em técnicas de
-    esparsidade e supervisão fraca, defiando a doutrina de que
-    modelos neuronais não são capazes de exibir tais características.
+    As redes neuronais tornaram-se omnipresentes em Aprendizagem
+    Automática. A composição destes modelos baseia-se em blocos
+    diferenciáveis que dão origem a representações densas dos dados
+    subjacentes. Para obter boas representações, os modelos
+    convencionais requerem muitos dados. Além disso, embora obtenham
+    excelente desempenho, estes modelos não são interpretáveis e não
+    fornecem representações dos dados de forma compacta. Para
+    resolver estes problemas, esta tese propõe soluções que envolvem
+    \textbf{esparsidade} e várias formas de \textbf{supervisão
+        fraca}. Para obter \textbf{eficiência de dados}, usamos técnicas
+    de transferência de informação como uma forma de supervisão
+    fraca. O modelo proposto tem um desempenho semelhante a modelos
+    treinados em milhões de dados, embora tenha sido treinado em
+    poucos milhares de dados apenas. Para obter
+    \textbf{transparência}, propomos uma função de normalização de
+    probabilidades que tem a capacidade de aprender a sua própria
+    esparsidade. Esta função é diferenciável e a esparsidade pode ser
+    por isso adaptada de acordo com os dados e com o papel que
+    representa a componente do modelo em que se insere. O modelo
+    proposto é mais interpretável do que modelos que usam funções
+    convencionais de normalização. Para obter \textbf{compacidade},
+    propomos uma maneira de obter gradientes exatos de forma
+    eficiente, no treino de modelos com variáveis latentes discretas
+    ou estruturadas. Estas componentes discretas têm a capacidade de
+    desvendar grupos e estruturas inerentes dos dados, de forma
+    compacta. No entanto, treinar estes modelos pode ser complexo,
+    pois exige aproximações através de amostragem ou relaxamentos
+    para o espaço contínuo. Com a nossa técnica, obtemos gradientes
+    exatos ao parameterizar as distribuições com funções esparsas,
+    tanto estruturadas como não-estruturadas. Obtemos um bom
+    desempenho em três diferentes aplicações, alcançando de qualquer
+    forma as vantagens práticas das aproximações mencionadas acima.
+    Graças a estas novas contribuições científicas, esta tese desafia
+    a doutrina atual de que modelos neuronais não são capazes de
+    exibir as propriedades mencionadas.
 
-    Para atingir eficiência na utilização de dados, propomos
-    aproveitar as capacidades de transferência de aprendizagem de
-    redes neuronais pré-treinadas em tarefas sequenciais. Aplicamos
-    este método em Pós-Edição Automática (PEA) para demonstrar a sua
-    eficácia. Para isso, usamos um modelo neuronal pré-treinado nos
-    dois componentes principais do sistema de PEA, explorando várias
-    estratégias de compartilhamento de parâmetros. Conseguimos obter
-    resultados competitivos, quando comparado com modelos treinados
-    em grandes quantidades de dados artificiais, mas utilizando
-    apenas um pequeno conjunto de dados.
+    % A presente tese cujo tema central consiste em melhorar a
+    % eficiência na utilização de dados, a transparência, e a
+    % compacidade de redes neuronais, propõe novos avanços em técnicas de
+    % esparsidade e supervisão fraca, defiando a doutrina de que
+    % modelos neuronais não são capazes de exibir tais características.
 
-    Para atingir transparência, propomos substituir a função softmax
-    nos mecanismos de atenção de redes neuronais pela função
-    $\alpha$-entmax: uma generalização diferenciável da softmax que
-    permite que palavras com baixa pontuação recebam precisamente um
-    peso de zero. Para além disso, derivamos um método para aprender
-    o parâmetro $\alpha$ automaticamente, que controla a forma e a
-    dispersão da função $\alpha$-entmax. Em tradução automática,
-    mostramos que a nossa abordagem adaptativa melhora a
-    interpretabilidade quando comparado à simples aplicação da
-    softmax.
+    % Para atingir eficiência na utilização de dados, propomos
+    % aproveitar as capacidades de transferência de aprendizagem de
+    % redes neuronais pré-treinadas em tarefas sequenciais. Aplicamos
+    % este método em Pós-Edição Automática (PEA) para demonstrar a sua
+    % eficácia. Para isso, usamos um modelo neuronal pré-treinado nos
+    % dois componentes principais do sistema de PEA, explorando várias
+    % estratégias de compartilhamento de parâmetros. Conseguimos obter
+    % resultados competitivos, quando comparado com modelos treinados
+    % em grandes quantidades de dados artificiais, mas utilizando
+    % apenas um pequeno conjunto de dados.
 
-    Para atingir modelos compactos, propomos uma nova técnica para
-    treinar modelos com variáveis latentes discretas. Treinar este
-    tipo de modelos é muitas vezes desafiador devido à necessidade de
-    usar estratégias de amostragem, que têm uma variância alta, ou
-    por ter de usar relaxamentos para o espaço contínuo. Em
-    alternativa, propomos usar mapeamentos esparsos diferenciáveis
-    para parametrizar as distribuições discretas. A esparsidade
-    permite que se faça uma marginalização eficiente das variáveis
-    latentes, em vez da utilização das técnicas mencionadas. Usamos o
-    nosso método em três diferentes aplicações e obtemos resultados
-    competitivos atingindo, mesmo assim, a praticabilidade de
-    aproximações baseadas em amostragem.
+    % Para atingir transparência, propomos substituir a função softmax
+    % nos mecanismos de atenção de redes neuronais pela função
+    % $\alpha$-entmax: uma generalização diferenciável da softmax que
+    % permite que palavras com baixa pontuação recebam precisamente um
+    % peso de zero. Para além disso, derivamos um método para aprender
+    % o parâmetro $\alpha$ automaticamente, que controla a forma e a
+    % dispersão da função $\alpha$-entmax. Em tradução automática,
+    % mostramos que a nossa abordagem adaptativa melhora a
+    % interpretabilidade quando comparado à simples aplicação da
+    % softmax.
+
+    % Para atingir modelos compactos, propomos uma nova técnica para
+    % treinar modelos com variáveis latentes discretas. Treinar este
+    % tipo de modelos é muitas vezes desafiador devido à necessidade de
+    % usar estratégias de amostragem, que têm uma variância alta, ou
+    % por ter de usar relaxamentos para o espaço contínuo. Em
+    % alternativa, propomos usar mapeamentos esparsos diferenciáveis
+    % para parametrizar as distribuições discretas. A esparsidade
+    % permite que se faça uma marginalização eficiente das variáveis
+    % latentes, em vez da utilização das técnicas mencionadas. Usamos o
+    % nosso método em três diferentes aplicações e obtemos resultados
+    % competitivos atingindo, mesmo assim, a praticabilidade de
+    % aproximações baseadas em amostragem.
 
 \end{resumo}

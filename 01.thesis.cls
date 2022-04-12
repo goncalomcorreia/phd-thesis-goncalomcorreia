@@ -363,13 +363,9 @@
 	\pdfbookmark{Abstract}{Abstract}
 	\chapter*{Abstract}}
 
-\newenvironment{acknowledgments}{\vspace*{3cm}
-    {\parindent \z@ \raggedright \normalfont
-        \hspace*{0\p@}\huge\bfseries Acknowledgments
-        \par\nobreak
-        \vspace*{1cm}
-    }
-}
+\newenvironment{acknowledgments}{
+\pdfbookmark{Acknowledgments}{Acknowledgments}
+\chapter*{Acknowledgments}}
 
 \newenvironment{resumo}{
 	\pdfbookmark{Resumo}{Resumo}
