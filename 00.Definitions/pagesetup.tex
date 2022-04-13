@@ -9,7 +9,7 @@
 %\textwidth 15cm
 %\textheight 23.5cm
 
-\usepackage[top=2.5cm, bottom=2.5cm, inner=3.0cm, outer=3.0cm]{geometry}
+\usepackage[top=3.0cm, bottom=3.0cm, inner=3.0cm, outer=2.5cm]{geometry}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -18,7 +18,7 @@
 \fancyhf{}
 %\fancyhead[LE]{\bfseries\nouppercase{\leftmark}}
 %\fancyhead[RO]{\bfseries\nouppercase{\rightmark}}
-\fancyfoot[LE,RO]{\bfseries\small\thepage}
+%\fancyfoot[LE,RO]{\bfseries\small\thepage}
 \renewcommand{\headrulewidth}{0.0pt}
 \renewcommand{\footrulewidth}{0.0pt}
 \addtolength{\headheight}{2pt} % make space for the rule
@@ -26,29 +26,35 @@
     \fancyhead{} % get rid of headers
     \renewcommand{\headrulewidth}{0pt} % and the line
     \renewcommand{\footrulewidth}{0pt}
-    \fancyfoot[LE,RO]{\bfseries\small\thepage}
+    %\fancyfoot[LE,RO]{\bfseries\small\thepage}
+    \fancyfoot[C]{\bfseries\small\thepage}
 }
 
 \fancypagestyle{begin}{%
     \fancyhead{}
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0pt}
-    \fancyfoot[LE,RO]{\bfseries\small\thepage}
+    %\fancyfoot[LE,RO]{\bfseries\small\thepage}
+    \fancyfoot[C]{\bfseries\small\thepage}
 }
 \fancypagestyle{document}{%
     \fancyhf{}
-    \fancyhead[LE]{\bfseries\nouppercase{\leftmark}}
-    \fancyhead[RO]{\bfseries\nouppercase{\rightmark}}
-    \fancyfoot[LE,RO]{\bfseries\small\thepage}
+    \fancyhead[LE]{\color{gray}\small\bfseries\nouppercase{\leftmark}}
+    \fancyhead[RO]{\color{gray}\small\bfseries\nouppercase{\rightmark}}
+    %\fancyfoot[LE,RO]{\bfseries\small\thepage}
+    \fancyfoot[C]{\bfseries\small\thepage}
     %\renewcommand{\headrulewidth}{0pt}
     %\renewcommand{\footrulewidth}{0pt}
     \addtolength{\headheight}{2pt} % make space for the rule
 }
 \fancypagestyle{documentsimple}{%
     \fancyhf{}
-    \fancyfoot[LE,RO]{\bfseries\small\thepage}
-    %\renewcommand{\headrulewidth}{0pt}
-    %\renewcommand{\footrulewidth}{0pt}
+    \fancyhead[LE]{\small\bfseries\textsc{\leftmark}}
+    \fancyhead[RO]{\small\bfseries\textsc{\rightmark}}
+    %\fancyfoot[LE,RO]{\bfseries\small\thepage}
+    \fancyfoot[C]{\bfseries\small\thepage}
+    \renewcommand{\headrulewidth}{1pt}
+    \renewcommand{\footrulewidth}{0pt}
     \addtolength{\headheight}{2pt} % make space for the rule
 }
 \setcounter{secnumdepth} {5}

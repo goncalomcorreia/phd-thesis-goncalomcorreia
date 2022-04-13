@@ -27,6 +27,7 @@
 %% ----------- COVER --------------
 % After deciding the language in which you'll write the thesis -- PT (Portuguese) or EN (English) -- you can
 % edit and select (uncomment) the respective cover file.
+\newgeometry{top=2.5cm, bottom=2.5cm, inner=2.5cm, outer=2.5cm}
 \input{0.Preliminaries/1.cover_EN_draft.tex}
 %\input{0.Preliminaries/1.cover_PT_draft.tex}
 %%-------------------------------------
@@ -48,16 +49,15 @@
 \begingroup
 \makeatletter
 % Redefine the \chapter* header macro to remove vertical space
-\def\@makeschapterhead#1{%
-    \vspace*{10\p@}
-    {\parindent \z@ \raggedright
-        \normalfont
-        \interlinepenalty\@M
-        \Huge \bfseries  #1\par\nobreak
-        \vskip 40\p@
-    }}
-\makeatother
-\newgeometry{top=2.5cm, bottom=2.5cm, inner=2.5cm, outer=2.5cm}
+% \def\@makeschapterhead#1{%
+%     \vspace*{50\p@}
+%     {\parindent \z@ \raggedright
+%         \normalfont
+%         \interlinepenalty\@M
+%         \Huge \bfseries  #1\par\nobreak
+%         \vskip 40\p@
+%     }}
+% \makeatother
 \onehalfspacing
 \input{0.Preliminaries/4.Abstract.tex}
 \input{0.Preliminaries/5.Keywords.tex}
@@ -67,11 +67,10 @@
 % Use Main document Language
 \selectlanguage{english}
 % space between paragraphs
-\setlength{\parskip}{0.5em}
+\setlength{\parskip}{0.4em}
 \input{0.Preliminaries/3.Acknowledgments.tex}
-\endgroup
+% \endgroup
 \input{0.Preliminaries/2.citation.tex} % --- Citation (optional) ---
-\newgeometry{top=3.0cm, bottom=3.0cm, inner=4.0cm, outer=3.0cm}
 \singlespacing
 \input{0.Preliminaries/6.Tables.tex}
 \acresetall
@@ -85,6 +84,9 @@
 \mtcsettitle{minitoc}{Contents}
 %% ------
 \pagestyle{documentsimple}%Simple head
+\newgeometry{top=3.0cm, bottom=3.0cm, inner=3.0cm, outer=2.5cm}
+% space between paragraphs
+\setlength{\parskip}{0.4em}
 \input{1.Introduction/main.tex}
 \input{2.Background/main.tex}
 \input{3.APE/main.tex}
