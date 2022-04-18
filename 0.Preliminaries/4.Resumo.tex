@@ -1,40 +1,41 @@
 \begin{resumo}
 
-    \noindent As redes neuronais tornaram-se omnipresentes em Aprendizagem
-    Automática. A composição destes modelos baseia-se em blocos
-    diferenciáveis que dão origem a representações densas dos dados
-    subjacentes. Para obter boas representações, os modelos
-    convencionais requerem muitos dados. Além disso, embora obtenham
-    excelente desempenho, estes modelos não são interpretáveis e não
-    fornecem representações dos dados de forma compacta. Para
-    resolver estes problemas, esta tese propõe soluções que envolvem
-    \textbf{esparsidade} e várias formas de \textbf{supervisão
-        fraca}. Para obter \textbf{eficiência de dados}, usamos técnicas
-    de transferência de informação como uma forma de supervisão
-    fraca. O modelo proposto tem um desempenho semelhante a modelos
-    treinados em milhões de dados, embora tenha sido treinado em
-    poucos milhares de dados apenas. Para obter
+    \noindent Em aprendizagem automática, os modelos baseados em
+    redes neuronais tornaram-se omnipresentes no estado da arte. A composição destes
+    modelos baseia-se em blocos diferenciáveis que dão origem a
+    representações vetoriais densas dos dados subjacentes. Para obter
+    boas representações, os métodos convencionais requerem o manuseamento de muitos
+    dados. Para além disso, embora obtenham excelente desempenho,
+    estes modelos não são interpretáveis e não fornecem
+    representações dos dados de forma compacta. Para resolver estes
+    problemas, esta tese propõe soluções que envolvem \textbf{esparsidade} e
+    várias formas de \textbf{supervisão fraca}. Para obter \textbf{eficiência} de
+    dados, usamos técnicas de transferência de informação como uma
+    forma de supervisão fraca. O modelo proposto tem um desempenho
+    semelhante a modelos treinados em milhões de dados, embora tenha
+    sido treinado em apenas poucos milhares. Para obter
     \textbf{transparência}, propomos uma função de normalização de
     probabilidades que tem a capacidade de aprender a sua própria
-    esparsidade. Esta função é diferenciável e a esparsidade pode ser
-    por isso adaptada de acordo com os dados e com o papel que
-    representa a componente do modelo em que se insere. O modelo
-    proposto é mais interpretável do que modelos que usam funções
-    convencionais de normalização. Para obter \textbf{compacidade},
-    propomos uma maneira de obter gradientes exatos de forma
-    eficiente, no treino de modelos com variáveis latentes discretas
-    ou estruturadas. Estas componentes discretas têm a capacidade de
-    desvendar grupos e estruturas inerentes dos dados, de forma
-    compacta. No entanto, treinar estes modelos pode ser complexo,
+    esparsidade, ou seja, capaz de aprender a atribuir valores nulos.
+    Esta função é diferenciável e a esparsidade pode ser por isso
+    adaptada de acordo com os dados e com o papel que representa na
+    componente do modelo em que se insere. O modelo proposto é mais
+    interpretável do que modelos que usam funções convencionais de
+    normalização. Para obter \textbf{compacidade}, propomos uma maneira de
+    obter gradientes exatos de forma eficiente, no treino de modelos
+    com variáveis latentes discretas ou estruturadas. Estas
+    componentes discretas têm a capacidade de desvendar grupos e
+    estruturas inerentes aos dados, compactando por isso a
+    informação. No entanto, treinar estes modelos pode ser complexo,
     pois exige aproximações através de amostragem ou relaxamentos
-    para o espaço contínuo. Com a nossa técnica, obtemos gradientes
-    exatos ao parameterizar as distribuições com funções esparsas,
-    tanto estruturadas como não-estruturadas. Obtemos bom
-    desempenho em três aplicações diferentes, alcançando, de qualquer
-    forma, as vantagens práticas das aproximações mencionadas acima.
-    Graças a estas novas contribuições científicas, esta tese desafia
-    a doutrina atual de que modelos neuronais não são capazes de
-    exibir as propriedades mencionadas.
+    para o espaço contínuo. Com a técnica utilizada neste estudo, obtemos gradientes
+    exatos ao parametrizar as distribuições com funções esparsas,
+    tanto estruturadas como não-estruturadas. Obtemos bom desempenho
+    em três aplicações diferentes, alcançando, de qualquer forma, as
+    vantagens práticas das aproximações acima mencionadas. Graças a
+    estas novas contribuições científicas, a presente tese desafia a
+    doutrina atual de que modelos neuronais não são capazes de exibir
+    eficiência de dados, transparência, e compacidade.
 
     % A presente tese cujo tema central consiste em melhorar a
     % eficiência na utilização de dados, a transparência, e a
