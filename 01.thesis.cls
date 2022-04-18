@@ -353,7 +353,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% REDEFINE ABSTRACT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newenvironment{keywords}{\vspace*{1cm}
+\newenvironment{keywords}{\vspace*{1.0cm}
     {\parindent \z@ \raggedright \normalfont
         \hspace*{0\p@}\bfseries Keywords:
     }
@@ -371,7 +371,7 @@
 	\pdfbookmark{Resumo}{Resumo}
 	\chapter*{Resumo}}
 
-    \newenvironment{palavraschave}{\vspace*{1cm}
+    \newenvironment{palavraschave}{\vspace*{1.0cm}
     {\parindent \z@ \raggedright \normalfont
         \hspace*{0\p@}\bfseries Palavras-chave:
     }

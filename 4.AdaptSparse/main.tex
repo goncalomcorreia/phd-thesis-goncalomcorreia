@@ -1,8 +1,8 @@
-\fancychapter{Adaptively Sparse Transformers}
+\fancychapter[Adaptively Sparse Transformers]{Adaptively Sparse Transformers}
 \label{chap:adaptsparse}
 
 \cleardoublepage
-\onehalfspacing
+\doublespacing
 
 In the previous chapter, we used transfer learning as a way
 to weakly supervise a Transformer model on a low-resource task.
@@ -410,26 +410,26 @@ density of attention weight vectors as well.
 
 \begin{figure}[!htbp]
     \centering
-    \begin{subfigure}[b]{.49\linewidth}
+    \begin{subfigure}[b]{.48\linewidth}
         \includegraphics[width=\linewidth]{Figures/hist_densities_ro.pdf}
         \caption{%
             \label{fig:hist_densities_ro}%
             WMT 2016 \langp{ro}{en}.}
     \end{subfigure}
-    \begin{subfigure}[b]{.49\linewidth}
+    \begin{subfigure}[b]{.48\linewidth}
         \includegraphics[width=\linewidth]{Figures/hist_densities_ja.pdf}
         \caption{%
             \label{fig:hist_densities_ja}%
             KFTT \langp{ja}{en}.}
     \end{subfigure}
 
-    \begin{subfigure}[b]{.49\linewidth}
+    \begin{subfigure}[b]{.48\linewidth}
         \includegraphics[width=\linewidth]{Figures/hist_densities.pdf}
         \caption{%
             \label{fig:hist_densities_en}%
             WMT 2014 \langp{en}{de}.}
     \end{subfigure}
-    \begin{subfigure}[b]{.49\linewidth}
+    \begin{subfigure}[b]{.48\linewidth}
         \includegraphics[width=\linewidth]{Figures/hist_densities_de.pdf}
         \caption{%
             \label{fig:hist_densities_de}%
