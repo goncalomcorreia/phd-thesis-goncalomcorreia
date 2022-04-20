@@ -10,8 +10,17 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           root_file: phd-thesis.tex
-      - name: Upload PDF to GitHub
-        uses: actions/upload-artifact@v2
+      - name: Check pdf file
+        run: |
+          file phd-thesis.pdf | grep -q ' PDF '
+      - name: Upload phd-thesis.pdf
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          name: PDF
-          path: phd-thesis.pdf
+          source_file: 'phd-thesis.pdf'
+          destination_repo: 'goncalomcorreia/new-site'
+          destination_folder: 'public'
+          user_email: 'goncalommac@gmail.com'
+          user_name: 'goncalomcorreia'
+          commit_message: '[github actions] update thesis pdf'
