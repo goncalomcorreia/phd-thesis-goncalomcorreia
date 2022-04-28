@@ -1,8 +1,3 @@
-\section{Neural Networks for NLP}
-\label{sec:nmt}
-
-We begin by presenting the main ingredients in the pipeline\dots
-
 \begin{itemize}
     \item pipeline: linear model, parameters, inputs and outputs, types of outputs, loss function
     \item neural network, deep models; define a neural network
@@ -12,6 +7,162 @@ We begin by presenting the main ingredients in the pipeline\dots
     \item transformers; define multi-head attention
     \item pre-trained language models: ELMo, BERT (encoders), GPT (language model), T5 (seq2seq)
 \end{itemize}
+
+\section{Machine Learning}
+\label{sec:ml-primer}
+
+We begin by presenting the main ingredients in the machine learning pipeline:
+%
+\begin{itemize}
+    \item a dataset $\mathcal{D}$, made out of
+          \textit{inputs} $\mathcal{D}=\left\{\bm{x}_i\right\}_{i=1}^N$ or
+          \textit{input-output} pairs
+          $\mathcal{D}=\left\{(\bm{x}_i,y_i)\right\}_{i=1}^N$;
+    \item a set of parameters $\theta$;
+    \item a loss function $L$;
+    \item an optimization algorithm $O$.
+\end{itemize}
+%
+With these ingredients, we create a machine learning pipeline by
+taking a \textit{training set} of $\mathcal{D}$ and optimize using $O$
+the parameters $\theta$, to minimize the loss
+$L$ on that set. The resulting model with optimal
+$\hat{\theta}$ can then be evaluated on a held-out set of
+$\mathcal{D}$, called \textit{test set}, to assess its performance.
+In a probabilistic perspective, the model is parameterizing a likelihood
+function $p(\mathcal{D}|\theta)$.
+
+\paragraph*{Supervised learning.} We now turn our attention to applications
+in which one uses a dataset of input-output pairs. In such a case, 
+after training the model, we
+wish to make predictions $\hat{y}$ for each novel input $\bm{x}$, and we can
+make such predictions by using the optimal trained parameters $\hat{\theta}$
+and selecting the highest-scoring $y\in\mathcal{Y}$
+%
+\begin{equation}
+    \hat{y}=\argmax_{y\in\mathcal{Y}}p\left(y|\bm{x};\hat{\theta}\right),
+\end{equation}
+%
+where $p$ is a probability distribution parameterized by
+$\hat{\theta}$ and $\mathcal{Y}$ is the set of possible outputs. For
+example, in a binary sentiment classification problem of English
+sentences, $\mathcal{Y}=\{\text{negative},\text{positive}\}$, and
+$\mathcal{X}$ would be the set of possible sentences in the English
+language. In turn, we obtain the optimal parameters $\hat{\theta}$ by
+minimizing a loss function $L$ on the training set of $\mathcal{D}$.
+In a supervised setting, this optimization problem takes the form
+The loss function $L$ is usually related to the
+\textit{negative log-likelihood}
+%
+\begin{equation}
+    L\left(\theta\right)=-\log p\left(y_i|\bm{x}_i;\theta\right).
+\end{equation}
+
+\paragraph*{Unsupervised learning.} Similarly, we can also use just a
+dataset of inputs $\bm{x}$ and optimize the parameters $\theta$ to
+obtain an unsupervised model; that is, a model in which the predictions are
+not based on any labels. In this case, the loss function $L$ only
+depends on the inputs $\bm{x}_i$ and the parameters $\theta$
+and we thus model the distribution $p(\bm{x}|\theta)$, that is,
+the likelihood of the model being able to generate the datapoints $\bm{x}$.
+In this case, the loss function $L$ is
+%
+\begin{equation}
+    L\left(\theta\right)=-\log p\left(\bm{x}_i|\theta\right).
+\end{equation}
+
+\paragraph*{Semi-supervised and weakly-supervised learning.} In a
+semi-supervised setting, there is tipically a smaller portion of the
+dataset that is labeled,
+$\mathcal{D}_{\text{labeled}}=\left\{(\bm{x}_i,y_i)\right\}_{i=1}^{N_{\text{labeled}}}$,
+and the remaining majority is unlabeled,
+$\mathcal{D}_{\text{unlabeled}}=\left\{(\bm{x}_i)\right\}_{i=1}^{N_{\text{unlabeled}}}$.
+The parameters are then optimized with a mixture of losses: a
+component that is supervised and a component that is unsupervised.
+Taking the loss examples given above, a semi-supervised model could
+have the loss function
+%
+\begin{equation}
+    L\left(\theta\right)=
+    -\log p\left(\bm{x}_i|\theta\right)
+    -\mathbbm{1}\left[(\bm{x}_i,y_i)\in\mathcal{D}_{\text{labeled}}\right]
+    \log p\left(y_i|\bm{x}_i;\theta\right),
+\end{equation}
+%
+where
+$\mathbbm{1}\left[(\bm{x}_i,y_i)\in\mathcal{D}_{\text{labeled}}\right]$
+denotes the indicator function that is $1$ if the corresponding
+input-output pair exists in the labeled set. In the context of this
+thesis, we will use the term \textit{weakly-supervised} and
+\textit{weak supervision} to refer to a broader setting that aims to
+alleviate the need for labeled data to obtain a well-performing
+model. This setting not only includes semi-supervision but also
+includes, for example, the transferring of learned parameters of an
+already optimized unsupervised model to a supervised one, also called
+\textit{transfer learning}. While not explored in this work, other
+forms of weak supervision include the usage of underspecified or
+unreliable labels, linguistic constraints, labels obtained via
+heuristics, among others.
+
+\subsection{Linear and Deep Models}
+
+Naturally, there are many different ways one can use $\theta$ to
+parameterize $p\left(y|\bm{x};\theta\right)$. One of the simpler ways
+is to define a linear model
+%
+\begin{equation}
+    p\left(y|\bm{x};\theta\right)=W_{\theta}^T\bm{\phi}\left(\bm{x}\right),
+    \label{eq:linear}
+\end{equation}
+%
+where $\bm{\phi}$ is a function that maps the inputs $\bm{x}$ into a
+manageable space, and $W_{\theta}$ is the matrix of weights. The
+problem of obtaining the optimal $W_{\theta}$ lies within the set of
+problems that convex optimization can solve, which significantly
+simplifies the optimization process. While the optimization
+simplicity of linear models is appealing, constructing $\bm{\phi}$
+may require a significant effort. The creation of a suitable function
+$\bm{\phi}: \mathcal{X} \rightarrow \reals^d$ might demand extensive
+knowledge of the domain of $\mathcal{X}$ and of the task itself. The
+\textit{art} of creating these functions $\bm{\phi}$ is often called
+\textbf{feature engineering}.
+
+An alternative to the linear model is the neural network, which, in a
+way, does feature engineering automatically through the use of hidden
+representations. Neural networks use non-linear functions, also known
+as \textit{activation functions}, along with linear functions similar
+to \eqnref{eq:linear} in order to build these hidden representations.
+
+\begin{definition}[Neural Network]
+    A neural network with parameters $\theta$ is a function
+    composed of building blocks that comprise both linear and non-linear
+    functions. These building blocks are called \textit{layers}.
+    The layers connect in a sequence, and the output of each
+    layer is fed into the next layer. The output of the last layer is
+    the output of the neural network. Therefore,
+    %
+    \begin{equation}
+        p\left(y|\bm{x};\theta\right)=l_\theta^{n}\left(l_\theta^{n-1}\left(\dots\left(l_\theta^{1}\left(\bm{x}\right)\right)\right)\right)
+    \end{equation}
+    %
+    defines a neural network with $n$ layers, where $l_i$ is the
+    $i$-th layer.
+\end{definition}
+
+Thanks to its non-linearity, neural networks effectively create
+intermediate abstractions of the data optimized to
+represent the data more meaningfully in order to succeed at the task, bypassing the need
+for feature engineering. Just as well, non-linearities end up
+impeding the usage of convex optimization, and so neural networks
+are often trained instead through a process called \textit{backpropagation},
+a gradient-based optimization algorithm.
+
+\begin{definition}[Backpropagation]
+    Backpropagation is
+\end{definition}
+
+
+\section{Neural Networks and Natural Language}
 
 \subsection{Sequence-to-Sequence Models}
 \label{sec:transformer_bg}
