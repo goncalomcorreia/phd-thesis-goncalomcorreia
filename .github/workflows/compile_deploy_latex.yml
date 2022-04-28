@@ -21,6 +21,7 @@ jobs:
           source_file: 'phd-thesis.pdf'
           destination_repo: 'goncalomcorreia/new-site'
           destination_folder: 'public'
+          destination_branch: 'master'
           user_email: 'goncalommac@gmail.com'
           user_name: 'goncalomcorreia'
           commit_message: '[github actions] update thesis pdf'
