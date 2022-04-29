@@ -27,20 +27,22 @@ $L$ on that set. The resulting model with optimal
 $\hat{\theta}$ can then be evaluated on a held-out set of
 $\mathcal{D}$, called \textit{test set}, to assess its performance.
 
-From a probabilistic perspective, this process creates a probability model
-that identifies the probability measure of a random experiment:
-it maps from available inputs in the set of possible inputs $\mathcal{X}$ to a probability
-distribution of a random variable $Y$ (when $\mathcal D$ is made of input-output pairs).
-When the set of possible outputs $\mathcal{Y}$ is discrete, the probability
-distribution of $Y$ is prescribed by a probability mass function (pmf) $p_{Y|X}(y|x;\theta)$;
-when the set of possible outputs $\mathcal{Y}$ is continuous, the probability
-distribution of $Y$ is prescribed by a probability density function (pdf).
-In the context of the present thesis, we will not have applications in which
-$\mathcal{Y}\in\reals$ (\ie \textit{regression problems}) and as such,
-when referring to $p_{Y|X}(y|x;\theta)$, we assume that it is a
-probability mass function. Furthermore, our problems will
-most often involve a $k$-way classification, and so
-$p_{Y|X}(y|x;\theta)$ is specifying a \textit{Categorical} distribution,
+From a probabilistic perspective, this process creates a probability
+model that identifies the probability measure of a random experiment:
+it maps from available inputs in the set of possible inputs
+$\mathcal{X}$ to a probability distribution of a random variable $Y$
+(when $\mathcal D$ is made of input-output pairs). When the set of
+possible outputs $\mathcal{Y}$ is discrete, the probability
+distribution of $Y$ is prescribed by a probability mass function
+(pmf) $p_{Y|X}(y|x;\theta)$; when the set of possible outputs
+$\mathcal{Y}$ is continuous, the probability distribution of $Y$ is
+prescribed by a probability density function (pdf). In the context of
+the present thesis, we will not have applications in which
+$\mathcal{Y}\in\reals$ (\ie \textit{regression problems}) and as
+such, when referring to $p_{Y|X}(y|x;\theta)$, we assume that it is a
+probability mass function. Furthermore, our problems will most often
+involve a $k$-way classification, and so $p_{Y|X}(y|x;\theta)$ is
+specifying a \textit{Categorical} distribution,
 %
 \begin{equation}
     Y|X\!\!=\!x \sim \text{Cat}(f(x; \theta)),
@@ -162,62 +164,91 @@ constraints, labels obtained via heuristics, among others.
 \subsection{Linear and Deep Models}
 
 Naturally, there are many different ways one can use $\theta$ to
-parameterize $p\left(y|\bm{x};\theta\right)$. One of the simpler ways
+parameterize $p_{Y|X}\left(y|\bm{x};\theta\right)$. One of the simpler ways
 is to define a linear model
 %
-\begin{equation}
-    p\left(y|\bm{x};\theta\right)=W_{\theta}^T\bm{\phi}\left(\bm{x}\right),
-    \label{eq:linear}
-\end{equation}
+\begin{align}
+    p_{Y|X}\left(y|\bm{x};\theta\right) & = \text{Cat}(y|f(\bm x; \theta)) \\
+    f(x; \theta)                        & = \softmax \left(\bm{s}\right)   \\
+    \bm{s}                              & 
+    = \bm{W}_{\theta}^T\bm{\phi}\left(\bm{x}\right) \label{eq:linear}
+\end{align}
 %
-% softmax is how to parameterize the probability mass function as a Categorical
-% add softmax
-where $\bm{\phi}$ is a function that maps the inputs $\bm{x}$ into a
-manageable space, and $W_{\theta}$ is the matrix of weights. The
-problem of obtaining the optimal $W_{\theta}$ lies within the set of
-problems that convex optimization can solve, which significantly
-simplifies the optimization process. While the optimization
-simplicity of linear models is appealing, constructing $\bm{\phi}$
-may require a significant effort. The creation of a suitable function
-$\bm{\phi}: \mathcal{X} \rightarrow \reals^d$ might demand extensive
-knowledge of the domain of $\mathcal{X}$ and of the task itself. The
-\textit{art} of creating these functions $\bm{\phi}$ is often called
-\textbf{feature engineering}.
+where $\bm{\phi}$ is a function that maps $\bm{x}$ into a
+manageable space, $W_{\theta}$ is a matrix of learnable weights, and
+softmax is a function that projects a vector of scores $\bm{s}$ into
+the simplex.
 
-An alternative to the linear model is the neural network, which, in a
+\begin{definition}[softmax]
+    The simplex projection function \textbf{softmax} is defined as
+    \begin{equation}\label{eq:softmax}
+        \softmax(\bm{s}) = \frac{\exp(s_j)}{\sum_{j'} \exp(s_{j'})}.
+    \end{equation}
+\end{definition}
+
+The problem of obtaining the optimal $\bm{W}_{\theta}$ lies
+within the set of problems that convex optimization can solve, which
+significantly simplifies the optimization process. While the
+optimization simplicity of linear models is appealing, constructing
+$\bm{\phi}$ may require a significant effort. The creation of a
+proper feature function $\bm{\phi}: \mathcal{X} \rightarrow \reals^d$ might
+demand extensive knowledge of the domain of $\mathcal{X}$ and of the
+task itself. The \textit{art} of creating these functions $\bm{\phi}$
+is often called \textbf{feature engineering}.
+
+An alternative to the linear model is the \textbf{neural network}, which, in a
 way, does feature engineering automatically through the use of hidden
 representations. Neural networks use non-linear functions, also known
 as \textit{activation functions}, along with linear functions similar
 to \eqnref{eq:linear} in order to build these hidden representations.
 
-\begin{definition}[Neural Network]
+\begin{definition}[neural network]
     A neural network with parameters $\theta$ is a function
     composed of building blocks that comprise both linear and non-linear
     functions. These building blocks are called \textit{layers}.
     The layers connect in a sequence, and the output of each
     layer is fed into the next layer. The output of the last layer is
-    the output of the neural network. Therefore,
+    the output of the neural network
     %
     \begin{equation}
-        p\left(y|\bm{x};\theta\right)=l_\theta^{n}\left(l_\theta^{n-1}\left(\dots\left(l_\theta^{1}\left(\bm{x}\right)\right)\right)\right)
+        f(x; \theta) = \softmax \left(\bm{W}_{\theta}^T\bm{\phi}_{\theta}\left(\bm{x}\right)\right)
     \end{equation}
     %
-    defines a neural network with $n$ layers, where $l_n$ is the
-    $i$-th layer.
+    where compositions of differentiable functions with learnable
+    $\theta$ parameterize $\bm{\phi}_{\theta}$. The composition
+    of $\bm{\phi}_{\theta}$ is extremely flexible and can be
+    defined in a variety of ways, making it a powerful way
+    to obtain meaningful representations of the input space.
 \end{definition}
-
+%
 Thanks to its non-linearity, neural networks effectively create
-intermediate abstractions of the data optimized to
-represent the data more meaningfully in order to succeed at the task, bypassing the need
-for feature engineering. Just as well, non-linearities end up
-impeding the usage of convex optimization, and so neural networks
-are often trained instead through a process called \textit{backpropagation},
-a gradient-based optimization algorithm.
+intermediate abstractions of the data, which are optimized to represent the data
+more meaningfully in order to succeed at the task, bypassing the need
+for feature engineering.
 
-\begin{definition}[Backpropagation]
-    Backpropagation is
+Just as well, non-linearities end up
+impeding the usage of convex optimization, and so neural networks are
+often trained instead through a process called
+\textit{backpropagation}, a gradient-based optimization algorithm.
+%
+\begin{definition}[backpropagation]
+    Backpropagation is a gradient-based optimization algorithm that
+    minimizes the loss function $L$ by iteratively updating the
+    parameters $\theta$. In order to be able to update $\theta$,
+    the only requirement is to be able to compute the gradient of
+    $L$ with respect to every weight $\bm{w}_\theta\in\theta$
+    %
+    \begin{equation}
+        \frac{\partial L_{\mathcal{D}}(\theta)}{\partial \bm{w}_\theta}.
+    \end{equation}
+    %
 \end{definition}
-
+%
+Due to the simplicity of this requirement, practitioners can build
+neural networks in a modular way, where differentiable building
+blocks of functions are combined in arbitrary computational graphs. A
+handful of different algorithms can be used to update $\theta$ during
+backpropagation; for example, Adam~\citep{kingma2014adam}.
 
 \section{Neural Networks and Natural Language}
 
@@ -273,13 +304,6 @@ representations of the queries, $\bm{K}, \bm{V} \in \reals^{m \times
 and $d$ is the dimensionality of these representations. The $\amap$
 mapping normalizes row-wise using \textbf{softmax},
 $\amap(\bm{Z})_{ij} = \softmax(\bm{z}_i)_j$.
-
-\begin{definition}
-    The normalization function \textbf{softmax} is defined as
-    \begin{equation}\label{eq:softmax}
-        \softmax(\bm{z}) = \frac{\exp(z_j)}{\sum_{j'} \exp(z_{j'})}.
-    \end{equation}
-\end{definition}
 
 In words, the \emph{keys} compute a relevance score between each item
 and query. Then, softmax normalizes these attention weights, and
