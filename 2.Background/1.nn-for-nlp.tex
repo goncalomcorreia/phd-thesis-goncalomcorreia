@@ -1,11 +1,3 @@
-\begin{itemize}
-    \item backpropagation; define backpropagation
-    \item sequence modelling; define the task of sequence modeling
-    \item sequence-to-sequence; define scaled attention
-    \item transformers; define multi-head attention
-    \item pre-trained language models: ELMo, BERT (encoders), GPT (language model), T5 (seq2seq)
-\end{itemize}
-
 \section{Machine Learning}
 \label{sec:ml-primer}
 
@@ -163,7 +155,7 @@ constraints, labels obtained via heuristics, among others.
 
 \subsection{Linear and Deep Models}
 
-Naturally, there are many different ways one can use $\theta$ to
+\noindent Naturally, there are many different ways one can use $\theta$ to
 parameterize $p_{Y|X}\left(y|\bm{x};\theta\right)$. One of the simpler ways
 is to define a linear model
 %
@@ -211,7 +203,8 @@ to \eqnref{eq:linear} in order to build these hidden representations.
     the output of the neural network
     %
     \begin{equation}
-        f(x; \theta) = \softmax \left(\bm{W}_{\theta}^T\bm{\phi}_{\theta}\left(\bm{x}\right)\right)
+        f(x; \theta) = \softmax 
+        \left(\bm{W}_{\theta}^T\bm{\phi}_{\theta}\left(\bm{x}\right)\right)
     \end{equation}
     %
     where compositions of differentiable functions with learnable
@@ -221,7 +214,7 @@ to \eqnref{eq:linear} in order to build these hidden representations.
     to obtain meaningful representations of the input space.
 \end{definition}
 %
-Thanks to its non-linearity, neural networks effectively create
+Thanks to its non-linearities, neural networks effectively create
 intermediate abstractions of the data, which are optimized to represent the data
 more meaningfully in order to succeed at the task, bypassing the need
 for feature engineering.
@@ -230,7 +223,9 @@ Just as well, non-linearities end up
 impeding the usage of convex optimization, and so neural networks are
 often trained instead through a process called
 \textit{backpropagation}, a gradient-based optimization algorithm.
-%
+
+\newpage % TODO: might remove if needed
+
 \begin{definition}[backpropagation]
     Backpropagation is a gradient-based optimization algorithm that
     minimizes the loss function $L$ by iteratively updating the
@@ -243,7 +238,7 @@ often trained instead through a process called
     \end{equation}
     %
 \end{definition}
-%
+
 Due to the simplicity of this requirement, practitioners can build
 neural networks in a modular way, where differentiable building
 blocks of functions are combined in arbitrary computational graphs. A
@@ -252,13 +247,33 @@ backpropagation; for example, Adam~\citep{kingma2014adam}.
 
 \section{Neural Networks and Natural Language}
 
+\begin{itemize}
+    \item embeddings?
+    \item transformers; define multi-head attention
+    \item pre-trained language models: ELMo, BERT (encoders), GPT (language model), T5 (seq2seq)
+\end{itemize}
+
 \subsection{Sequence-to-Sequence Models}
 \label{sec:transformer_bg}
 
+\noindent In NLP, predicting the next word in a sentence is a common task. The
+broader family of models that handle such tasks are sequential
+models. In this thesis, we mainly focus on
+\textbf{sequence-to-sequence models} (\textit{seq2seq}), which
+predict the next item in a sequence, given another sequence or set of
+sequences. The model has $Y_i | Y_{\leq i}, X$ as its underlying
+distribution. In turn, the pmf
+%
+\begin{equation}
+    p(y_i|y_{\leq i}, x) = \text{Cat}(y_i|f(y_{\leq i}, x; \theta))
+\end{equation}
+%
+specifies the probability distribution.
+
+
 % Y_i | Y_<i, X
 
-Sequence-to-sequence (seq2seq) models are the broad, main family of models
-used to train NMT systems. While there are a plethora of different architectures,
+While there are a plethora of different architectures,
 seq2seq models have in common the following blocks:
 
 \begin{itemize}
@@ -336,4 +351,4 @@ distinct purposes:
 Together, these mechanisms enable the contextualized flow of information between
 the input sentence and the sequential decoder.
 
-% \subsection{Large Pre-trained Language Models}
+\subsection{Large Pre-trained Language Models}
