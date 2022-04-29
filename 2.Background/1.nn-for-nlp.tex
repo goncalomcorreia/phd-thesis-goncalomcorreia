@@ -268,10 +268,10 @@ distribution. In turn, the pmf
     p(y_i|y_{\leq i}, x) = \text{Cat}(y_i|f(y_{\leq i}, x; \theta))
 \end{equation}
 %
-specifies the probability distribution.
-
-
-% Y_i | Y_<i, X
+specifies the probability distribution, where $x$ is the input
+sequence of words $x=[x^1, \dots, x^N]$, $y_i$ is the next word in
+the sequence $y=[y^1, \dots, y^M]$, and $y_{\leq i}$ is the history
+of previous words in $y$.
 
 While there are a plethora of different architectures,
 seq2seq models have in common the following blocks:
