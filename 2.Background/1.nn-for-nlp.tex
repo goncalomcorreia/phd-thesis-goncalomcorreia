@@ -131,33 +131,33 @@ Taking the loss examples given above, a semi-supervised model could
 have the loss function
 %
 \begin{equation}
-    L\left(\theta\right)=
-    -\log p\left(\bm{x}_n|\theta\right)
-    -\mathbbm{1}\left[(\bm{x}_n,y_n)\in\mathcal{D}_{\text{labeled}}\right]
-    \log p\left(y_n|\bm{x}_n;\theta\right),
+    L_{\mathcal D}\left(\theta\right)=
+    -\sum_n\log p_{X}\left(\bm{x}_n|\theta\right)
+    -\sum_n\mathbbm{1}\left[(\bm{x}_n,y_n)\in\mathcal{D}_{\text{labeled}}\right]
+    \log p_{Y|X}\left(y_n|\bm{x}_n;\theta\right),
+    \label{eq:semisup}
 \end{equation}
 %
-% some abuse of notation use the same letter p, OR subscript the pmf
-% p_{Y|X} and p_{X}
-% in some appl these are independent components that share some parameters
-% in others they are marginals of the same joint distribution
-%
-% how transfer can be learning log p(x) and then use it to learn p(y|x)
-% with same \theta
 where
 $\mathbbm{1}\left[(\bm{x}_n,y_n)\in\mathcal{D}_{\text{labeled}}\right]$
 denotes the indicator function that is $1$ if the corresponding
-input-output pair exists in the labeled set. In the context of this
+input-output pair exists in the labeled set. In some applications,
+$p_X$ and $p_{Y|X}$ are independent components that share some
+parameters; in others, they are marginals of the same joint
+distribution specified by $p(x, y;\theta)$. In the context of this
 thesis, we will use the term \textit{weakly-supervised} and
 \textit{weak supervision} to refer to a broader setting that aims to
 alleviate the need for labeled data to obtain a well-performing
 model. This setting not only includes semi-supervision but also
 includes, for example, the transferring of learned parameters of an
 already optimized unsupervised model to a supervised one, also called
-\textit{transfer learning}. While not explored in this work, other
-forms of weak supervision include the usage of underspecified or
-unreliable labels, linguistic constraints, labels obtained via
-heuristics, among others.
+\textit{transfer learning}. In such a case, the estimation of
+parameters can first occur by minimizing the first loss component in
+\eqnref{eq:semisup}, and then those learned parameters can be reused
+as an initialization on the minimization of the second component.
+While not explored in this thesis, other forms of weak supervision
+include the usage of underspecified or unreliable labels, linguistic
+constraints, labels obtained via heuristics, among others.
 
 \subsection{Linear and Deep Models}
 
