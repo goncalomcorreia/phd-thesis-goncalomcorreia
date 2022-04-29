@@ -1,6 +1,4 @@
 \begin{itemize}
-    \item pipeline: linear model, parameters, inputs and outputs, types of outputs, loss function
-    \item neural network, deep models; define a neural network
     \item backpropagation; define backpropagation
     \item sequence modelling; define the task of sequence modeling
     \item sequence-to-sequence; define scaled attention
@@ -15,82 +13,139 @@ We begin by presenting the main ingredients in the machine learning pipeline:
 %
 \begin{itemize}
     \item a dataset $\mathcal{D}$, made out of
-          \textit{inputs} $\mathcal{D}=\left\{\bm{x}_i\right\}_{i=1}^N$ or
+          \textit{inputs} $\mathcal{D}=\left\{\bm{x}_n\right\}_{n=1}^N$ or
           \textit{input-output} pairs
-          $\mathcal{D}=\left\{(\bm{x}_i,y_i)\right\}_{i=1}^N$;
+          $\mathcal{D}=\left\{(\bm{x}_n,y_n)\right\}_{n=1}^N$;
     \item a set of parameters $\theta$;
-    \item a loss function $L$;
-    \item an optimization algorithm $O$.
+    \item a loss function $L$.
 \end{itemize}
 %
 With these ingredients, we create a machine learning pipeline by
-taking a \textit{training set} of $\mathcal{D}$ and optimize using $O$
-the parameters $\theta$, to minimize the loss
+taking a \textit{training set} that is a subset of $\mathcal{D}$ and estimate
+the parameters $\theta$ by minimizing the loss
 $L$ on that set. The resulting model with optimal
 $\hat{\theta}$ can then be evaluated on a held-out set of
 $\mathcal{D}$, called \textit{test set}, to assess its performance.
-In a probabilistic perspective, the model is parameterizing a likelihood
-function $p(\mathcal{D}|\theta)$.
+
+From a probabilistic perspective, this process creates a probability model
+that identifies the probability measure of a random experiment:
+it maps from available inputs in the set of possible inputs $\mathcal{X}$ to a probability
+distribution of a random variable $Y$ (when $\mathcal D$ is made of input-output pairs).
+When the set of possible outputs $\mathcal{Y}$ is discrete, the probability
+distribution of $Y$ is prescribed by a probability mass function (pmf) $p_{Y|X}(y|x;\theta)$;
+when the set of possible outputs $\mathcal{Y}$ is continuous, the probability
+distribution of $Y$ is prescribed by a probability density function (pdf).
+In the context of the present thesis, we will not have applications in which
+$\mathcal{Y}\in\reals$ (\ie \textit{regression problems}) and as such,
+when referring to $p_{Y|X}(y|x;\theta)$, we assume that it is a
+probability mass function. Furthermore, our problems will
+most often involve a $k$-way classification, and so
+$p_{Y|X}(y|x;\theta)$ is specifying a \textit{Categorical} distribution,
+%
+\begin{equation}
+    Y|X\!\!=\!x \sim \text{Cat}(f(x; \theta)),
+\end{equation}
+%
+where $f(x; \theta)$ is a function such that
+$p_{Y|X}(y|x;\theta)=\text{Cat}(y|f(x; \theta))$.
 
 \paragraph*{Supervised learning.} We now turn our attention to applications
-in which one uses a dataset of input-output pairs. In such a case, 
-after training the model, we
+in which one uses a dataset of input-output pairs. In such a case,
+to estimate $\theta$,
+%
+\begin{equation}
+    \hat{\theta} = \argmin_\theta L_\mathcal{D}(\theta),
+\end{equation}
+%
+where $L_\mathcal{D}(\theta)$ is the loss function:
+the \textit{negative log-likelihood}
+%
+\begin{equation}
+    L_\mathcal{D}(\theta) = -\mathcal{L}_\mathcal{D}(\theta) =
+    - \sum_n \log p_{Y|X}(y_n|x_n; \theta).
+\end{equation}
+%
+Typically, the loss function might also entail a regularization term,
+which is added to the negative log-likelihood
+%
+\begin{equation}
+    L_\mathcal{D}(\theta) = -\mathcal{L}_\mathcal{D}(\theta) + \mathcal{R}(\theta).
+\end{equation}
+%
+Sometimes, instead of the probabilistically-grounded negative
+log-likelihood, practitioners might use a non-probabilistic loss and
+still use a statistical model; for example, one might use the 0/1
+loss where the loss is $1$ if the prediction $\hat{y}\neq y$ and $0$
+otherwise.
+After training the model, we
 wish to make predictions $\hat{y}$ for each novel input $\bm{x}$, and we can
 make such predictions by using the optimal trained parameters $\hat{\theta}$
 and selecting the highest-scoring $y\in\mathcal{Y}$
 %
 \begin{equation}
-    \hat{y}=\argmax_{y\in\mathcal{Y}}p\left(y|\bm{x};\hat{\theta}\right),
+    \hat{y}=\argmax_{y\in\mathcal{Y}}p_{Y|X}\left(y|\bm{x};\hat{\theta}\right).
 \end{equation}
 %
-where $p$ is a probability distribution parameterized by
-$\hat{\theta}$ and $\mathcal{Y}$ is the set of possible outputs. For
-example, in a binary sentiment classification problem of English
+For example, in a binary sentiment classification problem of English
 sentences, $\mathcal{Y}=\{\text{negative},\text{positive}\}$, and
 $\mathcal{X}$ would be the set of possible sentences in the English
-language. In turn, we obtain the optimal parameters $\hat{\theta}$ by
-minimizing a loss function $L$ on the training set of $\mathcal{D}$.
-In a supervised setting, this optimization problem takes the form
-The loss function $L$ is usually related to the
-\textit{negative log-likelihood}
-%
-\begin{equation}
-    L\left(\theta\right)=-\log p\left(y_i|\bm{x}_i;\theta\right).
-\end{equation}
+language.
+
+% TODO: not a distribution! pmf
+% TODO: "likelihood of the model" NOT "likelihood of the data."
 
 \paragraph*{Unsupervised learning.} Similarly, we can also use just a
-dataset of inputs $\bm{x}$ and optimize the parameters $\theta$ to
+dataset of inputs $\bm{x}$ and estimate the parameters $\theta$ under a loss to
 obtain an unsupervised model; that is, a model in which the predictions are
 not based on any labels. In this case, the loss function $L$ only
-depends on the inputs $\bm{x}_i$ and the parameters $\theta$
-and we thus model the distribution $p(\bm{x}|\theta)$, that is,
-the likelihood of the model being able to generate the datapoints $\bm{x}$.
-In this case, the loss function $L$ is
+depends on the inputs $\bm{x}_n$ and the parameters $\theta$
+and we thus model $p_X(\bm{x}|\theta)$.
+In this case, the loss function is
 %
 \begin{equation}
-    L\left(\theta\right)=-\log p\left(\bm{x}_i|\theta\right).
+    L_\mathcal{D}\left(\theta\right)=-\sum_n\log p_X\left(\bm{x}_n|\theta\right).
 \end{equation}
+%
+In this setting, to assess the resulting model's performance,
+we often compute the log-likelihood of the model under the test set
+%
+\begin{equation}
+    \mathcal{L}_{\mathcal{D}_\text{test}}(\hat{\theta}) =
+    \sum_n\log p_X\left(\bm{x}_n|\hat{\theta}\right).
+\end{equation}
+%
+that is, we assess the likelihood of the model being able to generate
+the data points $\bm{x}$.
 
 \paragraph*{Semi-supervised and weakly-supervised learning.} In a
 semi-supervised setting, there is tipically a smaller portion of the
 dataset that is labeled,
-$\mathcal{D}_{\text{labeled}}=\left\{(\bm{x}_i,y_i)\right\}_{i=1}^{N_{\text{labeled}}}$,
+$\mathcal{D}_{\text{labeled}}=
+    \left\{(\bm{x}_n,y_n)\right\}_{i=1}^{N_{\text{labeled}}}$,
 and the remaining majority is unlabeled,
-$\mathcal{D}_{\text{unlabeled}}=\left\{(\bm{x}_i)\right\}_{i=1}^{N_{\text{unlabeled}}}$.
-The parameters are then optimized with a mixture of losses: a
+$\mathcal{D}_{\text{unlabeled}}=
+    \left\{(\bm{x}_n)\right\}_{i=1}^{N_{\text{unlabeled}}}$.
+The parameters are then estimated by using a mixture of losses: a
 component that is supervised and a component that is unsupervised.
 Taking the loss examples given above, a semi-supervised model could
 have the loss function
 %
 \begin{equation}
     L\left(\theta\right)=
-    -\log p\left(\bm{x}_i|\theta\right)
-    -\mathbbm{1}\left[(\bm{x}_i,y_i)\in\mathcal{D}_{\text{labeled}}\right]
-    \log p\left(y_i|\bm{x}_i;\theta\right),
+    -\log p\left(\bm{x}_n|\theta\right)
+    -\mathbbm{1}\left[(\bm{x}_n,y_n)\in\mathcal{D}_{\text{labeled}}\right]
+    \log p\left(y_n|\bm{x}_n;\theta\right),
 \end{equation}
 %
+% some abuse of notation use the same letter p, OR subscript the pmf
+% p_{Y|X} and p_{X}
+% in some appl these are independent components that share some parameters
+% in others they are marginals of the same joint distribution
+%
+% how transfer can be learning log p(x) and then use it to learn p(y|x)
+% with same \theta
 where
-$\mathbbm{1}\left[(\bm{x}_i,y_i)\in\mathcal{D}_{\text{labeled}}\right]$
+$\mathbbm{1}\left[(\bm{x}_n,y_n)\in\mathcal{D}_{\text{labeled}}\right]$
 denotes the indicator function that is $1$ if the corresponding
 input-output pair exists in the labeled set. In the context of this
 thesis, we will use the term \textit{weakly-supervised} and
@@ -115,6 +170,8 @@ is to define a linear model
     \label{eq:linear}
 \end{equation}
 %
+% softmax is how to parameterize the probability mass function as a Categorical
+% add softmax
 where $\bm{\phi}$ is a function that maps the inputs $\bm{x}$ into a
 manageable space, and $W_{\theta}$ is the matrix of weights. The
 problem of obtaining the optimal $W_{\theta}$ lies within the set of
@@ -145,7 +202,7 @@ to \eqnref{eq:linear} in order to build these hidden representations.
         p\left(y|\bm{x};\theta\right)=l_\theta^{n}\left(l_\theta^{n-1}\left(\dots\left(l_\theta^{1}\left(\bm{x}\right)\right)\right)\right)
     \end{equation}
     %
-    defines a neural network with $n$ layers, where $l_i$ is the
+    defines a neural network with $n$ layers, where $l_n$ is the
     $i$-th layer.
 \end{definition}
 
@@ -166,6 +223,8 @@ a gradient-based optimization algorithm.
 
 \subsection{Sequence-to-Sequence Models}
 \label{sec:transformer_bg}
+
+% Y_i | Y_<i, X
 
 Sequence-to-sequence (seq2seq) models are the broad, main family of models
 used to train NMT systems. While there are a plethora of different architectures,
