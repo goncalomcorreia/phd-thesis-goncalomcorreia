@@ -9,7 +9,7 @@
 \section{Machine Learning}
 \label{sec:ml-primer}
 
-We begin by presenting the main ingredients in the machine learning pipeline:
+\noindent We begin by presenting the main ingredients in the machine learning pipeline:
 %
 \begin{itemize}
     \item a dataset $\mathcal{D}$, made out of
@@ -75,12 +75,12 @@ which is added to the negative log-likelihood
 Sometimes, instead of the probabilistically-grounded negative
 log-likelihood, practitioners might use a non-probabilistic loss and
 still use a statistical model; for example, one might use the 0/1
-loss where the loss is $1$ if the prediction $\hat{y}\neq y$ and $0$
-otherwise.
-After training the model, we
-wish to make predictions $\hat{y}$ for each novel input $\bm{x}$, and we can
-make such predictions by using the optimal trained parameters $\hat{\theta}$
-and selecting the highest-scoring $y\in\mathcal{Y}$
+loss where the loss is $1$ if the prediction is wrong, \ie
+$\hat{y}\neq y$, and $0$ otherwise. After training the model, we wish
+to make predictions $\hat{y}$ for each novel input $\bm{x}$ of the
+test set, and we can make such predictions by using the optimal
+trained parameters $\hat{\theta}$ and selecting the highest-scoring
+$y\in\mathcal{Y}$
 %
 \begin{equation}
     \hat{y}=\argmax_{y\in\mathcal{Y}}p_{Y|X}\left(y|\bm{x};\hat{\theta}\right).
