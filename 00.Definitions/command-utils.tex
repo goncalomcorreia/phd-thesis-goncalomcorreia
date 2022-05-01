@@ -109,7 +109,7 @@
         \makebox[\widthof{#3}][#1]{#2}%
 }
 
-\newcounter{definition}[section]
+\newcounter{definition}
 \newenvironment{definition}[1][]{%
         \stepcounter{definition}%
         \ifstrempty{#1}%
@@ -132,7 +132,7 @@
                 }{\end{mdframed}}
 \mdfsetup{skipabove=\topskip,skipbelow=\topskip}
 
-\newcounter{lemma}[section]
+\newcounter{lemma}
 \newenvironment{lemma}[1][]{%
         \stepcounter{lemma}%
         \ifstrempty{#1}%
@@ -155,7 +155,7 @@
                 }{\end{mdframed}}
 \mdfsetup{skipabove=\topskip,skipbelow=\topskip}
 
-\newcounter{proposition}[section]
+\newcounter{proposition}
 \newenvironment{proposition}[1][]{%
         \stepcounter{proposition}%
         \ifstrempty{#1}%

@@ -247,52 +247,71 @@ backpropagation; for example, Adam~\citep{kingma2014adam}.
 
 \section{Neural Networks and Natural Language}
 
-\begin{itemize}
-    \item embeddings?
-    \item transformers; define multi-head attention
-    \item pre-trained language models: ELMo, BERT (encoders), GPT (language model), T5 (seq2seq)
-\end{itemize}
+\noindent Using neural networks in NLP applications is a pivotal part of the
+research shown in the present thesis. While there are many ways of
+applying neural networks to NLP, with many different architectures
+and many different tasks in the literature, we give special attention
+to sequence-to-sequence models, which we will explain in the sequel.
+
+Nevertheless, in the context of neural networks for NLP, there is a
+clear focus on obtaining vectorized representations of words, words
+within their context, and whole sentences. A common ingredient in all
+neural network architectures of NLP is the use of
+\textbf{embeddings}. After the sentence is segmented into tokens
+(words, part of words, and punctuation), the first component of the
+neural network is an \textit{embedding table}: a set of learnable
+vectors of parameters that represent each token in the vocabulary $V$
+(chosen beforehand). For each token in the sentence, the
+corresponding vector (\textit{embedding}) is taken from the table,
+and the resulting output is the sequential concatenation of
+embeddings. From there, the network can be extended with a plethora
+of different architectures that will change those representations and
+entangle them to contextualize the representation of each word in the
+context of the sentence and the task at hand.
 
 \subsection{Sequence-to-Sequence Models}
 \label{sec:transformer_bg}
 
-\noindent In NLP, predicting the next word in a sentence is a common task. The
-broader family of models that handle such tasks are sequential
-models. In this thesis, we mainly focus on
-\textbf{sequence-to-sequence models} (\textit{seq2seq}), which
-predict the next item in a sequence, given another sequence or set of
-sequences. The model has $Y_i | Y_{\leq i}, X$ as its underlying
-distribution. In turn, the pmf
-%
-\begin{equation}
-    p(y_i|y_{\leq i}, x) = \text{Cat}(y_i|f(y_{\leq i}, x; \theta))
-\end{equation}
-%
-specifies the probability distribution, where $x$ is the input
-sequence of words $x=[x^1, \dots, x^N]$, $y_i$ is the next word in
-the sequence $y=[y^1, \dots, y^M]$, and $y_{\leq i}$ is the history
-of previous words in $y$.
+\noindent In NLP, predicting the next word in a sentence is a common
+task. The broader family of models that handle such tasks are
+sequential models. In this thesis, we mainly focus on
+\textbf{sequence-to-sequence models} (\textit{seq2seq}),
 
-While there are a plethora of different architectures,
-seq2seq models have in common the following blocks:
-
-\begin{itemize}
-    \item the {\bf encoder}, which takes as input a sequence $x=[x^1,
-              \dots, x^N]$ and creates hidden representations $h=[h^1, \dots,
-              h^N]$, by learning representations of each word in $x$ and then
-          representations that take into account the context around each word;
-    \item the {\bf decoder}, which takes the hidden representations
-          $h$ of the encoder and learns a mapping to produce a
-          variable-length sequence $\hat{y}$ conditioned on $h$, by
-          learning from the true target sentence $y=[y^1, \dots, y^M]$.
-\end{itemize}
+\begin{definition}[sequence-to-sequence models]
+    A sequence-to-sequence model is a model that takes as input a
+    sequence of tokens, and produces as output another sequence of tokens.
+    The model has $Y_i | Y_{\leq i}, X \sim
+        \text{Cat}(f(y_{\leq i}, x; \theta))$ as its underlying distribution.
+    In turn, the pmf
+    %
+    \begin{equation}
+        p(y_i|y_{\leq i}, x) = \text{Cat}(y_i|f(y_{\leq i}, x; \theta))
+    \end{equation}
+    %
+    specifies that probability distribution, where
+    %
+    \begin{itemize}
+        \item $x=[x^1, \dots, x^N]$ is the input sequence of words;
+        \item $y_i$ is the next word in the output sequence $y=[y^1, \dots, y^M]$;
+        \item $y_{\leq i}$ is the history of previous words in $y$.
+    \end{itemize}
+    %
+    When modeled with neural networks, these models typically have
+    two main building blocks: the \textit{encoder}, that models $x$,
+    and the \textit{decoder}, that models $y$ in the context of $x$.
+\end{definition}
 
 In the following section, we will expand on the current
-state-of-the-art seq2seq architecture.
+state-of-the-art seq2seq architecture, as of the time of this
+thesis: the \textbf{transformer}.
 
 \subsection{Transformer}
 
-The Transformer~\citep{vaswani2017attention} is a seq2seq model which
+\begin{itemize}
+    \item transformers; define multi-head attention
+\end{itemize}
+
+The transformer~\citep{vaswani2017attention} is a seq2seq model which
 maps an input sequence to an output sequence through many layers of
 \textbf{multi-head attention} mechanisms, yielding a dynamic,
 context-dependent strategy for propagating information within and
@@ -352,3 +371,7 @@ Together, these mechanisms enable the contextualized flow of information between
 the input sentence and the sequential decoder.
 
 \subsection{Large Pre-trained Language Models}
+
+\begin{itemize}
+    \item pre-trained language models: ELMo, BERT (encoders), GPT (language model), T5 (seq2seq)
+\end{itemize}
