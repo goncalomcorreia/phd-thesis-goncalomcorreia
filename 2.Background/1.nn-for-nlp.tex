@@ -247,11 +247,12 @@ backpropagation; for example, Adam~\citep{kingma2014adam}.
 
 \section{Neural Networks and Natural Language}
 
-\noindent Using neural networks in NLP applications is a pivotal part of the
-research shown in the present thesis. While there are many ways of
-applying neural networks to NLP, with many different architectures
-and many different tasks in the literature, we give special attention
-to sequence-to-sequence models, which we will explain in the sequel.
+\noindent Using neural networks in NLP applications is a pivotal part
+of the research shown in the present thesis. While there are many
+ways of applying neural networks to NLP, with many different
+architectures and many different tasks in the literature, we give
+special attention to sequence-to-sequence models, which we will
+explain in the sequel.
 
 Nevertheless, in the context of neural networks for NLP, there is a
 clear focus on obtaining vectorized representations of words, words
@@ -264,10 +265,10 @@ vectors of parameters that represent each token in the vocabulary $V$
 (chosen beforehand). For each token in the sentence, the
 corresponding vector (\textit{embedding}) is taken from the table,
 and the resulting output is the sequential concatenation of
-embeddings. From there, the network can be extended with a plethora
-of different architectures that will change those representations and
-entangle them to contextualize the representation of each word in the
-context of the sentence and the task at hand.
+embeddings. Many different architectures can extend the computational
+graph afterward, which will change those representations and entangle
+them to contextualize the representation of each word in the context
+of the sentence and the task at hand.
 
 \subsection{Sequence-to-Sequence Models}
 \label{sec:transformer_bg}
@@ -279,10 +280,9 @@ sequential models. In this thesis, we mainly focus on
 
 \begin{definition}[sequence-to-sequence models]
     A sequence-to-sequence model is a model that takes as input a
-    sequence of tokens, and produces as output another sequence of tokens.
-    The model has $Y_i | Y_{\leq i}, X \sim
-        \text{Cat}(f(y_{\leq i}, x; \theta))$ as its underlying distribution.
-    In turn, the pmf
+    sequence of tokens and produces as output another sequence of tokens.
+    The model has $Y_i | Y_{\leq i}, X \sim \text{Cat}(f(y_{\leq i}, x;
+        \theta))$ as its underlying distribution. In turn, the pmf
     %
     \begin{equation}
         p(y_i|y_{\leq i}, x) = \text{Cat}(y_i|f(y_{\leq i}, x; \theta))
@@ -301,15 +301,10 @@ sequential models. In this thesis, we mainly focus on
     and the \textit{decoder}, that models $y$ in the context of $x$.
 \end{definition}
 
-In the following section, we will expand on the current
-state-of-the-art seq2seq architecture, as of the time of this
-thesis: the \textbf{transformer}.
+In the following section, we will expand on the architecture used in
+the sequence-to-sequence models presented in this thesis: the \textbf{transformer}.
 
 \subsection{Transformer}
-
-\begin{itemize}
-    \item transformers; define multi-head attention
-\end{itemize}
 
 The transformer~\citep{vaswani2017attention} is a seq2seq model which
 maps an input sequence to an output sequence through many layers of
@@ -320,58 +315,94 @@ usually rely either on costly gated recurrent operations~\citep[often
     LSTMs:][]{bahdanau2014neural,luong2015effective} or static
 convolutions~\citep{convseq}.
 
-Given $n$ query contexts and $m$ sequence items under consideration,
-attention mechanisms compute, for each query, a weighted
+Attention mechanisms compute, for each query, a weighted
 representation of the items. The particular attention mechanism used
 in \citet{vaswani2017attention} is called \emph{scaled dot-product
-    attention}, and it is computed in the following way:
-%
-\begin{equation}
-    \att(\bm{Q}, \bm{K}, \bm{V}) = \amap
-    \left(\frac{\bm{Q}\bm{K}^\tr}{\sqrt{d}}\right) \bm{V},
-    \label{eq:att_scaled_dot}
-\end{equation}
-%
-where $\bm{Q} \in \reals^{n \times d}$ contains
-representations of the queries, $\bm{K}, \bm{V} \in \reals^{m \times
-        d}$ are the \emph{keys} and \emph{values} of the items attended over,
-and $d$ is the dimensionality of these representations. The $\amap$
-mapping normalizes row-wise using \textbf{softmax},
-$\amap(\bm{Z})_{ij} = \softmax(\bm{z}_i)_j$.
+    attention}.
 
-In words, the \emph{keys} compute a relevance score between each item
-and query. Then, softmax normalizes these attention weights, and
-these will weight the \emph{values} of each item at each query
-context.
+\begin{definition}[scaled dot-product attention]
+    Attention mechanisms are a possible differentiable building block
+    of a neural network, mainly used in sequence modeling. For each
+    item in the sequence, the attention mechanism computes a weighted
+    representation of all the other items in said sequence or a given
+    context sequence. Given the current item, it can often be
+    interpreted as showing each item's importance in the context. A
+    scaled dot-product attention mechanism is a particular type of
+    attention mechanism:
+    %
+    \begin{equation}
+        \att(\bm{Q}, \bm{K}, \bm{V}) = \amap
+        \left(\frac{\bm{Q}\bm{K}^\tr}{\sqrt{d}}\right) \bm{V},
+        \label{eq:att_scaled_dot}
+    \end{equation}
+    %
+    where, given $n$ query contexts and $m$ sequence items under
+    consideration, $\bm{Q} \in \reals^{n \times d}$ contains
+    representations of the queries, $\bm{K}, \bm{V} \in \reals^{m
+            \times d}$ are the \emph{keys} and \emph{values} of the items
+    attended over, and $d$ is the dimensionality of these
+    representations. The $\amap$ mapping normalizes row-wise using
+    \textbf{softmax}, $\amap(\bm{Z})_{ij} = \softmax(\bm{z}_i)_j$.
+    In words, the \emph{keys} compute a relevance score between each item
+    and query. Then, softmax normalizes these attention weights, and
+    these will weight the \emph{values} of each item at each query
+    context.
+\end{definition}
 
 However, for complex tasks, different parts of a sequence may be
 relevant in different ways, motivating \emph{multi-head attention} in
 transformers. Multi-head attention is simply the application of
 \eqnref{eq:att_scaled_dot} in parallel $H$ times, each with a
-different learned linear transformation that allows specialization:
+different learned linear transformation that allows specialization,
 %
 \begin{equation}\label{eq:head}%
-    \hspace{-.01ex}%
-    \ath_i(\bm{Q}\!,\!\bm{K}\!,\!\bm{V})\!=\!\att(\bm{QW}_i^Q\!\!,\bm{KW}_i^K\!\!,\bm{VW}_i^V\!)%
-    \hspace{-1.5ex}%
+    \ath_i(\bm{Q}\!,\!\bm{K}\!,\!\bm{V})\!=\!\att(\bm{QW}_i^Q\!\!,\bm{KW}_i^K\!\!,\bm{VW}_i^V\!).
 \end{equation}
 
-In the Transformer, there are three separate multi-head attention mechanisms for
+In the transformer, there are three separate multi-head attention mechanisms for
 distinct purposes:
+%
 \begin{itemize}
     \item \textbf{Encoder self-attention:} builds rich, layered representations of
-          each input word by attending to the entire input sentence.
+          each input word by attending to the entire input sentence;
     \item \textbf{Context attention:} selects
           a representative weighted average of the encodings of the input words at each
-          time step of the decoder.
+          time step of the decoder;
     \item \textbf{Decoder self-attention:} attends over the partial output sentence
           fragment produced so far.
 \end{itemize}
+%
 Together, these mechanisms enable the contextualized flow of information between
 the input sentence and the sequential decoder.
 
 \subsection{Large Pre-trained Language Models}
 
-\begin{itemize}
-    \item pre-trained language models: ELMo, BERT (encoders), GPT (language model), T5 (seq2seq)
-\end{itemize}
+A recently attractive way to obtain high-performing models in NLP is
+to use a pre-trained language model. These are models with many
+layers and parameters, trained on millions of sentences gathered from
+the web, using many computational resources in the training process.
+Many of such models' parameters are publicly released and are
+available for the research and industry community to use. Typically,
+practitioners download an already optimized model from the web and
+train it further by \textit{finetuning} it, that is, taking an
+already trained model's parameters and optimizing them on a new
+dataset, usually using a lower learning rate, such that the new
+optimum does not veer too far from the original optimum.
+
+Many different models have been released in the last few years, such
+as ELMo~\citep{peters2018deep}, OpenAI GPT
+series~\citep{radford2018improving, brown2020language},
+BERT~\citep{devlin2018bert}, and
+T5~\citep{raffel2020Exploringlimitstransfer}. Of particular interest
+in this thesis is BERT, since it is the model used in
+\chapref{chap:ape}.
+
+BERT, at its core, is a transformer model, as described in
+\secref{sec:transformer_bg}. However, it is only made out of the
+encoder building block, and thus not having language modeling
+capabilities in its \textit{vanilla} form. As other similar models,
+BERT was trained on an enormous corpus of sentences, on both
+monolingual english datasets and multilingual datasets of 100+
+languages. Many studies have analysed the BERT model and came up with
+variants for it, and its study has even been referred as
+``BERTology''~\citep{rogers2020PrimerBERTologyWhat}.
