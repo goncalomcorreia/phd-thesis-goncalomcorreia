@@ -169,10 +169,11 @@ is to define a linear model
 where $\bm{\phi}$ is a function that maps $\bm{x}$ into a
 manageable space, $W_{\theta}$ is a matrix of learnable weights, and
 softmax is a function that projects a vector of scores $\bm{s}$ into
-the simplex.
+a ``vector of probabilities'', that is, $\sum_k\softmax(\bm{s})_k=1$
+and $\softmax(\bm{s})_k \geq 0$.
 
 \begin{definition}[softmax]
-    The simplex projection function \textbf{softmax} is defined as
+    The projection function \textbf{softmax} is defined as
     \begin{equation}\label{eq:softmax}
         \softmax(\bm{s}) = \frac{\exp(s_j)}{\sum_{j'} \exp(s_{j'})}.
     \end{equation}
@@ -203,15 +204,16 @@ to \eqnref{eq:linear} in order to build these hidden representations.
     the output of the neural network
     %
     \begin{equation}
-        f(x; \theta) = \softmax 
+        f(x; \theta) = \pi 
         \left(\bm{W}_{\theta}^T\bm{\phi}_{\theta}\left(\bm{x}\right)\right)
     \end{equation}
     %
     where compositions of differentiable functions with learnable
-    $\theta$ parameterize $\bm{\phi}_{\theta}$. The composition
-    of $\bm{\phi}_{\theta}$ is extremely flexible and can be
-    defined in a variety of ways, making it a powerful way
-    to obtain meaningful representations of the input space.
+    $\theta$ parameterize $\bm{\phi}_{\theta}$ and $\pi$ is a
+    function that projects the scores into vectors of probabilities (\eg $\softmax$).
+    The composition of $\bm{\phi}_{\theta}$ is extremely flexible and
+    can be defined in a variety of ways, making it a powerful way to
+    obtain meaningful representations of the input space.
 \end{definition}
 %
 Thanks to its non-linearities, neural networks effectively create
@@ -375,6 +377,8 @@ distinct purposes:
 Together, these mechanisms enable the contextualized flow of information between
 the input sentence and the sequential decoder.
 
+% TODO: add a figure here of the transformer architecture
+
 \subsection{Large Pre-trained Language Models}
 
 A recently attractive way to obtain high-performing models in NLP is
@@ -394,15 +398,15 @@ as ELMo~\citep{peters2018deep}, OpenAI GPT
 series~\citep{radford2018improving, brown2020language},
 BERT~\citep{devlin2018bert}, and
 T5~\citep{raffel2020Exploringlimitstransfer}. Of particular interest
-in this thesis is BERT, since it is the model used in
+in this thesis is BERT since it is the model used in
 \chapref{chap:ape}.
 
 BERT, at its core, is a transformer model, as described in
 \secref{sec:transformer_bg}. However, it is only made out of the
-encoder building block, and thus not having language modeling
-capabilities in its \textit{vanilla} form. As other similar models,
-BERT was trained on an enormous corpus of sentences, on both
-monolingual english datasets and multilingual datasets of 100+
-languages. Many studies have analysed the BERT model and came up with
-variants for it, and its study has even been referred as
+encoder building block and thus does not have language modeling
+capabilities in its \textit{vanilla} form. As is the case with other
+similar models, BERT was trained on an enormous corpus of sentences
+in monolingual English and in multilingual datasets of 100+
+languages. Many studies have analyzed the BERT model and have
+developed variants for it. Its study has even been referred as
 ``BERTology''~\citep{rogers2020PrimerBERTologyWhat}.

@@ -3,41 +3,57 @@
 
 % TODO: in attention, it's coefficients of a convex combination
 
-\begin{itemize}
-    \item concept of sparsity
-    \item sparsemax
-    \item entmax
-    \item SparseMAP
-\end{itemize}
+\noindent We now shift our attention to projections onto the \textbf{simplex}. The
+\textit{probability simplex} $\simplex^K$ is a mathematical space
+such that, if $\bm{x}\in\simplex^K$, then $0 \leq x_k \leq 1$ for any
+$k\in\left\{0, \dots, K\right\}$ and $\sum_{k=0}^K x_k = 1$. As
+aforementioned, \textbf{softmax} is one such projection into it
+(\eqnref{eq:softmax}), but others exist, which we will explore and use in this thesis.
 
-% \subsection{Foundations}
+Note how the softmax mapping (\eqnref{eq:softmax}) is elementwise
+proportional to $\exp$; therefore, it can never assign a weight of
+\textbf{exactly zero}. Thus, unnecessary items are still taken into
+consideration to some extent. Since its output sums to one, this
+invariably means less weight is assigned to the relevant items,
+potentially harming performance and
+interpretability~\citep{jain2019attention}. This has motivated a line
+of research on learning networks with \emph{sparse}
+mappings~\citep{sparsemax,fusedmax,louizos,shao2019ssn}. In this
+section, we will explore projections that will be used or expanded in
+this thesis: sparsemax~\citep{martins2016softmax},
+$\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}, and
+SparseMAP~\cite{niculae2018sparsemap}.
 
 \subsection{Sparsemax}\label{sec:sparsemax_bg}
 
-The sparsemax mapping~\citep{martins2016softmax}, is given by the unique solution to
+\noindent The sparsemax transformation
+mapping~\citep{martins2016softmax}, is given by the unique solution
+to the convex optimization problem
+%
 \begin{equation}\label{eq:sparsemax}
     \sparsemax(\s) \coloneqq \argmin_{\pv \in \simplex^K} \| \pv - \s \|_2^2\,.
 \end{equation}
 
 Like softmax, sparsemax is differentiable and has efficient forward and backward
-passes~\citep{Held1974,martins2016softmax}, described in detail below;
-the backward pass is essential in our use case. Since
+passes~\citep{Held1974,martins2016softmax}, described in detail below. Since
 \eqnref{eq:sparsemax} is the Euclidean projection operator onto the probability
-simplex, and solutions can hit the boundary, sparsemax is likely to assign {\bf
+simplex and solutions can hit the boundary, sparsemax is likely to assign {\bf
         probabilities of exactly zero}; in contrast, softmax is always dense.
 
 As a projection onto a polytope, the solution is likely to fall on the
-boundaries or the corners of the set. In this case, points on the boundary of
+set's boundaries or corners. In this case, points on the border of
 $\simplex^K$ have one or more zero coordinates. In contrast, $\softmax(\s)
     \propto \exp(\s)$ is always strictly inside the simplex.
-From the optimality conditions of the sparsemax problem~\eqref{eq:sparsemax},
+From the optimality conditions of the sparsemax problem shown in \eqnref{eq:sparsemax},
 it follows that the solution must have the form:
+%
 \begin{equation}\label{eq:sparsemax_form}
     \sparsemax(\s) = \max(\s - \tau, 0)\,,
 \end{equation}
+%
 where the maximum is elementwise, and $\tau$ is the unique value that
 ensures the result sums to one.
-Letting $\bar{\ZZ}$ be the set of nonzero coordinates in the solution,
+Letting $\bar{\ZZ}$ be the set of nonzero coordinates in the solution, \ie the \textbf{support},
 the normalization condition is equivalently
 \begin{equation}
     \tau = \frac{\sum_{z \in \bar{\ZZ}} \ss_z}{|\bar{\ZZ}|}\,.
@@ -52,10 +68,11 @@ where $\bar{\pv}$ and ${\bar{\s}}$ denote the subsets of the respective vectors
 indexed by the support $\bar{\ZZ}$. Outside of the support, the partial
 derivatives are zero. (\emph{Cf.} the more general result in \citet[Proposition
     2]{entmax}.)
+
 In terms of computation, $\tau$ may be found numerically using root finding
 algorithms on $f(\tau) = \max(\s - \tau, 0) - 1$.
 Alternatively, observe that it is enough to find $\bar{\ZZ}$. By showing that
-sparsemax must preserve the ordering, \ie, that if $\ss_{z'} > \ss_z$ and $z \in
+sparsemax must preserve the ordering, \ie that if $\ss_{z'} > \ss_z$ and $z \in
     \bar{\ZZ}$ then $z' \in \bar{\ZZ}$, it can be shown that $\bar{\ZZ}$ must
 consist of the $k$ highest-scoring coordinates of $\s$, where $k$ can be find by
 inspection after sorting $\s$. This leads to a straightforward $\mathcal{O}(K
@@ -68,59 +85,91 @@ in modern libraries~\citep{pytorch}, this strategy is very fast in practice.
 
 \subsection{Entmax}\label{sec:entmax_bg}
 
-The softmax mapping (\eqnref{eq:softmax}) is elementwise
-proportional to $\exp$, therefore it can never assign a weight of
-\textbf{exactly zero}. Thus, unnecessary items are still taken into
-consideration to some extent. Since its output sums to one, this
-invariably means less weight is assigned to the relevant items,
-potentially harming performance and
-interpretability~\citep{jain2019attention}. This has motivated a line
-of research on learning networks with \emph{sparse}
-mappings~\citep{sparsemax,fusedmax,louizos,shao2019ssn}. We focus on
-a recently-introduced flexible family of transformations,
-$\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}, defined as:
-%
-\begin{equation}\label{eq:define_entmax}
-    \aentmax(\bm{z}) \coloneqq
-    \argmax_{\p \in \simplex^d} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
-\end{equation}
-%
-where $\simplex^d \coloneqq
-    \{\p \in \reals^d:\sum_{i} \pp_i = 1\}$
-is the \emph{probability simplex}, and, for $\alpha\geq1$,
-$\HHt_\alpha$ is the Tsallis continuous family of entropies
-\citep{Tsallis1988}:
-%
-\begin{equation}\label{eq:tsallisdef}
-    \HHt_{\alpha}(\bm{p})\!\coloneqq\!
-    \begin{cases}
-        \frac{1}{\alpha(\alpha-1)}\sum_j\!\left(p_j - p_j^\alpha\right)\!, &
-        \!\!\!\alpha \ne 1,                                                  \\
-        -\sum_j \pp_j \log \pp_j,                                          &
-        \!\!\!\alpha = 1.
-    \end{cases}
-\end{equation}
-%
-This family contains the well-known Shannon and Gini entropies,
-corresponding to the cases $\alpha=1$ and $\alpha=2$, respectively.
+We now focus on $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}.
+
+\begin{definition}[$\aentmax$]
+    \begin{equation}\label{eq:define_entmax}
+        \aentmax(\bm{z}) \coloneqq
+        \argmax_{\p \in \simplex^K} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
+    \end{equation}
+    %
+    where for $\alpha\geq1$,
+    $\HHt_\alpha$ is the Tsallis continuous family of entropies
+    \citep{Tsallis1988}:
+    %
+    \begin{equation}\label{eq:tsallisdef}
+        \HHt_{\alpha}(\bm{p})\!\coloneqq\!
+        \begin{cases}
+            \frac{1}{\alpha(\alpha-1)}\sum_j\!\left(p_j - p_j^\alpha\right)\!, &
+            \!\!\!\alpha \ne 1,                                                  \\
+            -\sum_j \pp_j \log \pp_j,                                          &
+            \!\!\!\alpha = 1.
+        \end{cases}
+    \end{equation}
+    %
+    This family contains the well-known Shannon and Gini entropies,
+    corresponding to the cases $\alpha=1$ and $\alpha=2$, respectively.
+\end{definition}
 
 \eqnref{eq:define_entmax} involves a convex optimization subproblem. Using the
-definition of $\HHt_\alpha$, the optimality conditions may be used to derive the
-following form for the solution (\appref{app:fenchelyoung}):
-%
-\begin{equation}\label{eq:entmax_form}
-    \aentmax(\x) = [(\alpha - 1){\x} - \thresh \ones]_+^{\nicefrac{1}{\alpha-1}},
-\end{equation}
-%
-where $[\cdot]_+$ is the positive part (ReLU) function, $\bm{1}$
-denotes the vector of all ones, and $\thresh$ -- which acts like a
-threshold -- is the Lagrange multiplier corresponding to the $\sum_i
-    \pp_i=1$ constraint.
+definition of $\HHt_\alpha$, the optimality conditions may be used to derive its solution:
+
+\begin{lemma}[Proof in \citet{entmax}]
+    \label{lemma:tsallis_reduction}%
+    For any $\x$, there exists a unique $\tau^\star$ such that
+    %
+    \begin{equation}\label{eq:entmax_form}
+        \aentmax(\x)
+        = [(\alpha - 1){\x} - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
+    \end{equation}
+    %
+    where $[\cdot]_+$ is the positive part (ReLU) function, $\bm{1}$
+    denotes the vector of all ones, and $\thresh$---which acts like a
+    threshold---is the Lagrange multiplier corresponding to the $\sum_i
+        \pp_i=1$ constraint.
+\end{lemma}
+% \begin{proof}
+%     From the definition of $\aentmax$,
+%     \begin{equation}
+%         \aentmax(\bm{z}) \coloneqq
+%         \argmax_{\p \in \simplex^d} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
+%     \end{equation}
+%     we may easily identify it with a regularized prediction function~\citep{blondel2019learning}:
+%     \[\aentmax(\x) \equiv \amap_{-\HHt_{\alpha}}(\x).\]
+%     We first note that for all $\p \in \triangle^d$,
+%     \begin{equation}
+%         -(\alpha-1) \HHt_\alpha(\p) = \frac{1}{\alpha} \sum_{i=1}^d p_i^\alpha + \text{const}.
+%     \end{equation}
+%     From the constant invariance and
+%     scaling properties of $\amap_{\Omega}$
+%     \citep[Proposition~1, items~4--5]{blondel2019learning},
+%     \[\amap_{-\HHt_\alpha}(\x)
+%         = \amap_{\Omega}((\alpha - 1)\x),
+%         \quad\text{with}\quad
+%         \Omega(\p) =
+%         \sum_{j=1}^{d} g(\pp_j),
+%         \quad
+%         g(t) = \frac{t^\alpha}{\alpha}.
+%     \]
+%     Using \citet[Proposition~5]{blondel2019learning}, noting that
+%     $g'(t) = t^{\alpha - 1}$ and $(g')^{-1}(u) =  u^{\nicefrac{1}{\alpha-1}}$,
+%     yields
+%     \begin{equation}\label{eq:rootform}
+%         \amap_{\Omega}(\x) = [\x - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}},
+%         \quad\text{and therefore}\quad
+%         \aentmax(\x) = [(\alpha-1)\x - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
+%     \end{equation}
+%     Since $\HHt_\alpha$ is strictly convex on the simplex, $\aentmax$ has a unique
+%     solution $\p^\star$. \eqnref{eq:rootform}
+%     implicitly defines a one-to-one mapping between $\p^\star$ and $\tau^\star$
+%     as long as $\p^\star \in \simplex$,
+%     therefore $\tau^\star$ is also unique.
+% \end{proof}
 
 \paragraph*{Properties of {\boldmath $\alpha$}-\entmaxtext.}
 The appeal of $\alpha$-\entmaxtext for attention rests on the
-following properties. For $\alpha=1$ (\ie, when $\HHt_\alpha$ becomes
-the Shannon entropy), it exactly recovers the softmax mapping (We
+following properties. For $\alpha=1$, \ie when $\HHt_\alpha$ becomes
+the Shannon entropy, it exactly recovers the softmax mapping (We
 provide a short derivation in \appref{app:fenchelyoung}). For all $\alpha>1$
 it permits sparse solutions, in stark contrast to softmax. In
 particular, for $\alpha=2$, it recovers the sparsemax mapping
@@ -152,91 +201,14 @@ particularly appealing in the context of multi-head attention
 mechanisms, where we shall show in \secref{sec:stats} that different
 heads tend to learn different sparsity behaviors.
 
-\section*{Regularized Fenchel-Young prediction functions}
-\begin{definition}[\citealt{blondel2019learning}]\label{def:rpf}
-
-    Let $\Omega \colon \simplex^d \to \RR \cup \{\infty\}$ be a strictly convex
-    regularization function. We define the prediction function $\amap_{\Omega}$ as
-    \begin{equation}
-        \amap_{\Omega}(\x) = \argmax_{\p \in \simplex^d}
-        \big(\p^\top\x - \Omega(\p)\big)
-        \label{eq:amap}
-    \end{equation}
-\end{definition}
-
-\section*{Characterizing the {\boldmath $\alpha$-\entmaxtext} mapping}\label{sec:bgform}
-
-\begin{lemma}[\citealt{entmax}]
-    \label{lemma:tsallis_reduction}%
-    For any $\x$, there exists a unique $\tau^\star$ such that
-    \begin{equation}\label{eq:entmax_form_app}
-        \aentmax(\x)
-        = [(\alpha - 1){\x} - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
-    \end{equation}
-\end{lemma}
-\begin{proof}
-    From the definition of $\aentmax$,
-    \begin{equation}
-        \aentmax(\bm{z}) \coloneqq
-        \argmax_{\p \in \simplex^d} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
-    \end{equation}
-    we may easily identify it with a regularized prediction function
-    (Def.~\ref{def:rpf}):
-    \[\aentmax(\x) \equiv \amap_{-\HHt_{\alpha}}(\x).\]
-    We first note that for all $\p \in \triangle^d$,
-    \begin{equation}
-        -(\alpha-1) \HHt_\alpha(\p) = \frac{1}{\alpha} \sum_{i=1}^d p_i^\alpha + \text{const}.
-    \end{equation}
-    From the constant invariance and
-    scaling properties of $\amap_{\Omega}$
-    \citep[Proposition~1, items~4--5]{blondel2019learning},
-    \[\amap_{-\HHt_\alpha}(\x)
-        = \amap_{\Omega}((\alpha - 1)\x),
-        \quad\text{with}\quad
-        \Omega(\p) =
-        \sum_{j=1}^{d} g(\pp_j),
-        \quad
-        g(t) = \frac{t^\alpha}{\alpha}.
-    \]
-    Using \citet[Proposition~5]{blondel2019learning}, noting that
-    $g'(t) = t^{\alpha - 1}$ and $(g')^{-1}(u) =  u^{\nicefrac{1}{\alpha-1}}$,
-    yields
-    \begin{equation}\label{eq:rootform}
-        \amap_{\Omega}(\x) = [\x - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}},
-        \quad\text{and therefore}\quad
-        \aentmax(\x) = [(\alpha-1)\x - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
-    \end{equation}
-    Since $\HHt_\alpha$ is strictly convex on the simplex, $\aentmax$ has a unique
-    solution $\p^\star$. \eqnref{eq:rootform}
-    implicitly defines a one-to-one mapping between $\p^\star$ and $\tau^\star$
-    as long as $\p^\star \in \simplex$,
-    therefore $\tau^\star$ is also unique.
-\end{proof}
-
-\section*{Connections to softmax and sparsemax}\label{sec:softmax}
-The Euclidean projection onto the simplex, sometimes referred to, in the context of
-neural attention, as sparsemax~\citep{sparsemax},
-is defined as
-\begin{equation}
-    \sparsemax(\x) \coloneqq \argmin_{\p \in \simplex} \| \p - \x \|_2^2.
-\end{equation}
-The solution can be characterized through the
-unique threshold $\thresh$ such that $\sum_i
-    \sparsemax(\x)_i = 1$ and \citet{Held1974}
-\begin{equation}
-    \sparsemax(\x) = [\x - \tau \bm{1}]_+~.
-\end{equation}
-Thus, each coordinate of the sparsemax solution is a piecewise-linear function.
+\paragraph*{Connections to softmax and sparsemax.}\label{sec:softmax}
+The solutionof sparsemax can be characterized through \eqnref{eq:sparsemax_form}
+and thus each coordinate of the sparsemax solution is a piecewise-linear function.
 Visibly, this expression is recovered when setting $\alpha=2$ in the
-$\alpha$-\entmaxtext expression (\eqnref{eq:entmax_form_supp}); for other
+$\alpha$-\entmaxtext expression (\eqnref{eq:entmax_form}); for other
 values of $\alpha$, the exponent induces curvature.
 
-On the other hand, the well-known softmax is usually defined through the
-expression
-\begin{equation}\label{eq:softmax-supp}
-    \softmax(\x)_i \coloneqq \frac{\exp(\xx_i)}{\sum_j \exp(\xx_j)},
-\end{equation}
-which can be shown to be the unique solution of the optimization problem
+On the other hand, softmax can be shown to be the unique solution of the optimization problem
 \begin{equation}
     \softmax(\x)_i =
     \argmax_{\p \in \simplex} \p^\top\x + \HHs(\p),
@@ -248,28 +220,28 @@ multipliers for the simplex constraints $\sum_i \pp_i = 1$ and $\pp_i \geq 0$,
 respectively. Since the \lhs is only finite for $\pp_i>0$,
 we must have $\nu_i=0$ for all $i$, by complementary
 slackness. Thus, the solution must have the form $\pp_i =
-    \nicefrac{\exp(\xx_i)}{Z}$, yielding \eqnref{eq:softmax-supp}.
+    \nicefrac{\exp(\xx_i)}{Z}$, yielding \eqnref{eq:softmax}.
 
 \subsection{SparseMAP}\label{sec:smap_bg}
 
-Theoretically, the approaches described in \secref{sec:sparsemax_bg}
-and \secref{sec:entmax_bg} apply to any discrete distribution, many
-interesting applications involve a discrete distribution of
+\noindent Theoretically, the approaches described in \secref{sec:sparsemax_bg}
+and \secref{sec:entmax_bg} apply to any value of $K$ in the simplex $\simplex^K$, but many
+interesting applications involve a $K$ with
 combinatorial size. For such cases, we turn to structured prediction
-methods in order to handle the combinatorial explosion. Of particular
+methods to handle the combinatorial explosion. Of particular
 interest in this thesis is \smap~\citep{niculae2018sparsemap,
     sparsemapcg}, a structured extension of sparsemax:
-
+%
 \begin{equation}\label{eq:sparsemap}
     \smapop(\bm{t}) \defeq \argmin_{\pv \in \simplex^{|\ZZ|}}
-    \|\bm{A}\pv - \bm{t}\|_2^2,
+    \|\bm{A}\pv - \bm{t}\|_2^2.
 \end{equation}
 
 \smap has been used successfully to model structures such as trees
 and matchings, and \citet{niculae2018sparsemap} apply an active set
 algorithm for evaluating it and computing gradients efficiently,
 requiring only a primitive for computing $\argmax_{z \in \ZZ} \langle
-    \bm{a}_z, \bm{t}\rangle$. (We detail the algorithm below). While the
+    \bm{a}_z, \bm{t}\rangle$, which we detail below. While the
 $\argmin$ in \eqref{eq:sparsemap} is generally not unique,
 Carath\'eodory's theorem guarantees that solutions with support size
 at most $D+1$ exist, and the active set algorithm enjoys linear and
@@ -278,27 +250,27 @@ finite convergence to a very sparse optimal distribution. Crucially,
 set $\bar\ZZ = \left\{z \in \ZZ \mid \xi^\star_z > 0\right\}$ grows
 only linearly with $D$, and therefore $|\bar\ZZ| \ll |\ZZ|$.
 
-\subsubsection{Computing SparseMAP: The Active Set Algorithm}\label{sec:smap_as_bg}
-
-In this section, we present the active set method
+The active set method
 \citep[Chapters 16.4 \& 16.5]{nocedalwright} as applied to the SparseMAP
-optimization problem (Eq.~\ref{eq:sparsemap})~\cite{niculae2018sparsemap}.
-This form of the algorithm, due to ~\citet[Section 6]{ad3},
+optimization problem (Eq.~\ref{eq:sparsemap})~\cite{niculae2018sparsemap}
 is a small variation of the formulation of Nocedal and Wright for handling
-the equality constraint.
+the equality constraint, due to ~\citet[Section 6]{ad3}.
 Assume that we could identify the \emph{support}, or
 \emph{active set} of an optimal solution  $\bm{\xi}^\star$, denoted
 \[\bar\ZZ \defeq \left\{z \in \ZZ \mid \xi^\star_z > 0\right\}\,. \]
 Then, given this set, we could find the solution to \eqref{eq:sparsemap}
 by solving the lower-dimensional equality-constrained problem
+%
 \begin{equation}
     \minimize\| \bar{\bm{A}}\bar{\pv} - \bm{t} \|^2
     \quad\subjto\quad\bm{1}^\top\bar{\pv} = 1\,,
 \end{equation}
+%
 where we denote by $\bar{\bm{A}}$ and $\bar{\pv}$ the restrictions of $\bm{A}$
 and $\pv$ to the active set of structures $\bar\ZZ$.
 The solution to this equality-constrained QP satisfies the KKT optimality
 conditions,
+%
 \begin{equation}
     \label{eq:qp_kkt}
     \begin{bmatrix}
@@ -309,11 +281,12 @@ conditions,
     =
     \begin{bmatrix} \bar{\bm{A}}^\top \bm{t} \\ 1 \end{bmatrix}.
 \end{equation}
+%
 Of course, the optimal support is not known ahead of time. The active set
-algorithm attempts to guess the support in a greedy fashion,
-at each iteration either [if the solution of \eqref{eq:qp_kkt} is not feasible
-        for \eqref{eq:sparsemap}]
-dropping a structure from $\bar\ZZ$, or [otherwise] adding a new structure.
+algorithm attempts to guess the support greedily,
+at each iteration either (if the solution of \eqref{eq:qp_kkt} is not feasible
+for \eqref{eq:sparsemap})
+dropping a structure from $\bar\ZZ$, or (otherwise) adding a new structure.
 Since the support changes one structure at a time, the design matrix in
 \eqref{eq:qp_kkt} gains or loses one row and column, so
 we may efficiently maintain its Cholesky decomposition via rank-one updates.
@@ -324,10 +297,13 @@ by $\hat{\pv} \in \simplex^{|\ZZ|}$.
 Since we might not have the optimal $\bar{\ZZ}$ yet, $\hat{\pv}$ can be infeasible
 (some coordinates may be negative.)
 To account for this, we take a partial step in its direction,
+%
 \begin{equation}
     \pv^{(i+1)} = (1-\gamma)\pv^{(i)} + \gamma \hat{\pv}^{(i+1)}\,
 \end{equation}
-where, to ensure feasibility, the step size is given by
+%
+where to ensure feasibility, the step size is given by
+%
 \begin{equation}\label{eq:step_size}
     \gamma = \min \left(1, \min_{z \in \bar{\ZZ}; \xi^{(i)}_z > \hat{\xi}_z}
     \frac{
@@ -346,9 +322,11 @@ where $\nu_z$ is the dual variable (Lagrange multiplier) corresponding to the
 constraint $\xi_z \geq 0$.
 Denote $\bm{\mu}^{(i)} \defeq \bm{A}\pv^{(i)} = \bar{\bm{A}}\bar{\pv}^{(i)}$.
 For any $z \not\in \bar{\ZZ}$, the corresponding dual variable must satisfy
+%
 \begin{equation}\label{eq:dual}
     \nu_z = \tau^{(i)} - \DP{\bm{a}_z}{\bm{t} - \bm{\mu}^{(i)}}\,.
 \end{equation}
+%
 If the smallest dual variable is positive, then our current guess satisfies all
 optimality conditions. To find the smallest dual variable we can equivalently
 solve $\argmax_{z \in \ZZ} \DP{\bm{a}_z}{\bm{t} - \bm{\mu}^{(i)}}$, which is
@@ -357,7 +335,7 @@ then $z$ is the index of the most violated constraint $\xi_z \geq 0$;
 it is thus a good choice of structure to add to the active set.
 
 The full procedure is given in Algorithm~\ref{alg:activeset}.
-The backward pass can be computed by implicit differentiation of the KKT system \eqref{eq:qp_kkt} \wrt
+The backward pass is computed by implicit differentiation of \eqnref{eq:qp_kkt} \wrt
 $\bm{t}$, giving, as in \cite{niculae2018sparsemap},
 \begin{equation}
     \pfrac{\bar{\pv}}{\bm{t}} = \bar{\bm{A}}\big(\bm{S} - \bm{ss}^\top / s\big),
