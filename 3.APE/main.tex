@@ -307,27 +307,6 @@ size of 8 and average length penalty.
     \label{tab:ablation_smt}
 \end{table}
 
-\paragraph*{Initialization and Parameter Sharing.}
-\tableref{tab:ablation_smt} compares the different decoder
-strategies described in \secref{sec:ape_bert_decoder} on the WMT 2018
-validation set. The best results were achieved by sharing the
-self-attention between encoder and decoder, and by initializing (but
-not sharing) the context attention with the same weights as the
-self-attention. Regarding the self-attention sharing, we hypothesize
-that its benefits are due to both encoder and decoder sharing a
-common language in their input (in the {\tt mt} and {\tt pe}
-sentence, respectively). Future work will investigate if this is
-still beneficial when the source and target languages are less
-similar. On the other hand, the initialization of the context
-attention with BERT's self-attention weights is essential to reap the
-benefits of BERT representations in the decoder---without it, using
-BERT decreases performance when compared to a regular transformer
-decoder. This might be due to the fact that context attention and
-self-attention share the same neural block architecture (multi-head
-attention) and thus the context attention benefits from the
-pre-trained BERT's better weight initialization. No benefit was
-observed from sharing the feed-forward weights.
-
 \begin{landscape}
     \begin{table*}[t]
         \centering
@@ -399,6 +378,27 @@ observed from sharing the feed-forward weights.
         \label{tab:results_smt}
     \end{table*}
 \end{landscape}
+
+\paragraph*{Initialization and Parameter Sharing.}
+\tableref{tab:ablation_smt} compares the different decoder
+strategies described in \secref{sec:ape_bert_decoder} on the WMT 2018
+validation set. The best results were achieved by sharing the
+self-attention between encoder and decoder, and by initializing (but
+not sharing) the context attention with the same weights as the
+self-attention. Regarding the self-attention sharing, we hypothesize
+that its benefits are due to both encoder and decoder sharing a
+common language in their input (in the {\tt mt} and {\tt pe}
+sentence, respectively). Future work will investigate if this is
+still beneficial when the source and target languages are less
+similar. On the other hand, the initialization of the context
+attention with BERT's self-attention weights is essential to reap the
+benefits of BERT representations in the decoder---without it, using
+BERT decreases performance when compared to a regular transformer
+decoder. This might be due to the fact that context attention and
+self-attention share the same neural block architecture (multi-head
+attention) and thus the context attention benefits from the
+pre-trained BERT's better weight initialization. No benefit was
+observed from sharing the feed-forward weights.
 
 \paragraph*{Final Results and Analysis.}
 Finally, \tableref{tab:results_smt} shows our results on the WMT
