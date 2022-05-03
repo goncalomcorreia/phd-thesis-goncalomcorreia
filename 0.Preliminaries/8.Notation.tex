@@ -1,34 +1,47 @@
 \begin{notation}
     \begin{tabularx}{\textwidth}{r X}
         % \multicolumn{2}{l}{\textbf{Vectors, matrices, and indexing.}} \\
-        $a$, $\bm{a}$, $\bm{A}$, and $\mathcal{A}$ &
-        a scalar, a vector, a matrix, and a set, respectively;                                    \\
 
-        $v_i$                                      &
-        the $i$th element of vector $\bm{v}$;                                                     \\
+        $a$, $\bm{a}$, $\bm{A}$, and $\mathcal{A}$ & a scalar, a
+        vector, a matrix, and a set, respectively;                                                                                                                            \\
 
-        $w_{ij}$                                   &
-        the element on the $i$th row and $j$th column of $\bm{W}$;                                \\
+        $v_i$                                      & the $i$th element of vector $\bm{v}$;                                                                                    \\
 
-        $\bm{e}_{i}$                               &
-        the indicator vector for which every entry is
-        zero, except the $i$\textsuperscript{th}, which is 1;                                     \\
+        $w_{ij}$                                   & the element on the $i$th row and $j$th column of
+        $\bm{W}$;                                                                                                                                                             \\
 
-        $\simplex^K$                               &
-        the canonical simplex, \ie, $\pv \in \reals^K~:~\DP{\bm{1}}{\pv} = 1, \pv \geq \bm{0}\}$; \\
+        $\bm{e}_{i}$                               & the indicator vector for which every entry is
+        zero, except the $i$\textsuperscript{th}, which is 1;                                                                                                                 \\
 
-        $\mathbb H(p)$                             &
-        the Shannon's entropy of a distribution $p(z)$, \ie, $-\sum_i p_i \log p_i$;              \\
+        $\simplex^K$                               & the canonical simplex, \ie, $\pv \in
+        \reals^K:~\sum_i \xi_i = 1, \pv \geq \bm{0}\}$;                                                                                                                       \\
 
-        $\KL\left[ p || q \right]$                 &
-        the Kullback-Leibler divergence of $p(z)$ from $q(z)$;                                    \\
+        $Y$                                        & a random variable;                                                                                                       \\
 
-        $\|z\|_0 \defeq |\{t: z_t \neq 0 \}|$      &
-        the number of non-zeros of a sequence $z$;                                                \\
+        $p_Y(y;\theta)$                            & the probability mass function (pmf) that
+        specifies the probability distribution of the random variable
+        $Y$, evaluated at the outcome $y$ using parameters $\theta$;                                                                                                          \\
 
-        $\mathbb{E}_{p(z)}[f(z)]$                  &
-        the expectation of a function $f:\ZZ \rightarrow \mathbb{R}$ under distribution $p(z)$,
-        letting $z \in \ZZ$ be a random variable;                                                 \\
+        $p(y|x)$                                   & the probability value of outcome $y$ given outcome $x$;                                                                  \\
+
+        $\text{Cat}(f(\cdot;\theta))$              & the categorical distribution parameterized by the function $f(\cdot;\theta)$                                             \\
+
+        $\text{Cat}(y; f(x;\theta))$               & the probability mass value of outcome $y$ under the categorical distribution parameterized by the function $f(x;\theta)$ \\
+
+        $\mathbb H(p)$                             & the Shannon's entropy of the pmf
+        $p(z)$, \ie, $-\sum_i p_i \log p_i$;                                                                                                                                  \\
+
+        $\KL\left[ p || q \right]$                 & the Kullback-Leibler divergence
+        of $p(z)$ from $q(z)$;                                                                                                                                                \\
+
+        $\|z\|_0 \defeq |\{t: z_t \neq 0 \}|$      & the number of
+        non-zeros of a sequence $z$;                                                                                                                                          \\
+
+        $\mathbb{E}_{p(z)}[f(z)]$                  & the expectation of a function
+        $f:\ZZ \rightarrow \mathbb{R}$ under the pmf $p(z)$,
+        letting $z \in \ZZ$ be an outcome of a random variable;                                                                                                               \\
+
+
 
         % $\bs{w}_j$ &
         %     the $j$th column of matrix $\bs{W}$; \\

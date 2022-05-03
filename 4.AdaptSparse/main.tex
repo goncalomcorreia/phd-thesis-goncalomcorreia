@@ -211,7 +211,7 @@ shape away from softmax and toward sparse mappings like sparsemax.
 \noindent%
 The proof uses implicit function differentiation and is given in \appref{app:alpha_grad}.
 
-Proposition~\ref{prop:grad_alpha} provides the remaining missing
+\eqnref{eq:final_gradient_alpha} provides the remaining missing
 piece needed for training adaptively sparse transformers. In the
 following section, we evaluate this strategy on neural machine
 translation, and analyze the behavior of the learned attention heads.
@@ -577,7 +577,7 @@ diversity seems to often peak in the middle layers of the encoder
 self-attention and context attention, while this is not the case for
 the decoder self-attention.
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\columnwidth]{Figures/head_prev.pdf}
     \caption{
@@ -586,6 +586,57 @@ the decoder self-attention.
         is $\alpha=1.91$. Quantitatively more confident, visual inspection
         confirms that the adaptive head behaves more consistently.}
     \label{fig:head_prev}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\columnwidth]{Figures/head_bpe}
+    \caption{%layer 5+1 / head 6+1, alpha=1.33.
+        BPE-merging head $(\alpha=1.91)$ discovered in the
+        $\alpha$-\entmaxtext model. Found in the first encoder layer,
+        this head learns to discover some subword units and combine their
+        information, leaving most words intact. It places $99.09\%$ of
+        its probability mass within the same BPE cluster as the current
+        token: more than any head in any other model.}
+    \label{fig:head_bpe}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.95\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{Figures/head_interro.pdf}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.95\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{Figures/head_interro_not.pdf}
+    \end{subfigure}
+    \caption{%layer 0+1 head 2+1 alpha=1.05
+        Interrogation-detecting heads in the three models. The top sentence
+        is interrogative while the bottom one is declarative but includes the
+        interrogative word ``what''. In the top example, these {\it
+                interrogation heads} assign a high probability to the question mark
+        in the time step of the interrogative word (with $\geq 97.0\%$
+        probability), while in the bottom example since there is no question
+        mark, the same head does not assign a high probability to the last
+        token in the sentence during the interrogative word time step.
+        Surprisingly, this head prefers a low $\alpha=1.05$, as can be seen
+        from the dense weights. This allows the head to identify the noun
+        phrase ``Armani Polo" better.}
+    \label{fig:head_interro}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+        width=0.95\columnwidth]{Figures/sparsity_difference.pdf}
+    \caption{%layer 5+1 / head 6+1, alpha=1.33.
+        Example of two sentences of similar length where the same head
+        ($\alpha=1.33$) exhibits different sparsity. The longer phrase in the
+        example on the right ``a sexually transmitted disease'' is handled
+        with higher confidence, leading to more sparsity.
+    }
+    \label{fig:sparsity_difference}
 \end{figure}
 
 \subsection{Identifying Head Specializations}\label{sec:spec}
@@ -618,57 +669,6 @@ highest-confidence head being sparse ($\alpha=1.91$).
 For position $+1$, the models each dedicate one head, with confidence
 around $95\%$, slightly higher for \entmaxtext. The adaptive model
 sets $\alpha=1.96$ for this head.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.95\columnwidth]{Figures/head_bpe}
-    \caption{%layer 5+1 / head 6+1, alpha=1.33.
-        BPE-merging head $(\alpha=1.91)$ discovered in the
-        $\alpha$-\entmaxtext model. Found in the first encoder layer,
-        this head learns to discover some subword units and combine their
-        information, leaving most words intact. It places $99.09\%$ of
-        its probability mass within the same BPE cluster as the current
-        token: more than any head in any other model.}
-    \label{fig:head_bpe}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \begin{subfigure}[b]{0.95\columnwidth}
-        \centering
-        \includegraphics[width=\columnwidth]{Figures/head_interro.pdf}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.95\columnwidth}
-        \centering
-        \includegraphics[width=\columnwidth]{Figures/head_interro_not.pdf}
-    \end{subfigure}
-    \caption{%layer 0+1 head 2+1 alpha=1.05
-        Interrogation-detecting heads in the three models. The top sentence
-        is interrogative while the bottom one is declarative but includes the
-        interrogative word ``what''. In the top example, these {\it
-                interrogation heads} assign a high probability to the question mark
-        in the time step of the interrogative word (with $\geq 97.0\%$
-        probability), while in the bottom example since there is no question
-        mark, the same head does not assign a high probability to the last
-        token in the sentence during the interrogative word time step.
-        Surprisingly, this head prefers a low $\alpha=1.05$, as can be seen
-        from the dense weights. This allows the head to identify the noun
-        phrase ``Armani Polo" better.}
-    \label{fig:head_interro}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[
-        width=0.95\columnwidth]{Figures/sparsity_difference.pdf}
-    \caption{%layer 5+1 / head 6+1, alpha=1.33.
-        Example of two sentences of similar length where the same head
-        ($\alpha=1.33$) exhibits different sparsity. The longer phrase in the
-        example on the right ``a sexually transmitted disease'' is handled
-        with higher confidence, leading to more sparsity.
-    }
-    \label{fig:sparsity_difference}
-\end{figure}
 
 \paragraph*{BPE-merging head.}
 Due to the sparsity of our models, we are able to identify other head
