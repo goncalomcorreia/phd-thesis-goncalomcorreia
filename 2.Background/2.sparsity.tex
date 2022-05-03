@@ -26,16 +26,21 @@ SparseMAP~\cite{niculae2018sparsemap}.
 
 \subsection{Sparsemax}\label{sec:sparsemax_bg}
 
-\noindent The sparsemax transformation
-mapping~\citep{martins2016softmax}, is given by the unique solution
-to the convex optimization problem
-%
-\begin{equation}\label{eq:sparsemax}
-    \sparsemax(\s) \coloneqq \argmin_{\pv \in \simplex^K} \| \pv - \s \|_2^2\,.
-\end{equation}
-
+\noindent Firstly, we will introduce the \textbf{sparsemax} mapping.
 Like softmax, sparsemax is differentiable and has efficient forward and backward
-passes~\citep{Held1974,martins2016softmax}, described in detail below. Since
+passes~\citep{Held1974,martins2016softmax}, described in detail below.
+
+\begin{definition}[sparsemax]
+    The sparsemax transformation
+    mapping~\citep{martins2016softmax}, is given by the unique solution
+    to the convex optimization problem
+    %
+    \begin{equation}\label{eq:sparsemax}
+        \sparsemax(\s) \coloneqq \argmin_{\pv \in \simplex^K} \| \pv - \s \|_2^2\,.
+    \end{equation}
+\end{definition}
+
+Since
 \eqnref{eq:sparsemax} is the Euclidean projection operator onto the probability
 simplex and solutions can hit the boundary, sparsemax is likely to assign {\bf
         probabilities of exactly zero}; in contrast, softmax is always dense.
@@ -46,18 +51,23 @@ $\simplex^K$ have one or more zero coordinates. In contrast, $\softmax(\s)
     \propto \exp(\s)$ is always strictly inside the simplex.
 From the optimality conditions of the sparsemax problem shown in \eqnref{eq:sparsemax},
 it follows that the solution must have the form:
-%
-\begin{equation}\label{eq:sparsemax_form}
-    \sparsemax(\s) = \max(\s - \tau, 0)\,,
-\end{equation}
-%
-where the maximum is elementwise, and $\tau$ is the unique value that
-ensures the result sums to one.
+
+\begin{lemma}[Proof in \citet{sparsemax}]
+    \begin{equation}\label{eq:sparsemax_form}
+        \sparsemax(\s) = \max(\s - \tau, 0)\,,
+    \end{equation}
+    %
+    where the maximum is elementwise, and $\tau$ is the unique value that
+    ensures the result sums to one.
+\end{lemma}
+
 Letting $\bar{\ZZ}$ be the set of nonzero coordinates in the solution, \ie the \textbf{support},
 the normalization condition is equivalently
+%
 \begin{equation}
     \tau = \frac{\sum_{z \in \bar{\ZZ}} \ss_z}{|\bar{\ZZ}|}\,.
 \end{equation}
+%
 Observing that small changes to $\s$ almost always have no effect on the support
 $\bar{\ZZ}$, differentiating Equation~\ref{eq:sparsemax_form} gives
 \begin{equation}
@@ -87,7 +97,11 @@ in modern libraries~\citep{pytorch}, this strategy is very fast in practice.
 
 We now focus on $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}.
 
+\newpage
+
 \begin{definition}[$\aentmax$]
+    The $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax} mapping
+    is given by the unique solution to the convex optimization problem
     \begin{equation}\label{eq:define_entmax}
         \aentmax(\bm{z}) \coloneqq
         \argmax_{\p \in \simplex^K} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
@@ -230,12 +244,16 @@ interesting applications involve a $K$ with
 combinatorial size. For such cases, we turn to structured prediction
 methods to handle the combinatorial explosion. Of particular
 interest in this thesis is \smap~\citep{niculae2018sparsemap,
-    sparsemapcg}, a structured extension of sparsemax:
-%
-\begin{equation}\label{eq:sparsemap}
-    \smapop(\bm{t}) \defeq \argmin_{\pv \in \simplex^{|\ZZ|}}
-    \|\bm{A}\pv - \bm{t}\|_2^2.
-\end{equation}
+    sparsemapcg}, a structured extension of sparsemax.
+
+\begin{definition}[SparseMAP]
+    SparseMAP~\citep{niculae2018sparsemap,
+        sparsemapcg} is given by the solution of the optimization problem
+    \begin{equation}\label{eq:sparsemap}
+        \smapop(\bm{t}) \defeq \argmin_{\pv \in \simplex^{|\ZZ|}}
+        \|\bm{A}\pv - \bm{t}\|_2^2.
+    \end{equation}
+\end{definition}
 
 \smap has been used successfully to model structures such as trees
 and matchings, and \citet{niculae2018sparsemap} apply an active set
