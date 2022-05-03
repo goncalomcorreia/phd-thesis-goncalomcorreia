@@ -352,20 +352,6 @@ a maximization (MAP) oracle call. If the resulting $\nu_z$ is negative,
 then $z$ is the index of the most violated constraint $\xi_z \geq 0$;
 it is thus a good choice of structure to add to the active set.
 
-The full procedure is given in Algorithm~\ref{alg:activeset}.
-The backward pass is computed by implicit differentiation of \eqnref{eq:qp_kkt} \wrt
-$\bm{t}$, giving, as in \cite{niculae2018sparsemap},
-\begin{equation}
-    \pfrac{\bar{\pv}}{\bm{t}} = \bar{\bm{A}}\big(\bm{S} - \bm{ss}^\top / s\big),
-    \quad\text{where}\quad
-    \bm{S} = (\bar{\bm{A}}^\top \bar{\bm{A}})^{-1},
-    \bm{s} = \bm{S1}, s = \bm{1}^\top\bm{S1}
-    \,.
-\end{equation}
-It is possible to apply the $\ell_2$ regularization term only to a subset of the
-rows of $\bm{A}$, as is more standard in the graphical model literature. We
-refer the reader to the presentation in \cite{ad3,niculae2018sparsemap} for this extension.
-
 \begin{algorithm}[htpb]
     \caption{Active set algorithm for SparseMAP \label{alg:activeset}}
     \begin{algorithmic}[1]
@@ -394,3 +380,17 @@ refer the reader to the presentation in \cite{ad3,niculae2018sparsemap} for this
         \EndFor
     \end{algorithmic}
 \end{algorithm}
+
+The full procedure is given in Algorithm~\ref{alg:activeset}.
+The backward pass is computed by implicit differentiation of \eqnref{eq:qp_kkt} \wrt
+$\bm{t}$, giving, as in \cite{niculae2018sparsemap},
+\begin{equation}
+    \pfrac{\bar{\pv}}{\bm{t}} = \bar{\bm{A}}\big(\bm{S} - \bm{ss}^\top / s\big),
+    \quad\text{where}\quad
+    \bm{S} = (\bar{\bm{A}}^\top \bar{\bm{A}})^{-1},
+    \bm{s} = \bm{S1}, s = \bm{1}^\top\bm{S1}
+    \,.
+\end{equation}
+It is possible to apply the $\ell_2$ regularization term only to a subset of the
+rows of $\bm{A}$, as is more standard in the graphical model literature. We
+refer the reader to the presentation in \cite{ad3,niculae2018sparsemap} for this extension.

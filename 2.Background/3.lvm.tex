@@ -30,10 +30,10 @@ observation,
 %
 is the expected value of a downstream loss $\ell(x,z;\theta)$ under a
 probability model $\pi(z|x,\theta)$ of the latent variable; in other
-words, the latent variable $z$ is {\it marginalized} to compute this loss.\footnote{
-        With this loss, we are assuming that the latent variable is discrete. We refer the reader
-        to \citet{Kim2018} for other possibilities, such as continuous latent variables, and for more
-        details in general.}
+words, the latent variable $z$ is {\it marginalized} to compute this loss.
+With this loss, we are assuming that the latent variable is discrete. We refer the reader
+to \citet{Kim2018} for other possibilities, such as continuous latent variables, and for more
+details in general.
 To model complex data, one parameterizes both the downstream loss and
 the pmf over latent assignments using neural networks, due
 to their flexibility and capacity~\citep{Kingma+2014:VAE}.
