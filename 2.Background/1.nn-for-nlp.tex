@@ -273,7 +273,6 @@ them to contextualize the representation of each word in the context
 of the sentence and the task at hand.
 
 \subsection{Sequence-to-Sequence Models}
-\label{sec:transformer_bg}
 
 \noindent In NLP, predicting the next word in a sentence is a common
 task. The broader family of models that handle such tasks are
@@ -307,8 +306,9 @@ In the following section, we will expand on the architecture used in
 the sequence-to-sequence models presented in this thesis: the \textbf{transformer}.
 
 \subsection{Transformer}
+\label{sec:transformer_bg}
 
-The transformer~\citep{vaswani2017attention} is a seq2seq model which
+\noindent The transformer~\citep{vaswani2017attention} is a seq2seq model which
 maps an input sequence to an output sequence through many layers of
 \textbf{multi-head attention} mechanisms, yielding a dynamic,
 context-dependent strategy for propagating information within and
@@ -381,7 +381,7 @@ the input sentence and the sequential decoder.
 
 \subsection{Large Pre-trained Language Models}
 
-A recently attractive way to obtain high-performing models in NLP is
+\noindent A recently attractive way to obtain high-performing models in NLP is
 to use a pre-trained language model. These are models with many
 layers and parameters, trained on millions of sentences gathered from
 the web, using many computational resources in the training process.
