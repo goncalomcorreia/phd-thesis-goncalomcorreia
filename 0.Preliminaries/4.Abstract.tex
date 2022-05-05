@@ -23,15 +23,14 @@
         cost in accuracy, sparsity helps to uncover different
         specializations of the neural components, aiding the
         interpretability of a popular neural machine translation
-        architecture compared to conventional normalization
-        functions. Finally, for \textbf{compactness}, we reveal a way
-        to efficiently obtain deterministic gradients of discrete and
-        structured latent variable models. The discrete nodes in
+        architecture. Finally, for \textbf{compactness}, we reveal a
+        way to efficiently obtain deterministic gradients of discrete
+        and structured latent variable models. The discrete nodes in
         these models can compactly represent implicit clusters and
         structures in the data. Still, their training can often be
         complex and prone to failure since it usually requires
         approximations that rely on sampling or relaxations. We
-        propose to train these models with exact gradients by
+        propose to train these models with deterministic gradients by
         parameterizing discrete distributions with sparse functions,
         both unstructured and structured. We obtain good performance
         on three latent variable model applications while still
