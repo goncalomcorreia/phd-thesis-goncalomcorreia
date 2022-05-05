@@ -7,73 +7,77 @@
 \cleardoublepage
 \doublespacing
 
-The success of well known deep learning
-models~\citep{convnet,devlin2018bert,brown2020language} rely on a
-rich parameterization through the use of numerous neural network
-layers. Along with huge amounts of datapoints, this allows for these
-models to learn good vector representations that consequently permit
-these models to excel in their respective tasks. However, these
-models are often highly overparameterized and their interpretation is
-difficult due to an underlying opaqueness of the model. Moreover,
-they require very expensive computing power, which causes
-understandable environmental concerns~\citep{Strubell2019}. In
-natural language processing (NLP), one such model is the Transformer
+\noindent Deep learning is a field of machine learning that uses
+\textbf{neural networks} to learn and obtain predictions
+and inferences from unprocessed data. The success of well-known deep
+learning models~\citep[\textit{inter
+        alia}]{convnet,devlin2018bert,brown2020language} relies on a rich
+parameterization accomplished through the use of numerous layers of
+computation. Along with vast amounts of data points,
+such a heavy parameterization allows these models to learn good
+vector representations that permit them to excel in their respective
+tasks. However, these models are often highly overparameterized;
+additionally, their interpretation is difficult due to the underlying
+opaqueness of neural models. Moreover, they require costly computing
+power, which causes environmental concerns~\citep{Strubell2019}. In
+natural language processing (NLP), one such model is the transformer
 architecture~\citep{vaswani2017attention} which has quickly risen to
-prominence through its performance, leading to improvements in the
-state of the art of neural machine
-translation~\citep[NMT;][]{marian,ott2018scaling}, and served as
-inspiration to even bigger and powerful general-purpose models like
-BERT~\citep{devlin2018bert} and
+prominence thanks to its outstanding performance, leading to
+improvements in the state-of-the-art of neural machine
+translation~\citep[NMT;][]{marian,ott2018scaling}, and served as an
+inspiration to even bigger and more powerful general-purpose models
+like BERT~\citep{devlin2018bert} and
 \mbox{GPT-3}~\citep{brown2020language}.
 
 On the other hand, neural latent variable models are powerful and
 expressive tools for finding patterns in high-dimensional data, such
 as images or text~\citep{Kim2018,Kingma+2014:VAE,RezendeEtAl14VAE}.
 These models have powerful structural biases that guide the model's
-training, leading to models that are more compact. Of particular
+training; of particular
 interest are \emph{discrete} latent variables, which can recover
 categorical and structured encodings of hidden aspects of the data,
 leading to compact representations~\citep{KingmaEtAl2014SSVAE} and,
 in some cases, superior explanatory power~\citep{titov2008joint,
     Bastings2019}. However, more often than not, training models with
-discrete latent nodes is a difficult task, due to the need to rely on
+discrete latent nodes is a difficult task due to the need to rely on
 high-variance methods~\citep{Williams1992} or relaxations into the
-continuous space~\citep{GumbelSoftmax,Concrete} to train them.
+continuous space~\citep{GumbelSoftmax,Concrete}.
 
 In this thesis, we will address the issues mentioned above of overuse
-of datapoints, opaqueness, and the difficulties in training compact
+of data points, opaqueness, and the difficulties in training compact
 versions of neural models. To obtain the solutions presented, we will
 rely on forms of \textbf{weak supervision} and, most importantly, on
-\textbf{sparsity}.
+\textbf{sparse} projections onto probability spaces.
 
 When this project began in 2018, the use of large pre-trained
 language models was very much in an infant state.
 ELMo~\citep{peters2018deep} had just been released, closely followed
-by BERT~\citep{devlin2018bert}, and practicioners were just starting
+by BERT~\citep{devlin2018bert}, and practitioners were just starting
 to use these models in their research to improve the state-of-the-art
-of tasks in NLP. The Transformer
+of tasks in NLP. The transformer
 arquitecture~\citep{vaswani2017attention} was also a promising model
-that had just started to pick up a lot of steam and replacing the
+that had just started to pick up much steam and to replace the
 recurrent neural network (RNN) sequence-to-sequence models that were
-prominent in the NMT literature at the
+prominent in the NLP literature at the
 time~\citep{bahdanau2014neural}. During the course of this project,
-there has been remarkable progress in neural network and NLP
+there has been remarkable progress in neural networks and NLP
 research; for example, pre-trained language model literature has
 evolved from proposing simply encoders that provide rich contextual
-representations, to also providing decoders that deliver extremely
-realistic text~\citep[GPT-3;][]{brown2020language} and
-encoder-decoder models that allow for any task to be posed as a
-natural language prompt~\citep{raffel2020Exploringlimitstransfer}.
+representations~\citep{devlin2018bert}, to also provide decoders that
+deliver extremely realistic text~\citep[GPT-3;][]{brown2020language},
+and encoder-decoder models that allow for any task to be posed as a
+natural language
+prompt~\citep{raffel2020Exploringlimitstransfer,lewis2020BARTDenoisingSequencetoSequence}.
 
 The approaches found in the present thesis are, in part, a product of
 the aforementioned research efforts. As we will see in the following
 chapters, we introduced a way to use large pre-trained encoders in
 generation tasks before large pre-trained decoder and encoder-decoder
-models were developed, we tackled the opaqueness of the, at the time,
-recently proposed and barely understood Transformer arquitecture, and
+models were developed; we tackled the opaqueness of the, at the time,
+recently proposed and barely understood transformer architecture; and
 pioneered a new paradigm in discrete latent variable model training.
 
-We also note that this thesis has strong roots on a line of
+We also note that this thesis has strong roots in a line of
 literature that has been proposing new methods to induce sparsity
 within the computational graphs of neural networks. Before this
 thesis, the foundations had been laid by the study of sparse
@@ -82,11 +86,10 @@ applications~\citep{maruf2019selective,malaviya2018sparse}, and also
 their uses in structured
 prediction~\citep{niculae2018sparsemap,sparsemapcg}. During the
 course of this project, we have extended this line of work by
-tackling some of the abovementioned issues with our own
-sparsity-induced solutions. We have also created new foundations for
-others to extend upon our work and create their own sparse approaches
-to new and challenging
-problems~\citep{treviso2021PredictingAttentionSparsity,
+tackling some of the abovementioned issues with our sparsity-induced
+solutions. We have also created new foundations for others to extend
+upon our work and create their own sparse approaches to new and
+challenging problems~\citep{treviso2021PredictingAttentionSparsity,
     farinhas2022SparseCommunicationMixed}.
 
 \input{1.Introduction/contributions.tex}
