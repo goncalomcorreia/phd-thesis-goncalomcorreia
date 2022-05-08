@@ -4,7 +4,7 @@
 \cleardoublepage
 \doublespacing
 
-In this chapter, we focus on the objective of making neural models
+\noindent In this chapter, we focus on the objective of making neural models
 more \textbf{compact}. We will propose a novel approach to train
 discrete and structured latent variable models that achieves an exact
 gradient unlike previous strategies in this field. Latent discrete
@@ -24,12 +24,12 @@ previous chapter, this sparsity will too be \textbf{learned} over
 time, increasing as the training progresses due to the model being
 more confident on latent variable assignments.
 
-\textit{This chapter is based on \citet{correia2020procneurips}.}
+\textit{This chapter is based on \citet*{correia2020procneurips}.}
 
 \section{Motivation}
 \label{sec:intro}
 
-Training with discrete variables (\secref{sec:discrete_lvm_bg}) can
+\noindent Training with discrete variables (\secref{sec:discrete_lvm_bg}) can
 become challenging, due to the need to compute a gradient of a large
 sum over all possible latent variable assignments, with each term
 itself being potentially expensive. This challenge is typically
@@ -123,7 +123,7 @@ problems.
 \section{Efficient Marginalization via Sparsity}
 \label{sec:categorical}
 
-As discussed in \secref{sec:lvm}, the challenge of computing the
+\noindent As discussed in \secref{sec:lvm}, the challenge of computing the
 exact expectation in \eqnref{eq:fit} is linked to the need to compute
 a sum with a large number of terms. This holds when the probability
 distribution over latent assignments is {\it dense} ({\it i.e.},
@@ -168,7 +168,7 @@ even for simple instances.
 
 \section{\label{sec:structured}Structured Latent Variables}
 
-As discussed in \secref{sec:struct_lvm_bg}, many interesting models
+\noindent As discussed in \secref{sec:struct_lvm_bg}, many interesting models
 can include latent variables that exist in a set of combinatorial
 size. While it may be tempting to consider using sparsemax to avoid
 the expensive sum in the exact expectation of \eqnref{eq:fit}, this
@@ -185,19 +185,19 @@ sparsemax (\secref{sec:topksparse}) and \smap (\secref{sec:smap}).
 
 \subsection{\label{sec:topksparse}\texorpdfstring{Top-{\boldmath $k$}}{Top-k} Sparsemax}
 
-Recall that the sparsemax operator (\eqnref{eq:sparsemax}) is simply
+\noindent Recall that the sparsemax operator (\eqnref{eq:sparsemax}) is simply
 the Euclidean projection onto the $|\ZZ|$-dimensional probability
 simplex. While there is a propensity for sparsity, there is no upper
 bound on the number of non-zeros of the resulting distribution. When
 $\ZZ$ is large, one possibility is to add a cardinality constraint
 $\|\pv\|_0 \le k$ for some prescribed $k \in \mathbb{N}$. The
 resulting problem becomes
-
+%
 \begin{equation}\label{eq:topk_sparsemax}
     \sparsemaxk(\s) \coloneqq
     \argmin_{\pv \in \simplex^{|\ZZ|}, \, \|\pv\|_0 \le k} \| \pv - \s \|_2^2,
 \end{equation}
-
+%
 which is known as a \emph{sparse projection onto the simplex} and has
 been studied in detail by \citet{kyrillidis2013sparse} and used to
 smooth structured prediction
@@ -234,7 +234,7 @@ gives us a certificate of optimality whenever $\|\pv^\star\|_0 < k$.
 
 \subsection{\label{sec:smap}\smap}
 
-A second possibility to obtain efficient summation over a
+\noindent A second possibility to obtain efficient summation over a
 combinatorial space without imposing any constraints on $\ell(x, z;
     \theta)$ is to use \smap~\citep{niculae2018sparsemap, sparsemapcg}.
 Due to the properties of \smap described in \secref{sec:smap_bg},
@@ -243,7 +243,7 @@ $|\bar\ZZ| = \mathcal{O}(D)$ terms.
 
 \section{\label{sec:applications}Experimental Analysis}
 
-We next demonstrate the applicability of our proposed strategies by
+\noindent We next demonstrate the applicability of our proposed strategies by
 tackling three tasks: a deep generative model with semi-supervision
 (\secref{sec:gen}), an emergent communication two-player game over a
 discrete channel (\secref{sec:comm}), and a variational autoencoder with
@@ -257,7 +257,7 @@ applicable. For other implementation details that we do not mention
 here, we refer the reader to the works referenced above. For all
 Gumbel baselines, we relax the sample into the continuous space but
 assume a discrete distribution when computing the entropy of $\pi(z
-    \mid x, \theta)$, as suggested as one implementation option in
+    |x, \theta)$, as suggested as one implementation option in
 \citet{Concrete}. Our code is publicly available\footnote{
     \url{https://github.com/deep-spin/sparse-marginalization-lvm}} and was
 largely inspired by the structure and implementations found in
@@ -265,12 +265,55 @@ EGG~\citep{Kharitonov2019} and was built upon it.
 
 \subsection{Semi-Supervised Variational Auto-Encoder}\label{sec:gen}
 
+\noindent We consider the semi-supervised Variational Auto-Encoder
+(VAE) of \citet{KingmaEtAl2014SSVAE}, which models the joint
+probability $p(z,h,x|\phi)=p(z)p(h)p(x|z,h)$, where $x$ is an
+observation (an MNIST image), $h$ is a continuous latent variable
+with a $n$-dimensional standard Gaussian prior, and $z$ is a discrete
+random variable with a uniform prior over $K$ categories. The
+marginal $p(x | \phi) = \sum_{z=1}^K \int_h p(x | z, h, \phi)p(h)p(z)
+    \dd h$ is intractable, due to the marginalization of $h \in \mathbb
+    R^n$. For a fixed $h$ (\eg, sampled), marginalizing $z$ requires $K$
+calls to the decoder, which can be costly depending on the decoder's
+architecture.
+
+To circumvent the need for the marginal likelihood,
+\citet{KingmaEtAl2014SSVAE} use variational inference
+\citep{Jordan+1999:VI} with an approximate posterior $\pi(z|x,
+    \theta_\pi)q(h|z,x, \lambda)$. This trains a
+classifier $\pi(z|x, \theta_\pi)$ along with the generative model. In
+\citet{KingmaEtAl2014SSVAE}, $h$ is sampled with a
+reparameterization, and the expectation over $z$ is computed in
+closed-form, that is, assessing all $K$ terms of the sum for a
+sampled $h$. Under the notation in \secref{sec:lvm},
+we let $\theta_\ell = \{\lambda, \phi\}$ and define
+$\pi(z|x, \theta_\pi) \defeq q(z|x, \lambda)$ and
+%
+\begin{align}
+    \begin{split}
+        \ell(x, z; \theta_\ell) \defeq
+        & - \mathbb E_{q(h|z,  \lambda)}\left[ \log p(x |z, h, \phi) \right] \\
+        & - \log \frac{p(z)}{\pi(z |x, \theta_\pi)}                          \\
+        & + \KL\left[q(h |x, z, \lambda) \,\,\|\,\, p(h)\right],
+        \label{eq:elbonotation}
+    \end{split}
+\end{align}
+%
+which turns \eqnref{eq:fit} into the (negative) evidence lower bound
+(ELBO). To update $q(h | x, z, \lambda)$, we use the
+reparameterization trick to obtain gradients through a sampled $h$.
+For $\pi(z | x, \theta_\pi)$, we may still explicitly marginalize over
+each possible assignment of $z$, but this has a multiplicative cost
+on $K$. As an alternative, we parameterize $\pi(z|x,
+    \theta_\pi)$ with a sparse mapping, comparing it to the original
+formulation and with stochastic gradients based on SFE and continuous
+relaxations of $z$.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=.9\textwidth]{Figures/ss_mnist_elbo_path.pdf}
     \caption{\label{fig:ssvaeelbo}Learning curves on the test set for semi-supervised VAE on MNIST.}
 \end{figure}
-
 
 \begin{table}[t]
     \centering
@@ -307,55 +350,12 @@ EGG~\citep{Kharitonov2019} and was built upon it.
         Average test results and standard errors over 10 runs for semi-supervised VAE on MNIST.}
 \end{table}
 
-We consider the semi-supervised Variational Auto-Encoder (VAE) of \citet{KingmaEtAl2014SSVAE},
-which models the joint probability $p(z,h,x|\phi)=p(z)p(h)p(x|z,h)$, where
-$x$ is an observation (an MNIST image), $h$ is a continuous latent
-variable with a $n$-dimensional standard Gaussian prior, and $z$ is a
-discrete random variable with a uniform prior over $K$ categories.
-The marginal $p(x | \phi) = \sum_{z=1}^K \int_h p(x | z, h,
-    \phi)p(h)p(z) \dd h$ is intractable, due to the marginalization of $h \in
-    \mathbb R^n$. For a fixed $h$ (\eg, sampled), marginalizing $z$
-requires $K$ calls to the decoder, which can be costly depending on
-the decoder's architecture.
-
-To circumvent the need for the marginal likelihood,
-\citet{KingmaEtAl2014SSVAE} use variational inference
-\citep{Jordan+1999:VI} with an approximate posterior $\pi(z|x,
-    \theta_\pi)q(h|z,x, \lambda)$. This trains a
-classifier $\pi(z|x, \theta_\pi)$ along with the generative model. In
-\citet{KingmaEtAl2014SSVAE}, $h$ is sampled with a
-reparameterization, and the expectation over $z$ is computed in
-closed-form, that is, assessing all $K$ terms of the sum for a
-sampled $h$. Under the notation in \secref{sec:lvm},
-we let $\theta_\ell = \{\lambda, \phi\}$ and define
-$\pi(z|x, \theta_\pi) \defeq q(z|x, \lambda)$ and
-%
-\begin{align}
-    \begin{split}
-        \ell(x, z; \theta_\ell) \defeq
-        & - \mathbb E_{q(h|z,  \lambda)}\left[ \log p(x \mid z, h, \phi) \right] \\
-        & - \log \frac{p(z)}{\pi(z \mid x, \theta_\pi)}                          \\
-        & + \KL\left[q(h \mid x, z, \lambda) \,\,\|\,\, p(h)\right],
-        \label{eq:elbonotation}
-    \end{split}
-\end{align}
-%
-which turns \eqnref{eq:fit} into the (negative) evidence lower bound
-(ELBO). To update $q(h | x, z, \lambda)$, we use the
-reparameterization trick to obtain gradients through a sampled $h$.
-For $\pi(z | x, \theta_\pi)$, we may still explicitly marginalize over
-each possible assignment of $z$, but this has a multiplicative cost
-on $K$. As an alternative, we parameterize $\pi(z|x,
-    \theta_\pi)$ with a sparse mapping, comparing it to the original
-formulation and with stochastic gradients based on SFE and continuous
-relaxations of $z$.
-
 \paragraph*{Data and architecture.} We evaluate this model on the
 MNIST dataset~\citep{lecun1998gradient}, using 10\% of labeled data,
 treating the remaining data as unlabeled. MNIST consists of $28
     \times 28$ gray-scale images of hand-written digits. It contains
-60,000 datapoints for training and 10,000 datapoints for testing. We
-perform model selection on the last 10,000 datapoints of the training
+60K datapoints for training and 10K datapoints for testing. We
+perform model selection on the last 10K datapoints of the training
 split. In this experiment, the classification network consists of
 three fully connected hidden layers of size 256, using ReLU
 activations. The generative and inference network both consist of one
@@ -411,7 +411,6 @@ deterministic gradients, we compare to stochastic gradients:
 \end{itemize}
 
 \paragraph*{Results and discussion.}
-
 In \figref{fig:ssvaeelbo}, we see that our proposed sparse
 marginalization approach performs just as well as its dense
 counterpart, both in terms of ELBO and accuracy. However, by
@@ -432,33 +431,33 @@ becomes more confident.
 
 \subsection{Emergent Communication Game}\label{sec:comm}
 
-Emergent communication studies how two agents can develop a
+\noindent Emergent communication studies how two agents can develop a
 communication protocol to solve a task
 collaboratively~\citep{kirby2002natural}. Recent work used neural
 latent variable models to train these agents via a ``collaborative
 game'' between
 them~\citep{lewis1969convention,Lazaridou2017,Havrylov2017,
     jorge2016learning, foerster2016learning, sukhbaatar2016learning}. In
-\citet{Lazaridou2017}, one of the agents (the \emph{sender}) sees an
-image $v_y$ and sends a single symbol message $z$ chosen from a set
-$\mathcal{Z}$ (the \emph{vocabulary}) to the other agent (the
-\emph{receiver}), who needs to choose the correct image $v_y$ out of
-a collection of images $\mathcal{V} = \left\{ v_1, \dots, v_C
+\citet{Lazaridou2017}, one of the agents, the \emph{sender}, sees an
+image $v_y$ and sends a single symbol message $z$ chosen from the \emph{vocabulary} set
+$\mathcal{Z}$ to the other agent, the
+\emph{receiver}, who needs to choose $v_y$ out of
+a set of images $\mathcal{V} = \left\{ v_1, \dots, v_C
     \right\}$.\footnote{\citet{Lazaridou2017} lets the sender see the
-    full set $\mathcal{V}$. In contrast, we follow \citet{Havrylov2017}
-    in showing only the correct image $v_y$ to the sender. This makes the
+    full set $\mathcal{V}$. However, we follow \citet{Havrylov2017}
+    in showing only the correct image $v_y$ to the sender, making the
     game harder, as the message $z$ needs to encode a good
-    ``description'' of the correct image $v_y$ instead of encoding only
+    ``description'' of $v_y$ instead of encoding only
     its differences from $\mathcal{V}\setminus \{v_y\}$.} They found that
 the messages communicated this way can be correlated with broad
 object properties amenable to interpretation by humans. In our
 framework, we let $x = (\mathcal{V}, y)$ and define $\ell (x, z;
-    \theta) \coloneqq -\log p(y \mid \mathcal{V}, z, \theta_\ell)$ and
-$\pi (z \mid x, \theta) \coloneqq p(z \mid v_y, \theta_\pi)$, where
-$p(y \mid \mathcal{V}, z, \theta_\ell)$ corresponds to the sender and
-$p(z \mid v_y, \theta_\pi)$ to the receiver. Following
+    \theta) \coloneqq -\log p(y |\mathcal{V}, z, \theta_\ell)$ and
+$\pi (z |x, \theta) \coloneqq p(z |v_y, \theta_\pi)$, where
+$p(y |\mathcal{V}, z, \theta_\ell)$ corresponds to the sender and
+$p(z |v_y, \theta_\pi)$ to the receiver. Following
 \citet{Lazaridou2017}, we add an entropy regularization of $\pi (z
-    \mid x, \theta)$ to the loss, with a coefficient as an
+    |x, \theta)$ to the loss, with a coefficient as an
 hyperparameter~\citep{Mnih2016}.
 
 \paragraph*{Data and architecture.} In this application, we closely
@@ -466,7 +465,7 @@ followed the experimental procedure described
 by~\citet{Lazaridou2017} with a few key differences. The architecture
 of the sender and the receiver is identical with the exception that
 the sender does not take as input the distracting images along with
-the correct image\,---\,only the correct image. To make the game even
+the correct image\,---\,only the correct image. To make the game even % TODO: do triple - like here
 harder, we increase the collection of images $|\mathcal{V}|$ as
 suggested by \citet{Havrylov2017}; in our experiments, we increase it
 from 2 to 16. and the vocabulary of the sender was increased to 256.
@@ -489,31 +488,32 @@ sender/receiver.
 
 \paragraph*{Comparisons.} We compare our method to stochastic gradient
 estimators as well as exact marginalization under a dense softmax
-parameterization of $p (z \mid v_y, \theta_\pi)$. Again, we have
+parameterization of $p (z |v_y, \theta_\pi)$. Again, we have
 unbiased (SFE with moving average baseline, SFE+, and NVIL) and
 biased (Gumbel-Softmax and ST Gumbel-Softmax) estimators. For SFE we
 also experiment using a 0/1 loss.
 
+% TODO: fix the middle column here
 \begin{table}[t]
     \begin{center}
         \tlfstyle
         \begin{tabular}{lr@{~}lr}
             \toprule
-            Method                                 & \multicolumn{2}{c}{Communication success (\%)} & Decoder calls                   \\
+            Method                                 & \multicolumn{2}{r}{Comm. success (\%)} & Decoder calls                   \\
             \midrule
-            {\emph{Monte Carlo}}                   &                                                &                           &     \\
-            SFE (NLL)                              & 33.05                                          & {\color{gray}$\pm$ 2.84}  & 1   \\
-            SFE (0/1)                              & 55.36                                          & {\color{gray}$\pm$ 2.92}  & 1   \\
-            SFE$+$ (0/1)                           & 44.32                                          & {\color{gray}$\pm$ 2.72}  & 2   \\
-            NVIL                                   & 37.04                                          & {\color{gray}$\pm$ 1.61}  & 1   \\
-            Gumbel                                 & 23.51                                          & {\color{gray}$\pm$ 16.19} & 1   \\
-            ST Gumbel                              & 27.42                                          & {\color{gray}$\pm$ 13.36} & 1   \\
+            {\emph{Monte Carlo}}                   &                                        &                           &     \\
+            SFE (NLL)                              & 33.05                                  & {\color{gray}$\pm$ 2.84}  & 1   \\
+            SFE (0/1)                              & 55.36                                  & {\color{gray}$\pm$ 2.92}  & 1   \\
+            SFE$+$ (0/1)                           & 44.32                                  & {\color{gray}$\pm$ 2.72}  & 2   \\
+            NVIL                                   & 37.04                                  & {\color{gray}$\pm$ 1.61}  & 1   \\
+            Gumbel                                 & 23.51                                  & {\color{gray}$\pm$ 16.19} & 1   \\
+            ST Gumbel                              & 27.42                                  & {\color{gray}$\pm$ 13.36} & 1   \\
             \spacerule
-            \emph{Marginalization}                 &                                                &                           &     \\
-            Dense                                  & 93.37                                          & {\color{gray}$\pm$ 0.42}  & 256 \\
+            \emph{Marginalization}                 &                                        &                           &     \\
+            Dense                                  & 93.37                                  & {\color{gray}$\pm$ 0.42}  & 256 \\
             Sparse {\small \color{gray}(proposed)} &
-            93.35                                  & {\color{gray}$\pm$ 0.50}                       &
-            3.13{\color{gray}$\pm$ 0.48}                                                                                              \\
+            93.35                                  & {\color{gray}$\pm$ 0.50}               &
+            3.13{\color{gray}$\pm$ 0.48}                                                                                      \\
             \bottomrule
         \end{tabular}
     \end{center}
@@ -523,7 +523,6 @@ also experiment using a 0/1 loss.
 \end{table}
 
 \paragraph*{Results and discussion.}
-
 Table~\ref{tab:symbol} shows the communication success (accuracy of
 the receiver at picking the correct image $v_y$). While the
 communication success for $|\mathcal{V}|=2$ in \citet{Lazaridou2017}
@@ -551,15 +550,15 @@ starts off dense while exploring, but quickly becomes very sparse
 
 \subsection{Bit-Vector Variational Auto-Encoder}\label{sec:bernvae}
 
-As described in \secref{sec:structured}, in many interesting problems,
+\noindent As described in \secref{sec:structured},
 combinatorial interactions and constraints make $\ZZ$ exponentially
 large. In this section, we study the illustrative case of encoding
 (compressing) images into a binary codeword $z$, by training a latent
 bit-vector variational autoencoder~\citep{GumbelSoftmax,
     mnih2014neural}. One approach for parameterizing the approximate
 posterior is to use a Gibbs distribution, decomposable as a product
-of independent Bernoulli, $q(z \mid x, \lambda) \propto
-    \exp(\DP{\bm{a}_z}{\bm{t}}) = \prod_{i=1}^D q(z_i \mid x, \lambda)$,
+of independent Bernoulli, $q(z |x, \lambda) \propto
+    \exp(\DP{\bm{a}_z}{\bm{t}}) = \prod_{i=1}^D q(z_i |x, \lambda)$,
 with each $z_i$ being a Bernoulli with parameter $t_i$, and $D$ being
 the number of binary latent variables. While marginalizing over all the
 possible $z \in \ZZ$ is intractable, drawing samples can be done
@@ -573,14 +572,14 @@ computation.
     Training this VAE to minimize the negative ELBO corresponds to
     $\ell(x, z; \theta_\ell) \defeq - \log \frac{p(x, z | \phi)}{q(z | x,
             \lambda)} $; we use a uniform prior $p(z)=1/|\ZZ|=1/{2^D}$. This
-    objective does not constrain $\pi(z| x,\theta_\pi) \defeq q(z \mid x,
+    objective does not constrain $\pi(z| x,\theta_\pi) \defeq q(z |x,
         \lambda)$ to the Gibbs parameterization, and thus to apply our
     methods we will differ from it.
 \end{sloppypar}
 
 \paragraph*{Top-{\boldmath $k$} sparsemax parameterization.} As pointed
-out in \secref{sec:structured}, we cannot explicitly handle the
-structured sparsemax distribution $\pv = \sparsemax(\s)$, as it
+out in \secref{sec:structured}, we now cannot explicitly handle the
+sparsemax mapping $\pv = \sparsemax(\s)$, as it
 involves a vector of dimension $2^D$. However, given $\bm{t}$, we can
 efficiently find the $k$ largest configurations in time
 $\mathcal{O}(kD)$, with the procedure described in
@@ -613,8 +612,8 @@ We stress that, with both top-$k$ sparsemax and \smap parameterizations,
 $z$ does not decompose into a product of independent
 binary variables: this property is specific to the Gibbs parameterization.
 However, since these new approaches induce a very sparse approximate posterior
-$q$, we may compute the terms $\EE_{q(z\mid x, \lambda)} [\log p(x \mid z,
-        \phi)]$ and $\EE_{q(z\mid x, \lambda)} [\log q(z \mid x, \lambda)]$
+$q$, we may compute the terms $\EE_{q(z|x, \lambda)} [\log p(x |z,
+        \phi)]$ and $\EE_{q(z|x, \lambda)} [\log q(z |x, \lambda)]$
 explicitly.
 
 \begin{figure}[htbp]
@@ -654,8 +653,8 @@ Fashion-MNIST~\citep{fmnist}, consisting of $28 \times 28$, 256-level
 gray-scale images of clothes. It contains 60K datapoints for training
 and 10K datapoints for testing. We perform model selection on the
 last 10K datapoints of the training split. The decoder uses an
-independent categorical distribution for each pixel, $p(x \mid z,
-    \phi) = \prod_{i=1}^{28} \prod_{j=1}^{28} p(x_{ij} \mid z, \phi)$.
+independent categorical distribution for each pixel, $p(x |z,
+    \phi) = \prod_{i=1}^{28} \prod_{j=1}^{28} p(x_{ij} |z, \phi)$.
 For top-$k$ sparsemax, we choose $k=10$. We have set the generative
 and inference network to consist of one hidden layer with 128 nodes,
 using ReLU activations. We have searched a learning rate doing grid
@@ -681,27 +680,25 @@ the same schedule and grid search to the temperature as described in
     on held-out data.
 \end{sloppypar}
 
-\begin{sloppypar}
-    Bits-per-dimension is the negative logarithm of marginal likelihood
-    normalized per number of pixels in the image, thus we need to assess
-    or estimate the marginal likelihood of observations. For dense
-    parameterizations, the usual option is importance sampling (IS) using
-    the trained approximate posterior as importance distribution: \ie,
-    $\log p(x|\phi) \overset{\text{IS}}{\approx} \log \left(\frac{1}{S}
-        \sum_{s=1}^S \frac{p(z^{(s)}, x|\phi)}{q(z^{(s)} | x, \lambda)}
-        \right)$ with $z^{(s)} \sim q(z|x, \lambda)$. The result is a
-    stochastic lower bound which converges to the true log-marginal in
-    the limit as $S \to \infty$. With a sparse posterior approximation we
-    can split the marginalization
-\end{sloppypar}
-
+Bits-per-dimension is the negative logarithm of marginal likelihood
+normalized per number of pixels in the image, thus we need to assess
+or estimate the marginal likelihood of observations. For dense
+parameterizations, the usual option is importance sampling (IS) using
+the trained approximate posterior as importance distribution: \ie,
+$\log p(x|\phi) \overset{\text{IS}}{\approx} \log \left(\frac{1}{S}
+    \sum_{s=1}^S \frac{p(z^{(s)}, x|\phi)}{q(z^{(s)} | x, \lambda)}
+    \right)$ with $z^{(s)} \sim q(z|x, \lambda)$. The result is a
+stochastic lower bound which converges to the true log-marginal in
+the limit as $S \to \infty$. With a sparse posterior approximation we
+can split the marginalization
+%
 \begin{equation}
     \log p(x|\phi) = \log \left( \sum_{z \in \bar \ZZ}
     p(z)p(x|z, \phi) + \sum_{z \in \ZZ \setminus \ZZ} p(z)p(x|z, \phi)
     \right)
 \end{equation}
-
-\noindent into one part that handles outcomes in the support $\bar \ZZ$ of the
+%
+into one part that handles outcomes in the support $\bar \ZZ$ of the
 sparse posterior approximation and another that handles the
 outcomes in the complement set $\ZZ \setminus \bar \ZZ$. We compute
 the first part exactly and estimate the second part via rejection
@@ -721,7 +718,7 @@ NVIL for $D=32$, but for $D=128$ all of our methods have a
 significantly higher rate and lower distortion than any unbiased
 estimator, suggesting a better fit of $p(x|\phi)$~\citep{Alemi2018}.
 In \figref{fig:structcalls}, we can observe the training progress in
-number of calls to $p(x \mid z, \phi)$ for the models with 32 and 128
+number of calls to $p(x |z, \phi)$ for the models with 32 and 128
 latent bits, respectively. While $\sparsemaxk$ introduces bias
 towards the most probable assignments and may discard outcomes that
 $\sparsemax$ would assign non-zero probability to, as training
@@ -738,7 +735,7 @@ this mismatch disappears, making the gradient computation exact.
 
 Remarkably, this happens for $D\!=\!32$\,---\,the support of
 $\sparsemaxk$ is smaller than $k$, giving the true gradient to
-$q(z\mid x, \lambda)$ for most of the training. This no longer
+$q(z|x, \lambda)$ for most of the training. This no longer
 happens for $D\!=\!128$, for which it remains with full support
 throughout, due to the much larger search space. On the other hand,
 \smap solutions become very sparse from the start in both cases,
@@ -747,7 +744,7 @@ trade-off between the solutions we propose: on one hand,
 $\sparsemaxk$ can become exact with respect to the expectation in
 \eqnref{eq:fit}, but it only does so if the chosen $k$ is suitable to
 the difficulty of the model; on the other hand, \smap may not offer
-an exact gradient to $q(z\mid x, \lambda)$, but its performance is
+an exact gradient to $q(z|x, \lambda)$, but its performance is
 very close to $\sparsemaxk$ and its higher propensity for sparsity
 gifts it with less computation. \figref{fig:elbo_bit} shows the
 downstream loss (ELBO) over epochs and over the median number of
@@ -797,7 +794,7 @@ not too problematic.
 \section{Subsequent Work}
 \label{sec:subsequent}
 
-\citet{correia2020procneurips} proved to be a relevant
+\noindent \citet{correia2020procneurips} proved to be a relevant
 contribution to the field of discrete and structured latent variable
 modelling. In particular, and most closely related to our work,
 \citet{chen2021EvidentialSoftmaxSparse} added another method to the
@@ -840,7 +837,7 @@ sparsemax had the best performance.
 
 \section{Final Remarks and Chapter Summary}
 
-We described a novel training strategy for discrete latent variable
+\noindent We described a novel training strategy for discrete latent variable
 models, eschewing the common approach based on MC gradient estimation
 in favor of deterministic, exact marginalization under a sparse
 distribution. Sparsity leads to a powerful \textbf{adaptive} method,
@@ -854,8 +851,8 @@ per sample, but make progress much faster and overall lead to
 superior results.
 
 Our proposed method thus offer the accuracy and robustness of exact
-marginalization while meeting the efficiency and flexibility of score
-function estimator methods, providing a promising alternative to
+marginalization while meeting the efficiency and flexibility of sampling
+methods, providing a promising alternative to
 successfully train more \textbf{compact} neural models. As we are
 learning from subsequent works (\secref{sec:subsequent}), we believe
 that our method can be used to address the challenges of training
