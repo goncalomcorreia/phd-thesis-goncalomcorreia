@@ -4,13 +4,13 @@
 \cleardoublepage
 \doublespacing
 
-To wrap up the present thesis, we review the main contributions
+\noindent To wrap up the present thesis, we review the main contributions
 developed in this work, and discuss their impact, limitations, and
 potential directions for future work.
 
 \section{Summary of Contributions}
 
-Over the course of this thesis, we have developed models and
+\noindent Over the course of this thesis, we have developed models and
 techniques that aim to make neural models more data-efficient, transparent,
 and compact.
 
@@ -57,7 +57,7 @@ process~\citep{raganato2020FixedEncoderSelfAttentiona}.
 
 \section{Open Problems and Limitations}
 
-In the pursuit of diligent research, we briefly discuss some of the
+\noindent In the pursuit of diligent research, we briefly discuss some of the
 open problems and limitations of the work presented in this thesis.
 We seek not to diminish any of these limitations, but rather present
 them fairly.
@@ -92,12 +92,12 @@ We hope to continue seeing this trend in the future.
 
 \section{Future Directions}
 
-We further list in this section exciting directions for future work
+\noindent We further list in this section exciting directions for future work
 that draw inspiration from the methods proposed in this thesis. We
 hope this might inspire other researchers in the field to explore
 these directions and extend the ideas presented.
 
-\paragraph{Semi-supervised Learning.} Some forms of weak
+\paragraph*{Semi-supervised Learning.} Some forms of weak
 supervision were explored in this work. In particular, we have shown
 promising results in \chapref{chap:sparsemarg} by introducing a new
 method to train discrete latent variable models, which can be used to
@@ -111,7 +111,7 @@ train a latent variable model. We can now circumvent this limitation
 by using our training method.
 % TODO: add more details how this can be done
 
-\paragraph{Non-differentiability of the LVM learning signal.} We note
+\paragraph*{Non-differentiability of the LVM learning signal.} We note
 how, in \eqnref{eq:fit}, the training of the parameters that learn
 $\pi(z|x;\theta)$ is decoupled from the training of the parameters of
 the generative model of the downstream loss: when marginalizing the

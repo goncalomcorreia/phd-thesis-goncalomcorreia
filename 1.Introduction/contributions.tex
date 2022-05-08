@@ -1,30 +1,28 @@
 \section{Contributions and Thesis Statement}
 \label{sec:int_contributions}
 
-We will now summarize the contributions of this thesis, which will
+\noindent We will now summarize the contributions of this thesis, which will
 address the open questions left to answer in the previous section.
 
 \begin{itemize}
 
       \item \textbf{We use weak supervision by leveraging transfer learning
-                  for data-efficient sequence-to-sequence models.}
-            We show how to leverage a pre-trained large transformer
-            encoder to perform a sequence-to-sequence task on a very
-            small dataset. We explore different avenues of parameter
-            sharing and initialization in order to make this
+                  for data-efficient sequence-to-sequence models.} We show how to
+            leverage a pre-trained encoder to perform a
+            sequence-to-sequence task on a tiny dataset. We explore different
+            avenues of parameter sharing and initialization to make this
             possible.
 
 
-      \item \textbf{We propose {\boldmath $\alpha$}-\entmaxtext{} with
-                  learnable {\boldmath $\alpha$}, a new sparse probability
-                  normalization function that learns its own sparsity.}
-            We derive the gradient of $\alpha$ in
-            $\alpha$-\entmaxtext{}~\citep{entmax}. By letting a
-            transformer learn through this gradient the $\alpha$ of
-            each attention head, the attention heads can dynamically
-            change their own sparsity during training. This way, each
-            attention head can accommodate its sparsity to the role
-            it will play in the overall model.
+      \item \textbf{We propose a new deep model with attention that can
+                  dynamically adapt to be denser or sparser as needed.} We change the
+            transformer architecture such that each attention head, the main
+            building block of transformers, can dynamically change its sparsity
+            during training. This way, each attention head can accommodate its
+            sparsity to its role in the overall model. To achieve that, we derive
+            the gradient of $\alpha$ in $\alpha$-\entmaxtext{}~\citep{entmax}, a
+            function akin to softmax, in which the sparsity of the probability
+            vector is controlled by a parameter $\alpha$.
 
       \item \textbf{We conduct an extensive analysis on the increased
                   transparency of transformer models that use {\boldmath
@@ -33,21 +31,27 @@ address the open questions left to answer in the previous section.
             Besides studying the distribution of sparsity and respective $\alpha$ values
             throughout all attention heads in the transformer, we also identify
             examples of sharper attention head behavior than what was found in
-            previous work, along with the disentanglement of new found behaviors
+            previous work, along with the disentanglement of newfound behaviors
             thanks to our proposed sparsity.
 
-      \item \textbf{We propose a new method to train discrete and
-                  structured latent variable models, based on the
-                  efficiency of marginalizing expectations using
-                  sparsity.}
-            Thanks to this method, we can train these families of
-            latent variable models without recurring to any Monte Carlo
-            estimation or relaxations of the discreteness into the
-            continuous space. In particular, in the unstructured
-            case, our method relies on the sparsemax activation
-            function. In the structured case, we propose to either
-            use SparseMAP~\citep{niculae2018sparsemap} or the
-            novel top-$k$ sparsemax.
+      \item \textbf{We propose a novel training method for latent variable
+                  models with discrete latent nodes that uses sparsity to compute an
+                  exact gradient.} Thanks to this method, we can train discrete latent
+            variable models through marginalization of the latent variable
+            efficiently thanks to parameterizing the probability mass function
+            with a sparse mapping, the sparsemax~\citep{sparsemax}. We test this
+            method on a semi-supervised latent variable model and an emergent
+            communication task. In both cases, our approach surpasses the
+            performance of standard practices involving Monte Carlo estimation or
+            continuous relaxations.
+
+      \item \textbf{We propose two novel approaches to train structured latent variable models.}
+            Similarly to the method for unstructured latent variable models, we marginalize
+            the structured space by using sparse mappings: SparseMAP~\citep{niculae2018sparsemap} or the novel top-$k$
+            sparsemax. In the latter, the gradient can be exact in certain conditions; in the former,
+            the support is small from the start, making it a very competitive approach with sampling methods.
+            We test our strategies on a bit-vector variational auto-encoder and find that
+            they are competitive with standard approaches to training these models.
 
       \item \textbf{We provide open-source code for each of the
                   methods we have proposed.}
@@ -57,16 +61,16 @@ address the open questions left to answer in the previous section.
 
 \end{itemize}
 
-\paragraph{Thesis Statement.} The primary claim of this thesis is
-that, unlike what is insisted in numerous previous work, neural
+\paragraph*{Thesis Statement.} The primary claim of this thesis is
+that, unlike what numerous previous works insist, neural
 models have the capability of being data-efficient, transparent, and
 compact: one only needs to look through a different lens that is
 capable of leveraging weak supervision, sparsity, and latent
-representations. We come to the conclusion that a \textit{vanilla}
+representations. We conclude that a \textit{vanilla}
 application of neural models to the problem at hand is not sufficient
-to have these properties: for \textbf{data-efficiency}, we find that we need
+for achieving these properties: for \textbf{data-efficiency}, we find that we need
 to allow parameter sharing, careful initialization, and powerful
-transfer learning capabilities in order to succeed at a low-resource
+transfer learning capabilities to succeed at a low-resource
 generation task; for \textbf{transparency}, we can allow the model to have
 sparsity and let it learn it according to its needs at training time; and
 for \textbf{compactness}, we can leverage discrete latent variable models in a

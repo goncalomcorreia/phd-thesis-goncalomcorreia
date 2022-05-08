@@ -273,12 +273,12 @@ them to contextualize the representation of each word in the context
 of the sentence and the task at hand.
 
 \subsection{Sequence-to-Sequence Models}
-\label{sec:transformer_bg}
 
 \noindent In NLP, predicting the next word in a sentence is a common
-task. The broader family of models that handle such tasks are
-sequential models. In this thesis, we mainly focus on
-\textbf{sequence-to-sequence models} (\textit{seq2seq}),
+task, for example, in tasks such as language modeling, or machine translation (MT). The
+broader family of models that handle such tasks are sequential
+models. In this thesis, we mainly focus on
+\textbf{sequence-to-sequence models} (\textit{seq2seq}).
 
 \begin{definition}[sequence-to-sequence models]
     A sequence-to-sequence model is a model that takes as input a
@@ -307,12 +307,13 @@ In the following section, we will expand on the architecture used in
 the sequence-to-sequence models presented in this thesis: the \textbf{transformer}.
 
 \subsection{Transformer}
+\label{sec:transformer_bg}
 
-The transformer~\citep{vaswani2017attention} is a seq2seq model which
+\noindent The transformer~\citep{vaswani2017attention} is a seq2seq model which
 maps an input sequence to an output sequence through many layers of
 \textbf{multi-head attention} mechanisms, yielding a dynamic,
 context-dependent strategy for propagating information within and
-across sentences. It contrasts with previous seq2seq models, which
+across sentences. It contrasts with previous seq2seq models for neural machine translation (NMT), which
 usually rely either on costly gated recurrent operations~\citep[often
     LSTMs:][]{bahdanau2014neural,luong2015effective} or static
 convolutions~\citep{convseq}.
@@ -380,8 +381,9 @@ the input sentence and the sequential decoder.
 % TODO: add a figure here of the transformer architecture
 
 \subsection{Large Pre-trained Language Models}
+\label{sec:pretrained-bg}
 
-A recently attractive way to obtain high-performing models in NLP is
+\noindent A recently attractive way to obtain high-performing models in NLP is
 to use a pre-trained language model. These are models with many
 layers and parameters, trained on millions of sentences gathered from
 the web, using many computational resources in the training process.

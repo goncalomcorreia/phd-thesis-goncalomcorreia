@@ -1,36 +1,42 @@
 \begin{abstract}
 
-        \noindent Neural network models have become ubiquitous in machine learning
-        literature. These models are compositions of differentiable building
-        blocks that result in dense representations of the underlying data.
-        To obtain good representations, conventional neural models require
-        many training data points. Moreover, those representations, albeit
-        capable of obtaining a high performance on many tasks, are largely uninterpretable.
-        These models are often overparameterized and give out representations
-        that do not compactly represent the data. To address these issues, we
-        find solutions in \textbf{sparsity} and various forms of
-        \textbf{weak supervision}. For \textbf{data-efficiency}, we leverage
-        transfer learning as a form of weak supervision. The proposed model
-        can perform similarly to models trained on millions of data points on
-        a sequence-to-sequence generation task, even though we only train it
-        on a few thousand. For \textbf{transparency}, we propose a
-        probability normalizing function that can learn its sparsity. The
-        model learns the sparsity it needs differentiably and thus adapts it
-        to the data according to the neural component's role in the overall
-        structure. We show that the proposed model improves the
-        interpretability of a popular neural machine translation architecture when
-        compared to conventional probability normalizing functions. Finally,
-        for \textbf{compactness}, we uncover a way to obtain exact gradients
-        of discrete and structured latent variable models efficiently. The
-        discrete nodes in these models can compactly represent implicit
-        clusters and structures in the data, but training them was often
-        complex and prone to failure since it required approximations that
-        rely on sampling or relaxations. We propose to train these models
-        with exact gradients by parameterizing discrete distributions with
-        sparse functions, both unstructured and structured. We obtain good
-        performance on three latent variable model applications while still
-        achieving the practicality of the approximations mentioned above.
-        Through these novel contributions, we challenge the conventional
-        wisdom that neural models cannot exhibit data-efficiency, transparency, or compactness.
+        \noindent Neural network models have become ubiquitous in
+        machine learning literature. These models are compositions of
+        differentiable building blocks that compute dense
+        representations of the underlying data. To obtain good
+        representations, conventional neural models require many
+        training data points. Moreover, the representations obtained
+        by neural models are largely uninterpretable, albeit capable
+        of obtaining high performance on many tasks. Neural models
+        are often overparameterized and give out representations that
+        do not compactly represent the data. To address these issues,
+        we find solutions in \textbf{sparsity} and various forms of
+        \textbf{weak supervision}. For \textbf{data-efficiency}, we
+        leverage transfer learning as a form of weak supervision. The
+        proposed model can perform similarly to models trained on
+        millions of data points on a sequence-to-sequence generation
+        task, even though we only train it on a few thousand. For
+        \textbf{transparency}, we propose a normalization function
+        that can learn its sparsity. The model learns how sparse it
+        needs to be at each layer, adapting the sparsity according to
+        the neural component's role in the overall structure. At no
+        cost in accuracy, sparsity helps to uncover different
+        specializations of the neural components, aiding the
+        interpretability of a popular neural machine translation
+        architecture. Finally, for \textbf{compactness}, we reveal a
+        way to efficiently obtain deterministic gradients of discrete
+        and structured latent variable models. The discrete nodes in
+        these models can compactly represent implicit clusters and
+        structures in the data. Still, their training can often be
+        complex and prone to failure since it usually requires
+        approximations that rely on sampling or relaxations. We
+        propose to train these models with deterministic gradients by
+        parameterizing discrete distributions with sparse functions,
+        both unstructured and structured. We obtain good performance
+        on three latent variable model applications while still
+        achieving the practicality of the approximations mentioned
+        above. Through these novel contributions, we challenge the
+        conventional wisdom that neural models cannot exhibit data
+        efficiency, transparency, or compactness.
 
 \end{abstract}
