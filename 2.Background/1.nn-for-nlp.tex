@@ -57,8 +57,12 @@ the \textit{negative log-likelihood}
 \begin{equation}
     L_\mathcal{D}(\theta) = -\mathcal{L}_\mathcal{D}(\theta) =
     - \sum_n \log p_{Y|X}(y_n|\bm{x}_n; \theta).
+    \label{eq:discr-loss}
 \end{equation}
 %
+A model with the loss function of \eqnref{eq:discr-loss} is called a
+\textit{discriminative model}, while one that models instead
+$p_{XY}(\bm{x}, y; \theta)$ is called a \textit{generative model}.
 Typically, the loss function might also entail a regularization term,
 which is added to the negative log-likelihood
 %
@@ -67,7 +71,7 @@ which is added to the negative log-likelihood
 \end{equation}
 %
 Sometimes, instead of the probabilistically-grounded negative
-log-likelihood, practitioners might use a non-probabilistic loss and
+log-likelihood, practitioners might use a non-probabilistic loss $\ell$ and
 still use a statistical model; for example, one might use the 0/1
 loss where the loss is $1$ if the $\argmax$ mode is wrong, \ie
 $\hat{y}\neq y$, and $0$ otherwise. After training the model, we wish
@@ -120,24 +124,20 @@ and the remaining majority is unlabeled,
 $\mathcal{D}_{U}=
     \left\{(\bm{x}_n)\right\}_{n=1}^{N_{U}}$.
 The parameters are then estimated by using a combination of losses: a
-component that is supervised and a component that is unsupervised.
-Taking the loss examples given above, a semi-supervised model could
+component that is supervised and another that is unsupervised.
+Taking the loss examples given above, a probabilistic semi-supervised model could
 have the loss function
 %
 \begin{equation}
     L_{\mathcal D}\left(\theta\right)=
-    -\frac{N_U}{N_L}
-    \sum_{\bm{x}\in\mathcal{D}_U}
+    -\sum_{\bm{x}\in\mathcal{D}_U}
     \log p_{X}\left(\bm{x}|\theta\right)
     -\sum_{(\bm{x},y)\in\mathcal{D}_L}
     \log p_{XY}\left(\bm{x}, y;\theta\right),
     \label{eq:semisup}
 \end{equation}
 %
-where
-$\mathbbm{1}\left[(\bm{x}_n,y_n)\in\mathcal{D}_{\text{labeled}}\right]$
-denotes the indicator function that is $1$ if the corresponding
-input-output pair exists in the labeled set. In some applications,
+In some applications,
 both models may be independent components that share some
 parameters; in others, they are components of the same joint distribution over
 $\mathcal{X}\times\mathcal{Y}$.
