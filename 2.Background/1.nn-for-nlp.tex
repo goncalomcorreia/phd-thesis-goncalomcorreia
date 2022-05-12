@@ -126,7 +126,8 @@ have the loss function
 %
 \begin{equation}
     L_{\mathcal D}\left(\theta\right)=
-    -\sum_n\log p_{X}\left(\bm{x}_n|\theta\right)
+    -\frac{\left|\mathcal D_\text{unlabeled}\right|}{\left|\mathcal D_\text{labeled}\right|}
+    \sum_n\log p_{X}\left(\bm{x}_n|\theta\right)
     -\sum_n\mathbbm{1}\left[(\bm{x}_n,y_n)\in\mathcal{D}_{\text{labeled}}\right]
     \log p_{Y|X}\left(y_n|\bm{x}_n;\theta\right),
     \label{eq:semisup}
@@ -226,14 +227,12 @@ impeding the usage of convex optimization, and so neural networks are
 often trained instead through a process called
 \textit{backpropagation}, a gradient-based optimization algorithm.
 
-\newpage % TODO: might remove if needed
-
 \begin{definition}[backpropagation]
     Backpropagation is a gradient-based optimization algorithm that
     minimizes the loss function $L$ by iteratively updating the
     parameters $\theta$. In order to be able to update $\theta$,
     the only requirement is to be able to compute the gradient of
-    $L$ with respect to every weight $\bm{w}_\theta\in\theta$
+    $L$ with respect to every weight $\bm{w}_\theta\in\theta$:
     %
     \begin{equation}
         \frac{\partial L_{\mathcal{D}}(\theta)}{\partial \bm{w}_\theta}.
