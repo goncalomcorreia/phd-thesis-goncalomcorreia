@@ -19,29 +19,29 @@ $L$ on that set. The resulting model with optimal
 $\hat{\theta}$ can then be evaluated on a held-out set of
 $\mathcal{D}$, called \textit{test set}, to assess its performance.
 
-From a probabilistic perspective, this process creates a probability
+When the model is probabilistic, this process creates a probability
 model that identifies the probability measure of a random experiment:
 it maps from available inputs in the set of possible inputs
 $\mathcal{X}$ to a probability distribution of a random variable $Y$
 (when $\mathcal D$ is made of input-output pairs). When the set of
 possible outputs $\mathcal{Y}$ is discrete, the probability
 distribution of $Y$ is prescribed by a probability mass function
-(pmf) $p_{Y|X}(y|x;\theta)$; when the set of possible outputs
+(pmf) $p_{Y|X}(y|\bm{x};\theta)$; when the set of possible outputs
 $\mathcal{Y}$ is continuous, the probability distribution of $Y$ is
 prescribed by a probability density function (pdf). In the context of
 the present thesis, we will not have applications in which
 $\mathcal{Y}\in\reals$ (\ie \textit{regression problems}) and as
-such, when referring to $p_{Y|X}(y|x;\theta)$, we assume that it is a
+such, when referring to $p_{Y|X}(y|\bm{x};\theta)$, we assume that it is a
 probability mass function. Furthermore, our problems will most often
-involve a $k$-way classification, and so $p_{Y|X}(y|x;\theta)$ is
+involve a $k$-way classification, and so $p_{Y|X}(y|\bm{x};\theta)$ is
 specifying a \textit{Categorical} distribution,
 %
 \begin{equation}
-    Y|X\!\!=\!x \sim \text{Cat}(f(x; \theta)),
+    Y|X\!\!=\!\bm{x} \sim \text{Cat}(f(\bm{x}; \theta)),
 \end{equation}
 %
-where $f(x; \theta)$ is a function such that
-$p_{Y|X}(y|x;\theta)=\text{Cat}(y|f(x; \theta))$.
+where $f(x; \theta) \in \simplex^K$ is a function such that
+$p_{Y|X}(y|\bm{x};\theta)=\text{Cat}(y|f(\bm{x}; \theta))$.
 
 \paragraph*{Supervised learning.} We now turn our attention to applications
 in which one uses a dataset of input-output pairs. In such a case,
@@ -56,7 +56,7 @@ the \textit{negative log-likelihood}
 %
 \begin{equation}
     L_\mathcal{D}(\theta) = -\mathcal{L}_\mathcal{D}(\theta) =
-    - \sum_n \log p_{Y|X}(y_n|x_n; \theta).
+    - \sum_n \log p_{Y|X}(y_n|\bm{x}_n; \theta).
 \end{equation}
 %
 Typically, the loss function might also entail a regularization term,
@@ -69,11 +69,11 @@ which is added to the negative log-likelihood
 Sometimes, instead of the probabilistically-grounded negative
 log-likelihood, practitioners might use a non-probabilistic loss and
 still use a statistical model; for example, one might use the 0/1
-loss where the loss is $1$ if the prediction is wrong, \ie
+loss where the loss is $1$ if the $\argmax$ mode is wrong, \ie
 $\hat{y}\neq y$, and $0$ otherwise. After training the model, we wish
 to make predictions $\hat{y}$ for each novel input $\bm{x}$ of the
 test set, and we can make such predictions by using the optimal
-trained parameters $\hat{\theta}$ and selecting the highest-scoring
+trained parameters $\hat{\theta}$ and selecting, for instance, the highest-scoring
 $y\in\mathcal{Y}$
 %
 \begin{equation}
@@ -90,8 +90,8 @@ language.
 
 \paragraph*{Unsupervised learning.} Similarly, we can also use just a
 dataset of inputs $\bm{x}$ and estimate the parameters $\theta$ under a loss to
-obtain an unsupervised model; that is, a model in which the predictions are
-not based on any labels. In this case, the loss function $L$ only
+obtain an unsupervised model; that is, a model in which inferences are made
+without access to any labels. In this case, the loss function $L$ only
 depends on the inputs $\bm{x}_n$ and the parameters $\theta$
 and we thus model $p_X(\bm{x}|\theta)$.
 In this case, the loss function is
@@ -112,24 +112,25 @@ that is, we assess the likelihood of the model being able to generate
 the data points $\bm{x}$.
 
 \paragraph*{Semi-supervised and weakly-supervised learning.} In a
-semi-supervised setting, there is tipically a smaller portion of the
+semi-supervised setting, there is typically a smaller portion of the
 dataset that is labeled,
-$\mathcal{D}_{\text{labeled}}=
-    \left\{(\bm{x}_n,y_n)\right\}_{i=1}^{N_{\text{labeled}}}$,
+$\mathcal{D}_{L}=
+    \left\{(\bm{x}_n,y_n)\right\}_{n=1}^{N_{L}}$,
 and the remaining majority is unlabeled,
-$\mathcal{D}_{\text{unlabeled}}=
-    \left\{(\bm{x}_n)\right\}_{i=1}^{N_{\text{unlabeled}}}$.
-The parameters are then estimated by using a mixture of losses: a
+$\mathcal{D}_{U}=
+    \left\{(\bm{x}_n)\right\}_{n=1}^{N_{U}}$.
+The parameters are then estimated by using a combination of losses: a
 component that is supervised and a component that is unsupervised.
 Taking the loss examples given above, a semi-supervised model could
 have the loss function
 %
 \begin{equation}
     L_{\mathcal D}\left(\theta\right)=
-    -\frac{\left|\mathcal D_\text{unlabeled}\right|}{\left|\mathcal D_\text{labeled}\right|}
-    \sum_n\log p_{X}\left(\bm{x}_n|\theta\right)
-    -\sum_n\mathbbm{1}\left[(\bm{x}_n,y_n)\in\mathcal{D}_{\text{labeled}}\right]
-    \log p_{Y|X}\left(y_n|\bm{x}_n;\theta\right),
+    -\frac{N_U}{N_L}
+    \sum_{\bm{x}\in\mathcal{D}_U}
+    \log p_{X}\left(\bm{x}|\theta\right)
+    -\sum_{(\bm{x},y)\in\mathcal{D}_L}
+    \log p_{XY}\left(\bm{x}, y;\theta\right),
     \label{eq:semisup}
 \end{equation}
 %
@@ -137,9 +138,10 @@ where
 $\mathbbm{1}\left[(\bm{x}_n,y_n)\in\mathcal{D}_{\text{labeled}}\right]$
 denotes the indicator function that is $1$ if the corresponding
 input-output pair exists in the labeled set. In some applications,
-$p_X$ and $p_{Y|X}$ are independent components that share some
-parameters; in others, they are marginals of the same joint
-distribution specified by $p(x, y;\theta)$. In the context of this
+both models may be independent components that share some
+parameters; in others, they are components of the same joint distribution over
+$\mathcal{X}\times\mathcal{Y}$.
+In the context of this
 thesis, we will use the term \textit{weakly-supervised} and
 \textit{weak supervision} to refer to a broader setting that aims to
 alleviate the need for labeled data to obtain a well-performing
@@ -158,7 +160,7 @@ constraints, labels obtained via heuristics, among others.
 
 \noindent Naturally, there are many different ways one can use $\theta$ to
 parameterize $p_{Y|X}\left(y|\bm{x};\theta\right)$. One of the simpler ways
-is to define a linear model
+is to define a log-linear model
 %
 \begin{align}
     p_{Y|X}\left(y|\bm{x};\theta\right) & = \text{Cat}(y|f(\bm x; \theta)) \\
@@ -169,14 +171,14 @@ is to define a linear model
 %
 where $\bm{\phi}$ is a function that maps $\bm{x}$ into a
 manageable space, $W_{\theta}$ is a matrix of learnable weights, and
-softmax is a function that projects a vector of scores $\bm{s}$ into
-a ``vector of probabilities'', that is, $\sum_k\softmax(\bm{s})_k=1$
-and $\softmax(\bm{s})_k \geq 0$.
+\textbf{softmax} is a function that projects a vector of scores $\bm{s}\in\reals^K$ into
+a ``vector of probabilities'', that is, $\sum_k\left[\softmax(\bm{s})\right]_k=1$
+and $\left[\softmax(\bm{s})\right]_k \geq 0$.
 
 \begin{definition}[softmax]
     The projection function \textbf{softmax} is defined as
     \begin{equation}\label{eq:softmax}
-        \softmax(\bm{s}) = \frac{\exp(s_j)}{\sum_{j'} \exp(s_{j'})}.
+        \left[\softmax(\bm{s})\right]_j = \frac{\exp(s_j)}{\sum_{j'} \exp(s_{j'})}.
     \end{equation}
 \end{definition}
 
@@ -185,12 +187,12 @@ within the set of problems that convex optimization can solve, which
 significantly simplifies the optimization process. While the
 optimization simplicity of linear models is appealing, constructing
 $\bm{\phi}$ may require a significant effort. The creation of a
-proper feature function $\bm{\phi}: \mathcal{X} \rightarrow \reals^d$ might
+effective feature function $\bm{\phi}: \mathcal{X} \rightarrow \reals^d$ might
 demand extensive knowledge of the domain of $\mathcal{X}$ and of the
 task itself. The \textit{art} of creating these functions $\bm{\phi}$
 is often called \textbf{feature engineering}.
 
-An alternative to the linear model is the \textbf{neural network}, which, in a
+An alternative to the log-linear model is a \textbf{neural network}, which, in a
 way, does feature engineering automatically through the use of hidden
 representations. Neural networks use non-linear functions, also known
 as \textit{activation functions}, along with linear functions similar
@@ -219,7 +221,7 @@ to \eqnref{eq:linear} in order to build these hidden representations.
 %
 Thanks to its non-linearities, neural networks effectively create
 intermediate abstractions of the data, which are optimized to represent the data
-more meaningfully in order to succeed at the task, bypassing the need
+more effectively in order to succeed at the task, bypassing the need
 for feature engineering.
 
 Just as well, non-linearities end up
@@ -227,15 +229,18 @@ impeding the usage of convex optimization, and so neural networks are
 often trained instead through a process called
 \textit{backpropagation}, a gradient-based optimization algorithm.
 
+% TODO: might remove
+\newpage
+
 \begin{definition}[backpropagation]
     Backpropagation is a gradient-based optimization algorithm that
-    minimizes the loss function $L$ by iteratively updating the
+    locally minimizes the loss function $L$ by iteratively updating the
     parameters $\theta$. In order to be able to update $\theta$,
     the only requirement is to be able to compute the gradient of
-    $L$ with respect to every weight $\bm{w}_\theta\in\theta$:
+    $L$ with respect to every coordinate $\theta_d\in\theta$:
     %
     \begin{equation}
-        \frac{\partial L_{\mathcal{D}}(\theta)}{\partial \bm{w}_\theta}.
+        \frac{\partial L_{\mathcal{D}}(\theta)}{\partial \theta_d}.
     \end{equation}
     %
 \end{definition}
@@ -245,6 +250,10 @@ neural networks in a modular way, where differentiable building
 blocks of functions are combined in arbitrary computational graphs. A
 handful of different algorithms can be used to update $\theta$ during
 backpropagation; for example, Adam~\citep{kingma2014adam}.
+
+% TODO: may add a paragraph on gradient estimates via mini-batching.
+% grad L_D is expensive (it scales with the data size), but an unbiased
+% estimate can be obtained via mini-batching.
 
 \section{Neural Networks and Natural Language}
 
@@ -274,7 +283,7 @@ of the sentence and the task at hand.
 \subsection{Sequence-to-Sequence Models}
 
 \noindent In NLP, predicting the next word in a sentence is a common
-task, for example, in tasks such as language modeling, or machine translation (MT). The
+task, for example, in tasks such as MT. The
 broader family of models that handle such tasks are sequential
 models. In this thesis, we mainly focus on
 \textbf{sequence-to-sequence models} (\textit{seq2seq}).
@@ -282,24 +291,21 @@ models. In this thesis, we mainly focus on
 \begin{definition}[sequence-to-sequence models]
     A sequence-to-sequence model is a model that takes as input a
     sequence of tokens and produces as output another sequence of tokens.
-    The model has $Y_i | Y_{\leq i}, X \sim \text{Cat}(f(y_{\leq i}, x;
+    The model has $Y_i | Y_{\leq i}, X \sim \text{Cat}(f(y_{\leq i}, \bm{x};
         \theta))$ as its underlying distribution. In turn, the pmf
     %
     \begin{equation}
-        p(y_i|y_{\leq i}, x) = \text{Cat}(y_i|f(y_{\leq i}, x; \theta))
+        p(y_i|y_{\leq i}, \bm{x}) = \text{Cat}(y_i|f(y_{\leq i}, \bm{x}; \theta))
     \end{equation}
     %
     specifies that probability distribution, where
-    %
-    \begin{itemize}
-        \item $x=[x^1, \dots, x^N]$ is the input sequence of words;
-        \item $y_i$ is the next word in the output sequence $y=[y^1, \dots, y^M]$;
-        \item $y_{\leq i}$ is the history of previous words in $y$.
-    \end{itemize}
-    %
+    $\bm{x}=[x^1, \dots, x^N]$ is the input sequence of words,
+    $y_i$ is the next word in the output sequence $y=[y^1, \dots, y^M]$,
+    and $y_{\leq i}$ is the history of previous words in $y$.
     When modeled with neural networks, these models typically have
-    two main building blocks: the \textit{encoder}, that models $x$,
-    and the \textit{decoder}, that models $y$ in the context of $x$.
+    two main building blocks: the \textit{encoder}, that processes $\bm{x}$,
+    and the \textit{decoder}, that parameterizes the probability of the next
+    token $y_i$ in the context of $y_{\leq i}$ and $\bm{x}$.
 \end{definition}
 
 In the following section, we will expand on the architecture used in
@@ -308,12 +314,12 @@ the sequence-to-sequence models presented in this thesis: the \textbf{transforme
 \subsection{Transformer}
 \label{sec:transformer_bg}
 
-\noindent The transformer~\citep{vaswani2017attention} is a seq2seq model which
+\noindent The transformer~\citep{vaswani2017attention} is an architecture which
 maps an input sequence to an output sequence through many layers of
 \textbf{multi-head attention} mechanisms, yielding a dynamic,
 context-dependent strategy for propagating information within and
 across sentences. It contrasts with previous seq2seq models for neural machine translation (NMT), which
-usually rely either on costly gated recurrent operations~\citep[often
+usually rely either on gated recurrent operations~\citep[often
     LSTMs:][]{bahdanau2014neural,luong2015effective} or static
 convolutions~\citep{convseq}.
 
@@ -384,9 +390,9 @@ the input sentence and the sequential decoder.
 
 \noindent A recently attractive way to obtain high-performing models in NLP is
 to use a pre-trained language model. These are models with many
-layers and parameters, trained on millions of sentences gathered from
+parameters, trained on millions of sentences gathered from
 the web, using many computational resources in the training process.
-Many of such models' parameters are publicly released and are
+Many of such models are publicly released and are
 available for the research and industry community to use. Typically,
 practitioners download an already optimized model from the web and
 train it further by \textit{finetuning} it, that is, taking an
@@ -408,6 +414,8 @@ encoder building block and thus does not have language modeling
 capabilities in its \textit{vanilla} form. As is the case with other
 similar models, BERT was trained on an enormous corpus of sentences
 in monolingual English and in multilingual datasets of 100+
-languages. Many studies have analyzed the BERT model and have
-developed variants for it. Its study has even been referred as
-``BERTology''~\citep{rogers2020PrimerBERTologyWhat}.
+languages. BERT's masked language modeling objective (MLM) has proven
+to be a powerful mechanism to learn transferrable contextual encoder
+representations of tokens and sentences. Many studies have analyzed
+the BERT model and have developed variants for it. Its study has even
+been referred as ``BERTology''~\citep{rogers2020PrimerBERTologyWhat}.
