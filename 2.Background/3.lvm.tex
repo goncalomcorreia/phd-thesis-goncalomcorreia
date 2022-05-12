@@ -15,7 +15,19 @@ have built-in \textit{inductive bias}, that is,
 make assumptions about how the variables interact, making the obtained
 representations more interpretable and compact.
 
-We assume throughout a latent variable model with observed variables
+Mathematically, the possibility of a latent variable being present
+in the modeling of $p_X(\bm{x}|\theta)$ stems from the simple
+observation that the expectation of a non-random quantity is the non-random quantity itself:
+%
+\begin{equation}\label{eq:lvm}
+        \log p_X(\bm{x}|\theta) =
+        \mathbb{E}_{\pi(z | x, \theta)} \left[\log p_X(\bm{x}|\theta)\right]\,,
+\end{equation}
+%
+where $z$ is the underlying latent or hidden variable and $\pi$ is the
+probability of an assignment $z$ given the current observed $\bm{x}$.
+
+When discussing latent variable models, we assume throughout that there are observed variables
 $x \in \mathcal{X}$ and latent stochastic variables $z \in \ZZ$. The
 overall fit to a dataset $\mathcal D$ is $L_\mathcal{D}(\theta) =
         \sum_{x \in \mathcal{D}} \LL_x(\theta)$, where the loss of each
@@ -28,9 +40,15 @@ observation,
         \sum_{z \in \mathcal Z} \pi(z | x, \theta)~\ell(x, z; \theta) ~,
 \end{equation}
 %
-is the expected value of a downstream loss $\ell(x,z;\theta)$ under a
+is the expected value of a downstream loss $\ell(x,z;\theta)$\footnote{
+        We swapped the probabilistically-grounded $\log p_X(\bm{x}|\theta)$
+        for a more general $\ell(x,z;\theta)$ in order
+        to englobate any possible loss, probabilistic or non-probabilistic.
+}
+under a
 probability model $\pi(z|x,\theta)$ of the latent variable; in other
 words, the latent variable $z$ is {\it marginalized} to compute this loss.
+\eqnref{eq:fit} might also include a regularizer $\mathcal{R}(\theta)$.
 With this loss, we are assuming that the latent variable is discrete. We refer the reader
 to \citet{Kim2018} for other possibilities, such as continuous latent variables, and for more
 details in general.
@@ -40,8 +58,8 @@ to their flexibility and capacity~\citep{Kingma+2014:VAE}.
 
 \subsection{Discrete Latent Variables}\label{sec:discrete_lvm_bg}
 
-\noindent In this thesis, we focus on \textbf{discrete} latent variables, where
-$|\ZZ|$ is finite, but possibly very large. One example is when
+\noindent In this thesis, we will focus on \textbf{discrete} latent variables, where
+$|\ZZ|$ is finite but possibly very large. One example is when
 $\pi(z|x,\theta)$ specifies a categorical distribution, parameterized by a
 vector $\pv \in \simplex^{|\ZZ|}$. To obtain $\pv$, a neural network
 computes a vector of scores $\s \in \mathbb{R}^{|\ZZ|}$, one score
@@ -109,13 +127,13 @@ as \emph{Gumbel-Softmax}~\citep{Concrete,GumbelSoftmax}, leads to a
 biased estimator that can still perform well in practice. Continuous
 relaxations like Straight-Through and Gumbel-Softmax are only
 possible under a further modeling assumption that $\ell$ is defined
-continuously (thus differentiably) in a neighbourhood of the
+continuously (thus differentiably) in a neighborhood of the
 indicator vector $\bm{z} = \bm{e}_{\zsamp}$ for every $z \in \ZZ$.
 
 \subsection{Structured Latent Variables}\label{sec:struct_lvm_bg}
 
 \noindent Many models of interest involve structured (or combinatorial) latent
-variables. In this section, we assume $z$ can be represented as a
+variables. In this thesis, we assume that a latent $z$ can be represented as a
         {\it bit-vector}---\ie a random vector of discrete binary variables
 $\bm{a}_{z} \in \{0, 1\}^D$. This assignment of binary variables may
 involve global factors and constraints (\eg tree constraints, or

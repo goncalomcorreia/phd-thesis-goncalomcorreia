@@ -61,9 +61,8 @@ process~\citep{raganato2020FixedEncoderSelfAttentiona}.
 open problems and limitations of the work presented in this thesis.
 We seek not to diminish any of these limitations, but rather present
 them fairly.
-%
-% We will also discuss the ethical ramifications of our
-% work in a later section (\secref{sec:impact}).
+We will also discuss the ethical ramifications of our
+work in a later section (\secref{sec:impact}).
 
 As previously stated, sparsity is a prominent theme in this work.
 That sparsity is achieved through probability normalization functions
@@ -105,110 +104,140 @@ train semi-supervised models (\secref{sec:gen}). We believe that our
 method can be used in real-world applications where supervision is
 limited and that it will lead to better results than standard
 methods. For example, in NLP, there are many applications where a
-relaxation of the discrete space is not possible~\citep{Lee2019} and
-where we could only rely on high variance methods if we wished to
-train a latent variable model. We can now circumvent this limitation
-by using our training method.
+relaxation of the discrete space is not possible~\citep{Lee2019}.
+We can consider the semi-supervised loss
+%
+\begin{equation}
+    \mathcal{L}_{x}(\theta) =
+    \sum_{z \in \mathcal{Z}} \pi(z | x) \ell(x, z; \theta)
+    + \sum_{z \in \mathcal{Z}} \pi(z | x, y) \ell(x, y, z; \theta)
+    + \mathcal{R}(\theta)\,,
+\end{equation}
+%
+which is very similar to the loss used in \secref{sec:gen},
+and apply it to more challenging datasets.
+Whereas before we could only rely on high variance methods if we wished to
+train such a model, we can now circumvent this limitation
+by using our training method and computing deterministic gradients.
+
 % TODO: add more details how this can be done
 
-\paragraph*{Non-differentiability of the LVM learning signal.} We note
-how, in \eqnref{eq:fit}, the training of the parameters that learn
-$\pi(z|x;\theta)$ is decoupled from the training of the parameters of
-the generative model of the downstream loss: when marginalizing the
-latent variables, the downstream loss only scales the gradients
-computed from $\pi(z|x;\theta)$. This means that our method can still
-be applied when the downstream loss component does not have any
-trainable parameters. Furthermore, that component in \eqnref{eq:fit}
-can be replaced by any function, even non-differentiable, akin to a
-reward signal. One example of a real-world application is prompting
-of large pre-trained language models. In this line of work, the
-pre-trained model is assumed to already have the knowledge required
-to handle the task at hand stored in its parameters and only a prompt
-is required to generate the desired output. This problem could be
-framed as a latent variable model and interpret the natural language
-prompt as a discrete latent variable. Using the property we just
-described, the downstream task can be optimized via any
-differentiable or non-differentiable reward signal.
+\paragraph*{Non-differentiability of the LVM learning signal.} We
+note how, in \eqnref{eq:fit}, the training of the parameters that
+learn $\pi(z|x;\theta)$ is decoupled from the training of the
+parameters of the generative model of the downstream loss: when
+marginalizing the latent variables, the downstream loss only scales
+the gradients computed from $\pi(z|x;\theta)$. This means that our
+method can still be applied when the downstream loss component does
+not have any trainable parameters. Furthermore, that component in
+\eqnref{eq:fit} can be replaced by any function, even
+non-differentiable, akin to a reward signal. One example of a
+real-world application where the downstream loss doesn't have
+learnable parameters is the prompting of large pre-trained language
+models~\citep{liu2021PretrainPromptPredict}. In this line of work,
+the pre-trained model is assumed to already have the knowledge
+required to handle the task at hand stored in its parameters and only
+a prompt is required to generate the desired output. This problem
+could be framed as a latent variable model and one could interpret a
+natural language prompt as a discrete latent variable. Using the
+property we just described, the downstream task can be optimized via
+any differentiable or non-differentiable reward signal
+%
+\begin{equation}
+    \mathcal{L}_{x}(\theta) =
+    - \sum_{z \in \mathcal{Z}} \pi(z | x) r(x, z),
+\end{equation}
+%
+where note that $r$ does not depend on the model's parameters $\theta$.
 
-% TODO: add idea of latent draft
+\paragraph*{Latent draft translation.} Related to the overall present
+thesis topics of increasing transparency and compactness of neural
+models in NLP, we highlight the potential of prototype
+editing~\citep{guu2018GeneratingSentencesEditing,
+    he2020LearningSparsePrototypes}. In this generative model, the
+generative process has two main steps: (1) selecting a prototype
+sequence of tokens $\bm{t}$ from a list of possible prototypes (\eg
+the training data), and (2) editing that prototype by sampling a latent
+edit vector $z$ that encodes the type of edit (\eg active to passive,
+reordering, \textit{inter alia}). We note the promising possibility
+of using this approach to NMT: While \citep{he2020LearningSparsePrototypes} apply their
+sparse neural editor to language modeling, we will model instead a
+conditional distribution over $\mathcal{X} \times \mathcal{Y}$:
+%
+\begin{equation}
+    p(y, \bm{t}, \bm{z} | \bm{x}) =
+    p(\bm{t} | \bm{x}; \theta)
+    p(\bm{z} | \bm{x}; \theta)
+    p(\bm{y} | \bm{t}, \bm{z}; \theta)\,.
+\end{equation}
+%
+We may think of t as being a template for y\,---\,it can be a
+lexicalized rule with gaps or variables, a phrase-based mapping
+from a section of $\bm x$ to a string in the target language, among others.
+Once again, for deterministic gradients and greater training stability, we
+may use the training method proposed in \chapref{chap:sparsemarg}.
 
-% TODO: add broader impact of this work
+\section{Broader Impact}\label{sec:impact}
 
-% \section{Broader Impact}\label{sec:impact}
+\noindent We discuss here the broader impact of our work.
 
-% We discuss here the broader impact of our work.
+First of all, we note that all of our code has been
+open-sourced to ensure it's scrutinizable by
+anyone and to boost any related future work that other researchers
+might want to pursue.
 
+A common theme in this thesis is transparency.
+The main objective of improving such property in neural models
+is to have superior explanatory power and therefore to aid in understanding cases
+in which the model failed the downstream task. Interpretability of
+deep neural models can be essential to better discover any ethically
+harmful biases that exist in the data or in the model itself.
 
-% Currently, the solutions available to train discrete latent variable
-% models (LVMs) greatly rely on MC sampling, which can have high variance.
-% Methods that aim to decrease this variance are often not trivial to
-% train and to implement and may disincentivize practitioners from
-% using this class of models. However, we believe that discrete LVMs
-% have, in many cases, more interpretable and intuitive
-% latent representations. Our methods offer: a simple approach in
-% implementation to train these models; no addition in the number of
-% parameters; low increase in computational overhead (especially when
-% compared to more sophisticated methods of variance
-% reduction~\citep{RB19}); and improved performance. Our code has been
-% open-sourced as to ensure it's scrutinizable by
-% anyone and to boost any related future work that other researchers
-% might want to pursue.
+On the other hand, the models discussed in this work may
+also pave the way for malicious use cases, such as is the case for generative models with
+\emph{Deepfakes}, fake human avatars used by malevolent Twitter
+users, or generation models that automatically generate fraudulent news,
+often based on the large pre-trained language models used in this thesis.
+Particularly, generative models as the ones used in \chapref{chap:sparsemarg}
+are remarkable at sampling new instances of fake data and, with the
+power of latent variables, the interpretability discussed before can
+be used maliciously to further push harmful biases instead of
+removing them. Furthermore, our work in \chapref{chap:sparsemarg} is promising in improving the
+performance of latent variable models with several discrete
+variables, that can be trained as attributes to control the sample
+generation. Attributes that can be activated or deactivated at will
+to generate fake data can both help beneficial and malignant users to
+finely control the generated sample. Our work may be currently
+agnostic to this, but we recognize the dangers and encourage effort to
+combating any malicious applications.
 
-% As we have already pointed out, oftentimes LVMs
-% have superior explanatory power and so can aid in understanding cases
-% in which the model failed the downstream task. Interpretability of
-% deep neural models can be essential to better discover any ethically
-% harmful biases that exist in the data or in the model itself.
+Energy-wise, our data-efficient and compact models aim to require
+less data and computation than other models that rely on a massive
+amount of data and infrastructure. This makes our models ideal for
+situations where data is scarce, or where there are few computational
+resources to train large models. We believe that data efficiency and
+compactness are a step forward in the direction of alleviating
+environmental concerns of deep learning
+research~\citep{strubell2019energy}. However, we note that, for
+example, the adaptive sparsity of the models proposed in
+\chapref{chap:sparsemarg} tend to use more resources earlier on
+than standard methods. Even though in the applications shown
+they consume much less as training progresses, it's not clear if that
+trend is still observed in all potential applications.
 
-% On the other hand, the generative models discussed in this work may
-% also pave the way for malicious use cases, such as is the case with
-% \emph{Deepfakes}, fake human avatars used by malevolent Twitter
-% users, and automatically generated fraudulent news. Generative models
-% are remarkable at sampling new instances of fake data and, with the
-% power of latent variables, the interpretability discussed before can
-% be used maliciously to further push harmful biases instead of
-% removing them. Furthermore, our work is promising in improving the
-% performance of LVMs with several discrete
-% variables, that can be trained as attributes to control the sample
-% generation. Attributes that can be activated or deactivated at will
-% to generate fake data can both help beneficial and malignant users to
-% finely control the generated sample. Our work may be currently
-% agnostic to this, but we recognize the dangers and dedicate effort to
-% combating any malicious applications.
+Regarding sparsity, we note how sparsity may exhibit a larger risk of
+disregarding certain correlations or groups of observations,
+and thus may contribute to misinforming a practitioner.
+Where such a model that uses sparsity informs decision-makers on matters that affect
+lives, these decisions may be based on an incomplete view of the
+correlations in the data and/or these correlations may be exaggerated
+in harmful ways.
+At this point, it is
+unclear to which extent this happens and, if it does, whether it is
+consistent across various uses. We believe that a better understanding
+of the impact of sparsity in potentially oversimplifying correlations is an
+additional interesting avenue of future work.
 
-% Energy-wise, LVMs often require less data and
-% computation than other models that rely on a massive amount of data
-% and infrastructure. This makes LVMs ideal for
-% situations where data is scarce, or where there are few computational
-% resources to train large models. We believe that better latent
-% variable modeling is a step forward in the direction of alleviating
-% environmental concerns of deep learning
-% research~\citep{strubell2019energy}. However, the models proposed in
-% this work tend to use more resources earlier on in training than
-% standard methods, and even though in the applications shown they
-% consume much less as training progresses, it's not clear if that
-% trend is still observed in all potential applications.
-
-% In data science, LVMs, such as
-% mixed-membership models~\citep{blei2014build}, can be used to uncover
-% correlations in large amounts of data, for example, by clustering
-% observations. Training these models requires various degrees of
-% approximations which are not without consequence, they may impact the
-% quality of our conclusions and their fealty to the data. For example,
-% variational inference tends to under-estimate uncertainty and give
-% very little support to certain less-represented groups of variables.
-% Where such a model informs decision-makers on matters that affect
-% lives, these decisions may be based on an incomplete view of the
-% correlations in the data and/or these correlations may be exaggerated
-% in harmful ways. On the one hand, our work contributes to more stable
-% training of LVMs, and thus it is a step towards addressing some of
-% the many approximations that can blur the picture. On the other hand,
-% sparsity may exhibit a larger risk of disregarding certain
-% correlations or groups of observations, and thus contribute to
-% misinforming the data scientist. At this point it is unclear to which
-% extent the latter happens and, if it does, whether it is consistent
-% across LVMs and their various uses. We aim to study this issue
-% further and work with practitioners to identify failure cases.
 
 \cleardoublepage
 

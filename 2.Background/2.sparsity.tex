@@ -1,13 +1,11 @@
 \section{Sparsity and the Simplex}
 \label{sec:sparsity_background}
 
-% TODO: in attention, it's coefficients of a convex combination
-
 \noindent We now shift our attention to projections onto the \textbf{simplex}. The
-\textit{probability simplex} $\simplex^K$ is a mathematical space
-such that, if $\bm{x}\in\simplex^K$, then $0 \leq x_k \leq 1$ for any
-$k\in\left\{0, \dots, K\right\}$ and $\sum_{k=0}^K x_k = 1$. As
-aforementioned, \textbf{softmax} is one such projection into it
+\textit{probability simplex} $\simplex^{K-1}$ is a mathematical space contained in $\reals^K$
+such that, if $\bm{x}\in\simplex^{K-1}$, then $0 \leq x_k \leq 1$ for any
+$k\in\left\{1, \dots, K\right\}$ and $\sum_{k=1}^K x_k = 1$. As
+aforementioned, \textbf{softmax} is one such projection from $\bm{s}\in\reals^K$ into it
 (\eqnref{eq:softmax}), but others exist, which we will explore and use in this thesis.
 
 Note how the softmax mapping (\eqnref{eq:softmax}) is elementwise
@@ -18,8 +16,12 @@ invariably means less weight is assigned to the relevant items,
 potentially harming performance and
 interpretability~\citep{jain2019attention}. This has motivated a line
 of research on learning networks with \emph{sparse}
-mappings~\citep{sparsemax,fusedmax,louizos,shao2019ssn}. In this
-section, we will explore projections that will be used or expanded in
+mappings~\citep{sparsemax,fusedmax,louizos,shao2019ssn}.
+Such projections can play multiple roles in a neural model,
+for example, as a weighting function in transformers' attention mechanisms
+or as a way to parameterize discrete probability distributions.
+In the following
+sections, we will explore projections that will be used or expanded in
 this thesis: sparsemax~\citep{martins2016softmax},
 $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}, and
 SparseMAP~\cite{niculae2018sparsemap}.
@@ -61,13 +63,10 @@ it follows that the solution must have the form:
     ensures the result sums to one.
 \end{lemma}
 
-Letting $\bar{\ZZ}$ be the set of nonzero coordinates in the solution, \ie the \textbf{support},
-the normalization condition is equivalently
-%
-\begin{equation}
-    \tau = \frac{\sum_{z \in \bar{\ZZ}} \ss_z}{|\bar{\ZZ}|}\,.
-\end{equation}
-%
+Letting $\bar{\ZZ}$ be the set of
+nonzero coordinates in the solution, \ie the \textbf{support}, the
+normalization condition is equivalently $\tau = \frac{\sum_{z \in
+            \bar{\ZZ}} \ss_z}{|\bar{\ZZ}|}$.
 Observing that small changes to $\s$ almost always have no effect on the support
 $\bar{\ZZ}$, differentiating Equation~\ref{eq:sparsemax_form} gives
 \begin{equation}
@@ -216,8 +215,8 @@ mechanisms, where we shall show in \secref{sec:stats} that different
 heads tend to learn different sparsity behaviors.
 
 \paragraph*{Connections to softmax and sparsemax.}\label{sec:softmax}
-The solutionof sparsemax can be characterized through \eqnref{eq:sparsemax_form}
-and thus each coordinate of the sparsemax solution is a piecewise-linear function.
+The solution of sparsemax can be characterized through \eqnref{eq:sparsemax_form}
+and thus each coordinate of the solution is a piecewise-linear function.
 Visibly, this expression is recovered when setting $\alpha=2$ in the
 $\alpha$-\entmaxtext expression (\eqnref{eq:entmax_form}); for other
 values of $\alpha$, the exponent induces curvature.
@@ -238,21 +237,28 @@ slackness. Thus, the solution must have the form $\pp_i =
 
 \subsection{SparseMAP}\label{sec:smap_bg}
 
-\noindent Theoretically, the approaches described in \secref{sec:sparsemax_bg}
-and \secref{sec:entmax_bg} apply to any value of $K$ in the simplex $\simplex^K$, but many
-interesting applications involve a $K$ with
-combinatorial size. For such cases, we turn to structured prediction
-methods to handle the combinatorial explosion. Of particular
-interest in this thesis is \smap~\citep{niculae2018sparsemap,
-    sparsemapcg}, a structured extension of sparsemax.
+\noindent Theoretically, the approaches described in
+\secref{sec:sparsemax_bg} and \secref{sec:entmax_bg} apply to any
+value of $K$, but many interesting
+applications involve a $K$ that grows combinatorially as a function
+of sequence length. For such cases, we turn to structured prediction
+methods to handle the combinatorial explosion. Of particular interest
+in this thesis is \smap~\citep{niculae2018sparsemap, sparsemapcg}, a
+structured extension of sparsemax.
 
 \begin{definition}[SparseMAP]
     SparseMAP~\citep{niculae2018sparsemap,
         sparsemapcg} is given by the solution of the optimization problem
     \begin{equation}\label{eq:sparsemap}
         \smapop(\bm{t}) \defeq \argmin_{\pv \in \simplex^{|\ZZ|}}
-        \|\bm{A}\pv - \bm{t}\|_2^2.
+        \|\bm{A}\pv - \bm{t}\|_2^2,
     \end{equation}
+    %
+    where $\bm{A}\in\reals^{D\times K}$ is the matrix of all possible configurations
+    of the structured variable, and $\bm{t}$ is a compact vector variable scores of length $D$.
+    The columns of $\bm{A}$ are the configurations $\bm{a}_i \in \reals^D$ of the structured variable,
+    and the each configuration's score is given by $s_z \defeq \DP{\bm{a}_z}{\bm{t}}$.
+    More on structured prediction in \secref{sec:struct_lvm_bg}.
 \end{definition}
 
 \smap has been used successfully to model structures such as trees

@@ -837,20 +837,35 @@ sparsemax had the best performance.
 
 \section{Final Remarks and Chapter Summary}
 
-\noindent We described a novel training strategy for discrete latent variable
+The solutions that were available to train discrete latent variable
+models greatly relied on MC sampling, which can have high variance.
+Methods that aim to decrease this variance are often not trivial to
+train and implement and may disincentivize practitioners from
+using this class of models. However, we believe that discrete latent variable models
+have, in many cases, more interpretable, intuitive, and compact
+latent representations.
+
+We described a novel training strategy for discrete latent variable
 models, eschewing the common approach based on MC gradient estimation
 in favor of deterministic, exact marginalization under a sparse
-distribution. Sparsity leads to a powerful \textbf{adaptive} method,
+distribution. Our training strategy offers: a simple approach in
+implementation to training these models; no addition in the number of
+parameters; low increase in computational overhead (especially when
+compared to more sophisticated methods of variance
+reduction~\citep{RB19}); and improved performance.
+Sparsity leads to a powerful \textbf{adaptive} method,
 which can investigate fewer or more latent assignments $z$ depending
 on the ambiguity of a training instance $x$, as well as on the stage
-in training. We showcase the performance and flexibility of our
-method by investigating a variety of applications, with both discrete
+in training.
+
+We showcase the performance and flexibility of our
+methods by investigating a variety of applications, with both discrete
 and structured latent variables, with positive results. Our models
 very quickly approach a small number of latent assignment evaluations
 per sample, but make progress much faster and overall lead to
 superior results.
 
-Our proposed method thus offer the accuracy and robustness of exact
+Our proposed method thus offers the accuracy and robustness of exact
 marginalization while meeting the efficiency and flexibility of sampling
 methods, providing a promising alternative to
 successfully train more \textbf{compact} neural models. As we are
