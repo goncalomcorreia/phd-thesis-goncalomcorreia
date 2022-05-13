@@ -48,8 +48,8 @@ entirely, and instead deterministically evaluate the sum with less
 computation? To answer affirmatively, we propose an alternative
 method to train these models by parameterizing the discrete
 distribution with {\bf sparse
-        mappings}\,---\,sparsemax~\citep{martins2016softmax} and two
-structured counterparts, \smap~\citep{niculae2018sparsemap} and a
+        mappings}\,---\,sparsemax~\citep{sparsemax} and two
+structured counterparts, \smap~\citep{sparsemap} and a
 novel mapping top-$k$ sparsemax. Sparsity implies that some
 assignments of the latent variable are entirely ruled out. This leads
 to the corresponding terms in the sum evaluating trivially to zero,
@@ -76,8 +76,8 @@ the efficiency of single-sample estimators.
 
 \paragraph*{Differentiable sparse mappings.} There has been recent
 interest in applying sparse mappings of discrete distributions in
-deep discriminative models~\citep{martins2016softmax,
-    niculae2018sparsemap, fusedmax, entmax, sparsemapcg}, attention
+deep discriminative models~\citep{sparsemax,
+    sparsemap, fusedmax, entmax, sparsemapcg}, attention
 mechanisms~\citep{malaviya2018sparse, shao2019ssn,
     maruf2019selective, correia2019adaptively}, and in topic
 models~\citep{caothesis}. Our work focuses on the parameterization of
@@ -236,7 +236,7 @@ gives us a certificate of optimality whenever $\|\pv^\star\|_0 < k$.
 
 \noindent A second possibility to obtain efficient summation over a
 combinatorial space without imposing any constraints on $\ell(x, z;
-    \theta)$ is to use \smap~\citep{niculae2018sparsemap, sparsemapcg}.
+    \theta)$ is to use \smap~\citep{sparsemap, sparsemapcg}.
 Due to the properties of \smap described in \secref{sec:smap_bg},
 assessing the expectation in \eqnref{eq:fit} only requires evaluating
 $|\bar\ZZ| = \mathcal{O}(D)$ terms.
@@ -371,7 +371,7 @@ For these models, we also did a grid search over $r$ (1e-5, 1e-4) and
 over the frequency of updating $\tau$ every (500, 1000) steps.
 Optimization was done with Adam. For our method, in the labeled loss
 component of the semi-supervised objective we used the sparsemax
-loss~\citep{martins2016softmax}. Following \citet{RB19}, we pretrain
+loss~\citep{sparsemax}. Following \citet{RB19}, we pretrain
 the network with only labeled data prior to training with the whole
 training set. Likewise, for our method, we pretrained the network on
 the sparsemax loss and every other method with the Negative
@@ -590,7 +590,7 @@ efficiently.
 intractable structured sparsemax, as discussed in
 \secref{sec:structured}, is \smap. In this case, we compute an optimal
 distribution $\pv$ using the active set algorithm of
-\citet{niculae2018sparsemap}, by using a maximization oracle which
+\citet{sparsemap}, by using a maximization oracle which
 can be computed in $\mathcal{O}(D)$:
 \begin{equation}
     \argmax_z \DP{\bm{a}_z}{\bm{t}} = z^\star \quad \text{s.t.}\quad

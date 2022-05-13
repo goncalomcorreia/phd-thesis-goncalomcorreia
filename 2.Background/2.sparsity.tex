@@ -22,19 +22,19 @@ for example, as a weighting function in transformers' attention mechanisms
 or as a way to parameterize discrete probability distributions.
 In the following
 sections, we will explore projections that will be used or expanded in
-this thesis: sparsemax~\citep{martins2016softmax},
+this thesis: sparsemax~\citep{sparsemax},
 $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}, and
-SparseMAP~\cite{niculae2018sparsemap}.
+SparseMAP~\cite{sparsemap}.
 
 \subsection{Sparsemax}\label{sec:sparsemax_bg}
 
 \noindent Firstly, we will introduce the \textbf{sparsemax} mapping.
 Like softmax, sparsemax is differentiable and has efficient forward and backward
-passes~\citep{Held1974,martins2016softmax}, described in detail below.
+passes~\citep{Held1974,sparsemax}, described in detail below.
 
 \begin{definition}[sparsemax]
     The sparsemax transformation
-    mapping~\citep{martins2016softmax}, is given by the unique solution
+    mapping~\citep{sparsemax}, is given by the unique solution
     to the convex optimization problem
     %
     \begin{equation}\label{eq:sparsemax}
@@ -243,11 +243,11 @@ value of $K$, but many interesting
 applications involve a $K$ that grows combinatorially as a function
 of sequence length. For such cases, we turn to structured prediction
 methods to handle the combinatorial explosion. Of particular interest
-in this thesis is \smap~\citep{niculae2018sparsemap, sparsemapcg}, a
+in this thesis is \smap~\citep{sparsemap, sparsemapcg}, a
 structured extension of sparsemax.
 
 \begin{definition}[SparseMAP]
-    SparseMAP~\citep{niculae2018sparsemap,
+    SparseMAP~\citep{sparsemap,
         sparsemapcg} is given by the solution of the optimization problem
     \begin{equation}\label{eq:sparsemap}
         \smapop(\bm{t}) \defeq \argmin_{\pv \in \simplex^{|\ZZ|}}
@@ -262,7 +262,7 @@ structured extension of sparsemax.
 \end{definition}
 
 \smap has been used successfully to model structures such as trees
-and matchings, and \citet{niculae2018sparsemap} apply an active set
+and matchings, and \citet{sparsemap} apply an active set
 algorithm for evaluating it and computing gradients efficiently,
 requiring only a primitive for computing $\argmax_{z \in \ZZ} \langle
     \bm{a}_z, \bm{t}\rangle$, which we detail below. While the
@@ -276,7 +276,7 @@ only linearly with $D$, and therefore $|\bar\ZZ| \ll |\ZZ|$.
 
 The active set method
 \citep[Chapters 16.4 \& 16.5]{nocedalwright} as applied to the SparseMAP
-optimization problem (Eq.~\ref{eq:sparsemap})~\cite{niculae2018sparsemap}
+optimization problem (Eq.~\ref{eq:sparsemap})~\cite{sparsemap}
 is a small variation of the formulation of Nocedal and Wright for handling
 the equality constraint, due to ~\citet[Section 6]{ad3}.
 Assume that we could identify the \emph{support}, or
@@ -389,7 +389,7 @@ it is thus a good choice of structure to add to the active set.
 
 The full procedure is given in Algorithm~\ref{alg:activeset}.
 The backward pass is computed by implicit differentiation of \eqnref{eq:qp_kkt} \wrt
-$\bm{t}$, giving, as in \cite{niculae2018sparsemap},
+$\bm{t}$, giving, as in \cite{sparsemap},
 \begin{equation}
     \pfrac{\bar{\pv}}{\bm{t}} = \bar{\bm{A}}\big(\bm{S} - \bm{ss}^\top / s\big),
     \quad\text{where}\quad
@@ -399,4 +399,4 @@ $\bm{t}$, giving, as in \cite{niculae2018sparsemap},
 \end{equation}
 It is possible to apply the $\ell_2$ regularization term only to a subset of the
 rows of $\bm{A}$, as is more standard in the graphical model literature. We
-refer the reader to the presentation in \cite{ad3,niculae2018sparsemap} for this extension.
+refer the reader to the presentation in \cite{ad3,sparsemap} for this extension.
