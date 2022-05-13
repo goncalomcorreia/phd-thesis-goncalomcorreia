@@ -8,7 +8,7 @@
 more \textbf{compact}. We will propose a novel approach to train
 discrete and structured latent variable models that achieves an exact
 gradient unlike previous strategies in this field. Latent discrete
-and structured variables are of particular interest for compactness
+and structured variables are of particular interest for the compactness
 of neural models since they can constrain the model and provide
 inductive bias. This family of latent variable models can also be easily
 semi-supervised, which can further increase the inductive bias and
@@ -44,7 +44,7 @@ Gumbel-Softmax~\citep{Concrete,GumbelSoftmax}, which potentially
 reduce variance but introduce bias and modeling assumptions.
 
 In this work, we take a step back and ask: Can we avoid sampling
-entirely, and instead deterministically evaluate the sum with less
+entirely, and instead, deterministically evaluate the sum with less
 computation? To answer affirmatively, we propose an alternative
 method to train these models by parameterizing the discrete
 distribution with {\bf sparse
@@ -58,13 +58,13 @@ allowing us to disregard potentially expensive computations.
 \paragraph*{Contributions.} We introduce a general strategy for
 learning discrete latent variable models that hinges on
 learning a sparse distribution over the possible assignments. In the
-unstructured categorical case our strategy relies on the sparsemax
+unstructured categorical case, our strategy relies on the sparsemax
 activation function, presented in~\secref{sec:categorical}, while in the
 structured case we propose two strategies, \smap and top-$k$
 sparsemax, presented in~\secref{sec:structured}. Unlike existing
 approaches, our strategies involve neither MC estimation nor any
 relaxation of the discrete latent variable to the continuous space.
-We demonstrate our strategy on three different applications: a
+We demonstrate our strategy in three different applications: a
 semi-supervised generative model, an emergent communication game, and
 a bit-vector variational autoencoder. We provide a thorough analysis
 and comparison to MC methods, and\,---\,when feasible\,---\,to exact
@@ -105,11 +105,11 @@ downstream loss assessed at the relaxed sample to define a control
 variate. RELAX~\citep{RELAX}, instead, learns to predict the
 downstream loss of the relaxed sample with an auxiliary network. In
 contrast, sparse marginalization works for any factorization where a
-primitive for $1$-best (or $k$-best) enumeration is available, and
+primitive for $1$-best (or $k$-best) enumeration is available and
 takes no additional parameters nor additional optimization
-objectives. Another line of work approximates argmax gradients by
+objectives. Another line of work approximates $\argmax$ gradients by
 perturbed finite differences \cite{lorberbom2019direct,vlastelica};
-this requires the same computation primitive as our approach, but is
+this requires the same computation primitive as our approach but is
 always biased. ARM~\citep{yin2019arm} is a control variate based on
 antithetic samples~\citep{mcbook}: it does not require relaxation nor
 additional parameters, but it only applies to factorial Bernoulli
@@ -217,7 +217,7 @@ simple to compute.\footnote{the Jacobian of $\topk$ is a diagonal matrix whose
 
 To apply the top-$k$ sparsemax to a large or combinatorial set $\ZZ$,
 all we need is a primitive to compute the top-$k$ entries of
-$s$---this is available for many structured problems (for example,
+$s$\,---\,this is available for many structured problems (for example,
 sequential models via $k$-best dynamic programming) and, when $\ZZ$
 is the set of joint assignments of $D$ discrete binary variables, it
 can be done with a cost $\mathcal{O}(kD)$.
@@ -354,8 +354,8 @@ relaxations of $z$.
 MNIST dataset~\citep{lecun1998gradient}, using 10\% of labeled data,
 treating the remaining data as unlabeled. MNIST consists of $28
     \times 28$ gray-scale images of hand-written digits. It contains
-60K datapoints for training and 10K datapoints for testing. We
-perform model selection on the last 10K datapoints of the training
+60K data points for training and 10K for testing. We
+perform model selection on the last 10K data points of the training
 split. In this experiment, the classification network consists of
 three fully connected hidden layers of size 256, using ReLU
 activations. The generative and inference network both consist of one
@@ -370,17 +370,17 @@ temperature of the Gumbel models was annealed according to $\tau =
 For these models, we also did a grid search over $r$ (1e-5, 1e-4) and
 over the frequency of updating $\tau$ every (500, 1000) steps.
 Optimization was done with Adam. For our method, in the labeled loss
-component of the semi-supervised objective we used the sparsemax
-loss~\citep{sparsemax}. Following \citet{RB19}, we pretrain
-the network with only labeled data prior to training with the whole
-training set. Likewise, for our method, we pretrained the network on
+component of the semi-supervised objective, we used the sparsemax
+loss~\citep{sparsemax}. Following \citet{RB19}, we pre-train
+the network with only labeled data before training with the whole
+training set. Likewise, for our method, we pre-trained the network on
 the sparsemax loss and every other method with the Negative
 Log-Likelihood loss. Each model was trained for 200 epochs.
 
 \paragraph*{Comparisons.} Our proposal's key ingredient is sparsity,
 which permits exact marginalization and a deterministic gradient. To
 investigate the impact of sparsity alone, we report a comparison
-against the exact marginalization over the entire support $\ZZ$ using
+against the exact marginalization over the entire support, $\ZZ$ using
 a dense softmax parameterization. To investigate the impact of
 deterministic gradients, we compare to stochastic gradients:
 
@@ -391,11 +391,11 @@ deterministic gradients, we compare to stochastic gradients:
               p(x|z', h, \phi)$ as baseline, where $z' \sim \pi(z|x, \theta_\pi)$
           is an independent sample;
     \item NVIL~\citep{mnih2014neural}
-          with a learned baseline (we train a MLP to predict the learning
+          with a learned baseline (we train an MLP to predict the learning
           signal by minimizing mean squared error);
           \footnote{NVIL and SFE+ are
               similar, the difference being that the baseline in SFE+ does not
-              require additional parameters nor it introduces additional
+              require additional parameters nor does it introduce additional
               objectives.}
     \item Sum-and-sample~\citep{RB19};
     \item Gumbel-Softmax, which relaxes the random variable to the interior of the simplex;
@@ -405,7 +405,7 @@ deterministic gradients, we compare to stochastic gradients:
               without ST), we follow \citet{GumbelSoftmax} and substitute
               $\KL(\pi(z|x, \theta_\pi) \| p(z))$ in the ELBO by the $\KL$
               divergence of $\Cat(\softmax(\s))$ from a discrete uniform prior.
-              Strictly speaking this means the objective is not a proper ELBO and
+              Strictly speaking, this means the objective is not a proper ELBO and
               its relationship to an ELBO is unclear~\citep[Appendix
                   C.2]{Concrete}.}
 \end{itemize}
@@ -420,7 +420,7 @@ support of our method is much smaller\,---\,sparsemax-parameterized
 posteriors get very confident, and mostly require one, and sometimes
 two, calls to the decoder. Regarding the Monte Carlo methods, the
 continuous relaxation done by Gumbel-Softmax underperformed all the
-other methods, with the exception of SFE with a moving average. While
+other methods, except for SFE with a moving average. While
 SFE+ and Sum\&Sample are very strong performers, they will always
 require throughout training the same number of calls to the decoder
 (in this case, two). On the other hand, sparsemax makes a small
@@ -469,7 +469,7 @@ the correct image\,---\,only the correct image. To make the game even % TODO: do
 harder, we increase the collection of images $|\mathcal{V}|$ as
 suggested by \citet{Havrylov2017}; in our experiments, we increase it
 from 2 to 16. and the vocabulary of the sender was increased to 256.
-The hidden size and embedding size was also increased to 512 and 256,
+The hidden size and embedding size were also increased to 512 and 256,
 respectively. We did a grid search on the learning rate (0.01, 0.005,
 0.001) and entropy regularizer (0.1, 0.05, 0.01) and chose the best
 configuration for each model on the validation set based on the
@@ -482,7 +482,7 @@ embedding size to be 256. All methods are trained for 500 epochs. The
 data used by \citet{Lazaridou2017} is a subset of ImageNet containing
 463,000 images, chosen by sampling 100 images from 463 base-level
 concepts. The images are then applied a forward-pass through the
-pretrained VGG ConvNet~\citep{convnet} and the representations at the
+pre-trained VGG ConvNet~\citep{convnet} and the representations at the
 second-to-last fully connected layer are saved to use as input to the
 sender/receiver.
 
@@ -527,13 +527,13 @@ Table~\ref{tab:symbol} shows the communication success (accuracy of
 the receiver at picking the correct image $v_y$). While the
 communication success for $|\mathcal{V}|=2$ in \citet{Lazaridou2017}
 was close to perfect, we see that increasing $|\mathcal{V}|$ to 16
-makes this game much harder to sampling-based approaches. In fact,
-only the models that do explicit marginalization achieve close to
+makes this game much harder to sampling-based approaches.
+Only the models that do explicit marginalization achieve close to
 perfect communication in the test set. However, as $\ZZ$ increases,
 marginalizing with a softmax parameterization gets computationally
 more expensive, as it requires $|\ZZ|$ forward and backward passes on
 the receiver. Unlike softmax, the model trained with sparsemax
-gives a very small support, requiring on average only 3 decoder
+gives very small support, requiring on average only 3 decoder
 calls. In fact, sparsemax
 starts off dense while exploring, but quickly becomes very sparse
 (\figref{fig:nonzero_comm}).
@@ -650,15 +650,15 @@ explicitly.
 
 \paragraph*{Data and architecture.} We use
 Fashion-MNIST~\citep{fmnist}, consisting of $28 \times 28$, 256-level
-gray-scale images of clothes. It contains 60K datapoints for training
-and 10K datapoints for testing. We perform model selection on the
-last 10K datapoints of the training split. The decoder uses an
-independent categorical distribution for each pixel, $p(x |z,
-    \phi) = \prod_{i=1}^{28} \prod_{j=1}^{28} p(x_{ij} |z, \phi)$.
-For top-$k$ sparsemax, we choose $k=10$. We have set the generative
-and inference network to consist of one hidden layer with 128 nodes,
-using ReLU activations. We have searched a learning rate doing grid
-search (0.0005, 0.001, 0.002) and chosen the model based on the ELBO
+gray-scale images of clothes. It contains 60K data points for training
+and 10K data points for testing. We perform model selection on the
+last 10K data points of the training split. The decoder uses an
+independent categorical distribution for each pixel, $p(x |z, \phi) =
+    \prod_{i=1}^{28} \prod_{j=1}^{28} p(x_{ij} |z, \phi)$. For top-$k$
+sparsemax, we choose $k=10$. We have set the generative and inference
+network to consist of one hidden layer with 128 nodes, using ReLU
+activations. We have searched a learning rate by doing a grid search
+(0.0005, 0.001, 0.002) and have chosen the model based on the ELBO
 performance on the validation set. For the Gumbel models, we applied
 the same schedule and grid search to the temperature as described in
 \secref{sec:gen}. We used the Adam optimizer.
@@ -674,7 +674,7 @@ the same schedule and grid search to the temperature as described in
     terms of accuracy or task success. Instead, we display the trained
     models in the rate-distortion (RD)
     plane~\citep{Alemi2018}\footnote{Distortion is the expected value of
-        the reconstruction negative log-likelihood, while rate is the average
+        the reconstruction negative log-likelihood, while the rate is the average
         KL divergence from the prior to the approximate posterior.} and also
     report bits-per-dimension of $x$, estimated with importance sampling,
     on held-out data.
@@ -721,7 +721,7 @@ In \figref{fig:structcalls}, we can observe the training progress in
 number of calls to $p(x |z, \phi)$ for the models with 32 and 128
 latent bits, respectively. While $\sparsemaxk$ introduces bias
 towards the most probable assignments and may discard outcomes that
-$\sparsemax$ would assign non-zero probability to, as training
+$\sparsemax$ would assign a non-zero probability to, as training
 progresses distributions may (or tend to) be sufficiently sparse and
 this mismatch disappears, making the gradient computation exact.
 
@@ -751,7 +751,7 @@ downstream loss (ELBO) over epochs and over the median number of
 decoder calls per epoch. The plots on \figref{fig:elbo_bit_calls}
 show how our methods have comparable computational overhead to
 sampling approaches. Oftentimes, our methods could have been trained
-in less epochs to obtain the same performance as the sampling
+in fewer epochs to obtain the same performance as the sampling
 estimators have for 100 epochs.
 
 \begin{figure}[ht]
@@ -796,7 +796,7 @@ not too problematic.
 
 \noindent \citet{correia2020procneurips} proved to be a relevant
 contribution to the field of discrete and structured latent variable
-modelling. In particular, and most closely related to our work,
+modeling. In particular, and most closely related to our work,
 \citet{chen2021EvidentialSoftmaxSparse} added another method to the
 family of efficient marginalization techniques that we started in
 \citet{correia2020procneurips}. They introduce a new

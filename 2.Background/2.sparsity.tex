@@ -1,12 +1,14 @@
 \section{Sparsity and the Simplex}
 \label{sec:sparsity_background}
 
-\noindent We now shift our attention to projections onto the \textbf{simplex}. The
-\textit{probability simplex} $\simplex^{K-1}$ is a mathematical space contained in $\reals^K$
-such that, if $\bm{x}\in\simplex^{K-1}$, then $0 \leq x_k \leq 1$ for any
-$k\in\left\{1, \dots, K\right\}$ and $\sum_{k=1}^K x_k = 1$. As
-aforementioned, \textbf{softmax} is one such projection from $\bm{s}\in\reals^K$ into it
-(\eqnref{eq:softmax}), but others exist, which we will explore and use in this thesis.
+\noindent We now shift our attention to projections onto the
+\textbf{simplex}. The \textit{probability simplex} $\simplex^{K-1}$
+is a subset of $\reals^K$ such that, if $\bm{x}\in\simplex^{K-1}$,
+then $0 \leq x_k \leq 1$ for any $k\in\left\{1, \dots, K\right\}$ and
+$\sum_{k=1}^K x_k = 1$. As aforementioned, \textbf{softmax} is one
+such projection that maps from $\bm{s}\in\reals^K$ into it
+(\eqnref{eq:softmax}), but others exist, which we will explore and
+use in this thesis.
 
 Note how the softmax mapping (\eqnref{eq:softmax}) is elementwise
 proportional to $\exp$; therefore, it can never assign a weight of
@@ -17,8 +19,8 @@ potentially harming performance and
 interpretability~\citep{jain2019attention}. This has motivated a line
 of research on learning networks with \emph{sparse}
 mappings~\citep{sparsemax,fusedmax,louizos,shao2019ssn}.
-Such projections can play multiple roles in a neural model,
-for example, as a weighting function in transformers' attention mechanisms
+Such projections can play multiple roles in a neural model.
+For example, as a weighting function in transformers' attention mechanisms
 or as a way to parameterize discrete probability distributions.
 In the following
 sections, we will explore projections that will be used or expanded in
@@ -38,21 +40,26 @@ passes~\citep{Held1974,sparsemax}, described in detail below.
     to the convex optimization problem
     %
     \begin{equation}\label{eq:sparsemax}
-        \sparsemax(\s) \coloneqq \argmin_{\pv \in \simplex^K} \| \pv - \s \|_2^2\,.
+        \sparsemax(\s) \coloneqq \argmin_{\pv \in \simplex^K} \| \pv - \s \|_2^2\,,
     \end{equation}
+    %
+    where $\s\in\reals^K$.
 \end{definition}
 
 Since
 \eqnref{eq:sparsemax} is the Euclidean projection operator onto the probability
-simplex and solutions can hit the boundary, sparsemax is likely to assign {\bf
-        probabilities of exactly zero}; in contrast, softmax is always dense.
+simplex and solutions can hit the boundary, where some coordinates are zero-valued, sparsemax can assign {\bf
+        probabilities of exactly zero}; in contrast, $\softmax(\s)
+    \propto \exp(\s)$ is always dense, that is, it is always strictly
+in the interior of the simplex where all coordinates are non-zero.
 
 As a projection onto a polytope, the solution is likely to fall on the
 set's boundaries or corners. In this case, points on the border of
-$\simplex^K$ have one or more zero coordinates. In contrast, $\softmax(\s)
-    \propto \exp(\s)$ is always strictly inside the simplex.
+$\simplex^K$ have one or more zero coordinates.
 From the optimality conditions of the sparsemax problem shown in \eqnref{eq:sparsemax},
 it follows that the solution must have the form:
+
+\newpage
 
 \begin{lemma}[Proof in \citet{sparsemax}]
     \begin{equation}\label{eq:sparsemax_form}
@@ -60,7 +67,7 @@ it follows that the solution must have the form:
     \end{equation}
     %
     where the maximum is elementwise, and $\tau$ is the unique value that
-    ensures the result sums to one.
+    ensures that the output of sparsemax sums to one.
 \end{lemma}
 
 Letting $\bar{\ZZ}$ be the set of
@@ -75,7 +82,7 @@ $\bar{\ZZ}$, differentiating Equation~\ref{eq:sparsemax_form} gives
 \end{equation}
 where $\bar{\pv}$ and ${\bar{\s}}$ denote the subsets of the respective vectors
 indexed by the support $\bar{\ZZ}$. Outside of the support, the partial
-derivatives are zero. (\emph{Cf.} the more general result in \citet[Proposition
+derivatives are zero. (\emph{cf.}, the more general result in \citet[Proposition
     2]{entmax}.)
 
 In terms of computation, $\tau$ may be found numerically using root finding
@@ -83,7 +90,7 @@ algorithms on $f(\tau) = \max(\s - \tau, 0) - 1$.
 Alternatively, observe that it is enough to find $\bar{\ZZ}$. By showing that
 sparsemax must preserve the ordering, \ie that if $\ss_{z'} > \ss_z$ and $z \in
     \bar{\ZZ}$ then $z' \in \bar{\ZZ}$, it can be shown that $\bar{\ZZ}$ must
-consist of the $k$ highest-scoring coordinates of $\s$, where $k$ can be find by
+consist of the $k$ highest-scoring coordinates of $\s$, where $k$ can be found by
 inspection after sorting $\s$. This leads to a straightforward $\mathcal{O}(K
     \log K)$ algorithm due to Held~\citep[pp.~16--17]{Held1974}. This can be further pushed to
 $\mathcal{O}(K)$ using median pivoting algorithms~\citep{Condat2016, entmax}. We use
@@ -136,9 +143,9 @@ definition of $\HHt_\alpha$, the optimality conditions may be used to derive its
         = [(\alpha - 1){\x} - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
     \end{equation}
     %
-    where $[\cdot]_+$ is the positive part (ReLU) function, $\bm{1}$
-    denotes the vector of all ones, and $\thresh$---which acts like a
-    threshold---is the Lagrange multiplier corresponding to the $\sum_i
+    where $[\cdot]_+$ is the positive part function, $\bm{1}$
+    denotes the vector of all ones, and $\tau^\star$\,---\,which acts like a
+    threshold\,---\,is the Lagrange multiplier corresponding to the $\sum_i
         \pp_i=1$ constraint.
 \end{lemma}
 % \begin{proof}
@@ -182,8 +189,7 @@ definition of $\HHt_\alpha$, the optimality conditions may be used to derive its
 \paragraph*{Properties of {\boldmath $\alpha$}-\entmaxtext.}
 The appeal of $\alpha$-\entmaxtext for attention rests on the
 following properties. For $\alpha=1$, \ie when $\HHt_\alpha$ becomes
-the Shannon entropy, it exactly recovers the softmax mapping (We
-provide a short derivation in \appref{app:fenchelyoung}). For all $\alpha>1$
+the Shannon entropy, it exactly recovers the softmax mapping. For all $\alpha>1$
 it permits sparse solutions, in stark contrast to softmax. In
 particular, for $\alpha=2$, it recovers the sparsemax mapping
 \citep{sparsemax}, which is piecewise linear. In-between, as $\alpha$
@@ -224,7 +230,7 @@ values of $\alpha$, the exponent induces curvature.
 On the other hand, softmax can be shown to be the unique solution of the optimization problem
 \begin{equation}
     \softmax(\x)_i =
-    \argmax_{\p \in \simplex} \p^\top\x + \HHs(\p),
+    \argmax_{\p \in \simplex^K} \p^\top\x + \HHs(\p),
 \end{equation}
 where $\HHs(\p) \coloneqq -\sum_i \pp_i \log \pp_i$ is the Shannon entropy.
 Indeed, setting the gradient to $0$ yields the condition
@@ -232,15 +238,14 @@ $\log \pp_i = \xx_j - \nu_i - \tau - 1$, where $\thresh$ and $\nu > 0$ are Lagra
 multipliers for the simplex constraints $\sum_i \pp_i = 1$ and $\pp_i \geq 0$,
 respectively. Since the \lhs is only finite for $\pp_i>0$,
 we must have $\nu_i=0$ for all $i$, by complementary
-slackness. Thus, the solution must have the form $\pp_i =
-    \nicefrac{\exp(\xx_i)}{Z}$, yielding \eqnref{eq:softmax}.
+slackness. Thus, the solution must have the form $\pp_i \propto \exp(\xx_i)$, yielding \eqnref{eq:softmax}.
 
 \subsection{SparseMAP}\label{sec:smap_bg}
 
 \noindent Theoretically, the approaches described in
 \secref{sec:sparsemax_bg} and \secref{sec:entmax_bg} apply to any
 value of $K$, but many interesting
-applications involve a $K$ that grows combinatorially as a function
+applications involve a $K$ that grows exponentially as a function
 of sequence length. For such cases, we turn to structured prediction
 methods to handle the combinatorial explosion. Of particular interest
 in this thesis is \smap~\citep{sparsemap, sparsemapcg}, a
