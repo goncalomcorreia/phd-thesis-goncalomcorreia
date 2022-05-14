@@ -238,6 +238,7 @@ often trained instead through a process called
     %
     \begin{equation}
         \frac{\partial L_{\mathcal{D}}(\theta)}{\partial \theta_d}.
+        \label{eq:backprop}
     \end{equation}
     %
 \end{definition}
@@ -247,6 +248,12 @@ neural networks in a modular way, where differentiable building
 blocks of functions are combined in arbitrary computational graphs. A
 handful of different algorithms can be used to update $\theta$ during
 backpropagation; for example, Adam~\citep{kingma2014adam}.
+
+In practice, computing \eqnref{eq:backprop} for the whole dataset
+$\mathcal D$ is a costly operation, and so the gradient is usually
+computed through an unbiased estimate: independent and identically
+distributed samples of the dataset are drawn, and \eqnref{eq:backprop}
+is computed on that set of samples (\ie, the \textit{mini-batch}).
 
 % TODO: may add a paragraph on gradient estimates via mini-batching.
 % grad L_D is expensive (it scales with the data size), but an unbiased
