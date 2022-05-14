@@ -73,8 +73,8 @@ which is added to the negative log-likelihood
 Sometimes, instead of the probabilistically-grounded negative
 log-likelihood, practitioners might use a non-probabilistic loss $\ell$ and
 still use a statistical model; for example, one might use the 0/1
-loss where the loss is $1$ if the $\argmax$ mode is wrong, \ie
-$\hat{y}\neq y$, and $0$ otherwise. After training the model, we wish
+loss where the loss is $1$ if the $\argmax$ mode is wrong (\ie,
+$\hat{y}\neq y$) and $0$ otherwise. After training the model, we wish
 to make predictions $\hat{y}$ for each novel input $\bm{x}$ of the
 test set, and we can make such predictions by using the optimal
 trained parameters $\hat{\theta}$ and selecting, for instance, the highest-scoring

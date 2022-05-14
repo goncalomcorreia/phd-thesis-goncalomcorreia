@@ -71,7 +71,7 @@ it follows that the solution must have the form:
 \end{lemma}
 
 Letting $\bar{\ZZ}$ be the set of
-nonzero coordinates in the solution, \ie the \textbf{support}, the
+nonzero coordinates in the solution (\ie, the \textbf{support}) the
 normalization condition is equivalently $\tau = \frac{\sum_{z \in
             \bar{\ZZ}} \ss_z}{|\bar{\ZZ}|}$.
 Observing that small changes to $\s$ almost always have no effect on the support
@@ -88,7 +88,7 @@ derivatives are zero. (\emph{cf.}, the more general result in \citet[Proposition
 In terms of computation, $\tau$ may be found numerically using root finding
 algorithms on $f(\tau) = \max(\s - \tau, 0) - 1$.
 Alternatively, observe that it is enough to find $\bar{\ZZ}$. By showing that
-sparsemax must preserve the ordering, \ie that if $\ss_{z'} > \ss_z$ and $z \in
+sparsemax must preserve the ordering, that is, if $\ss_{z'} > \ss_z$ and $z \in
     \bar{\ZZ}$ then $z' \in \bar{\ZZ}$, it can be shown that $\bar{\ZZ}$ must
 consist of the $k$ highest-scoring coordinates of $\s$, where $k$ can be found by
 inspection after sorting $\s$. This leads to a straightforward $\mathcal{O}(K
@@ -188,8 +188,8 @@ definition of $\HHt_\alpha$, the optimality conditions may be used to derive its
 
 \paragraph*{Properties of {\boldmath $\alpha$}-\entmaxtext.}
 The appeal of $\alpha$-\entmaxtext for attention rests on the
-following properties. For $\alpha=1$, \ie when $\HHt_\alpha$ becomes
-the Shannon entropy, it exactly recovers the softmax mapping. For all $\alpha>1$
+following properties. For $\alpha=1$ (\ie, when $\HHt_\alpha$ becomes
+the Shannon entropy) it exactly recovers the softmax mapping. For all $\alpha>1$
 it permits sparse solutions, in stark contrast to softmax. In
 particular, for $\alpha=2$, it recovers the sparsemax mapping
 \citep{sparsemax}, which is piecewise linear. In-between, as $\alpha$

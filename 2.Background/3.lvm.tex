@@ -6,7 +6,7 @@ neural models more compact. To that effect, we propose a novel way to
 train latent variable models. Latent variable models differ from the
 models described in \secref{sec:ml-primer}, which only have
 \textit{observed variables} ($X$ and $Y$). Latent variables are
-variables that are not observed, \ie \textit{hidden}, but are assumed
+variables that are not observed (\ie, \textit{hidden}) but are assumed
 to be correlated with the observed variables. Even though the
 training of these models may be difficult, there are significant
 advantages to this approach. Particularly, these models often need
@@ -135,10 +135,10 @@ indicator vector $\bm{z} = \bm{e}_{\zsamp}$ for every $z \in \ZZ$.
 
 \noindent Many models of interest involve structured (or combinatorial) latent
 variables. In this thesis, we assume that a latent $z$ can be represented as a
-    {\it bit-vector}\,---\,\ie a vector of discrete binary variables
+    {\it bit-vector}\,---\,\ie, a vector of discrete binary variables
 $\bm{a}_{z} \in \{0, 1\}^D$. This assignment of binary variables may
-involve global factors and constraints (\eg tree constraints, or
-budget constraints on the number of active variables, \ie $\sum_i
+involve global factors and constraints (\eg, tree constraints, or
+budget constraints on the number of active variables, \ie, $\sum_i
     [\bm{a}_{z}]_i \le B$, where $B$ is the maximum number of variables
 allowed to activate at the same time). In such structured problems,
 $|\ZZ|$ increases exponentially with $D$, making an exact evaluation of
