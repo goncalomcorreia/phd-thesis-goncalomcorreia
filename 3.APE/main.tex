@@ -149,7 +149,7 @@ perfect fit for the APE task.
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=0.9\textwidth]{Figures/bert-ape-diagram.pdf}
-    \caption{Dual-Source BERT. Dashed lines show which blocks have shared parameters in our best configuration.}
+    \caption[Dual-Source BERT.]{Dual-Source BERT. Dashed lines show which blocks have shared parameters in our best configuration.}
     \label{fig:transformer_diagram}
 \end{figure}
 
@@ -296,7 +296,7 @@ size of 8 and an average length penalty.
         {FF $\leftrightarrow$}{CA $\leftarrow$} Encoder FF & 19.04           & 71.53          \\
         \bottomrule
     \end{tabular}
-    \caption{
+    \caption[Ablation study of decoder configurations.]{
         Ablation study of decoder configurations, by gradually having more
         shared parameters between the encoder and decoder (trained without
         synthetic data). $\leftrightarrow$ denotes parameter tying and
@@ -366,7 +366,8 @@ size of 8 and an average length penalty.
             \textbf{73.94}                                   & \textbf{17.15} & \textbf{73.60}                                                 \\
             \bottomrule
         \end{tabular}
-        \caption{Results on the WMT 2016--18 APE shared task datasets. Our
+        \caption[Results on the WMT 2016--18 APE shared task datasets.]{
+            Results on the WMT 2016--18 APE shared task datasets. Our
             single models trained on the 23K dataset took only 3h20m to converge
             on a single Nvidia GeForce GTX 1080 GPU, while results for models
             trained on 8M triplets take approximately 2 days on the same GPU.

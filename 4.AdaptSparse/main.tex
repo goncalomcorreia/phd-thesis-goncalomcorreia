@@ -74,7 +74,8 @@ Our contributions are the following:
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\columnwidth]{Figures/comparison.pdf}
-    \caption{Attention distributions of different self-attention heads for the
+    \caption[Comparison of Adaptively Sparse Transformers to related work.]{
+        Attention distributions of different self-attention heads for the
         time step of the token ``over'', shown to compare our model to other
         related work. While the Sparse
         Transformer~\citep{openai_sparse_transf} and the Adaptive Span
@@ -319,7 +320,7 @@ learned internal mechanics of the self-attention heads.
             \bottomrule
         \end{tabular}
     \end{center}
-    \caption{Machine translation tokenized BLEU test results
+    \caption[Test results on four machine translation datasets.]{Machine translation tokenized BLEU test results
         on IWSLT 2017 \langp{de}{en},
         KFTT \langp{ja}{en}, WMT 2016 \langp{ro}{en} and
         WMT 2014 \langp{en}{de}, respectively.\label{table:mt}}
@@ -341,7 +342,8 @@ models.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.95\columnwidth]{Figures/learning_alpha.pdf}
-    \caption{\label{fig:learning_alpha}
+    \caption[Trajectories of $\alpha$ values for a subset of the heads during
+        training.]{\label{fig:learning_alpha}
         Trajectories of $\alpha$ values for a subset of the heads during
         training. Initialized at random, most heads become denser in the
         beginning, before converging. This suggests that dense attention may
@@ -399,7 +401,7 @@ density of attention weight vectors as well.
             \label{fig:hist_alphas_de}%
             IWSLT 2017 \langp{de}{en}.}
     \end{subfigure}
-    \caption{
+    \caption[Distribution of learned $\alpha$ values per attention block.]{
         Distribution of learned $\alpha$ values per attention block.
         While the encoder self-attention has a bimodal distribution
         of values of $\alpha$,
@@ -434,7 +436,7 @@ density of attention weight vectors as well.
             \label{fig:hist_densities_de}%
             IWSLT 2017 \langp{de}{en}.}
     \end{subfigure}
-    \caption{%
+    \caption[Distribution of attention densities for all attention heads.]{%
         \label{fig:hist_densities}
         Distribution of attention densities (average number of tokens
         receiving non-zero attention weight) for all attention heads and all
@@ -508,7 +510,7 @@ to the fixed case of $\alpha=1.5$.
             \label{fig:head_density_per_layer_de}%
             IWSLT 2017 \langp{de}{en}.}
     \end{subfigure}
-    \caption{%
+    \caption[Head density per layer for fixed and learned $\alpha$.]{%
         \label{fig:head_density_per_layer}
         Head density per layer for fixed and learned $\alpha$. Each line
         corresponds to an attention head; lower values mean that that
@@ -543,7 +545,7 @@ to the fixed case of $\alpha=1.5$.
             \label{fig:js_divs_de}%
             IWSLT 2017 \langp{de}{en}.}
     \end{subfigure}
-    \caption{%
+    \caption[Jensen-Shannon Divergence between heads at each layer.]{%
         \label{fig:js_divs}
         Jensen-Shannon Divergence between heads at each layer. Measures the
         disagreement between heads: the higher the value, the more the heads
@@ -579,7 +581,8 @@ the decoder self-attention.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\columnwidth]{Figures/head_prev.pdf}
-    \caption{
+    \caption[Self-attention from the most confidently previous-position head in
+        each model.]{
         Self-attention from the most confidently previous-position head in
         each model. The learned parameter in the $\alpha$-\entmaxtext model
         is $\alpha=1.91$. Quantitatively more confident, visual inspection
@@ -590,7 +593,8 @@ the decoder self-attention.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\columnwidth]{Figures/head_bpe}
-    \caption{%layer 5+1 / head 6+1, alpha=1.33.
+    \caption[BPE-merging head $(\alpha=1.91)$ discovered in the
+        $\alpha$-\entmaxtext model.]{%layer 5+1 / head 6+1, alpha=1.33.
         BPE-merging head $(\alpha=1.91)$ discovered in the
         $\alpha$-\entmaxtext model. Found in the first encoder layer,
         this head learns to discover some subword units and combine their
@@ -610,7 +614,7 @@ the decoder self-attention.
         \centering
         \includegraphics[width=\columnwidth]{Figures/head_interro_not.pdf}
     \end{subfigure}
-    \caption{%layer 0+1 head 2+1 alpha=1.05
+    \caption[Interrogation-detecting heads in the three models.]{%layer 0+1 head 2+1 alpha=1.05
         Interrogation-detecting heads in the three models. The top sentence
         is interrogative while the bottom one is declarative but includes the
         interrogative word ``what''. In the top example, these {\it
@@ -629,7 +633,7 @@ the decoder self-attention.
     \centering
     \includegraphics[
         width=0.95\columnwidth]{Figures/sparsity_difference.pdf}
-    \caption{%layer 5+1 / head 6+1, alpha=1.33.
+    \caption[Example of two sentences of similar length with different sparsity.]{%layer 5+1 / head 6+1, alpha=1.33.
         Example of two sentences of similar length where the same head
         ($\alpha=1.33$) exhibits different sparsity. The longer phrase in the
         example on the right ``a sexually transmitted disease'' is handled

@@ -346,7 +346,7 @@ relaxations of $z$.
                & 96.87{\color{gray}$\pm$ .001} & 1.01{\color{gray}$\pm$ 0.01} \\
         \bottomrule
     \end{tabular}
-    \caption{\label{tab:ssvaeelbo}
+    \caption[Test set results for semi-supervised VAE on MNIST.]{\label{tab:ssvaeelbo}
         Average test results and standard errors over 10 runs for semi-supervised VAE on MNIST.}
 \end{table}
 
@@ -493,31 +493,28 @@ unbiased (SFE with moving average baseline, SFE+, and NVIL) and
 biased (Gumbel-Softmax and ST Gumbel-Softmax) estimators. For SFE we
 also experiment using a 0/1 loss.
 
-% TODO: fix the middle column here
 \begin{table}[t]
     \begin{center}
         \tlfstyle
-        \begin{tabular}{lr@{~}lr}
+        \begin{tabular}{lrrr}
             \toprule
-            Method                                 & \multicolumn{2}{r}{Comm. success (\%)} & Decoder calls                   \\
+            Method                                 & \multicolumn{2}{r}{Communication success (\%)}                                                        & Decoder calls                                                          \\
             \midrule
-            {\emph{Monte Carlo}}                   &                                        &                           &     \\
-            SFE (NLL)                              & 33.05                                  & {\color{gray}$\pm$ 2.84}  & 1   \\
-            SFE (0/1)                              & 55.36                                  & {\color{gray}$\pm$ 2.92}  & 1   \\
-            SFE$+$ (0/1)                           & 44.32                                  & {\color{gray}$\pm$ 2.72}  & 2   \\
-            NVIL                                   & 37.04                                  & {\color{gray}$\pm$ 1.61}  & 1   \\
-            Gumbel                                 & 23.51                                  & {\color{gray}$\pm$ 16.19} & 1   \\
-            ST Gumbel                              & 27.42                                  & {\color{gray}$\pm$ 13.36} & 1   \\
+            {\emph{Monte Carlo}}                   &                                                                                                       &                                     &                                  \\
+            SFE (NLL)                              & 33.05\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\! & {\color{gray}$\pm$ \phantom{1}2.84} & 1                                \\
+            SFE (0/1)                              & 55.36\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\! & {\color{gray}$\pm$ \phantom{1}2.92} & 1                                \\
+            SFE$+$ (0/1)                           & 44.32\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\! & {\color{gray}$\pm$ \phantom{1}2.72} & 2                                \\
+            NVIL                                   & 37.04\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\! & {\color{gray}$\pm$ \phantom{1}1.61} & 1                                \\
+            Gumbel                                 & 23.51\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\! & {\color{gray}$\pm$ 16.19}           & 1                                \\
+            ST Gumbel                              & 27.42\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\! & {\color{gray}$\pm$ 13.36}           & 1                                \\
             \spacerule
-            \emph{Marginalization}                 &                                        &                           &     \\
-            Dense                                  & 93.37                                  & {\color{gray}$\pm$ 0.42}  & 256 \\
-            Sparse {\small \color{gray}(proposed)} &
-            93.35                                  & {\color{gray}$\pm$ 0.50}               &
-            3.13{\color{gray}$\pm$ 0.48}                                                                                      \\
+            \emph{Marginalization}                 &                                                                                                       &                                     &                                  \\
+            Dense                                  & 93.37\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\! & {\color{gray}$\pm$ \phantom{1}0.42} & 256                              \\
+            Sparse {\small \color{gray}(proposed)} & 93.35\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\! & {\color{gray}$\pm$ \phantom{1}0.50} & 3.13\,\,{\color{gray}$\pm$ 0.48} \\
             \bottomrule
         \end{tabular}
     \end{center}
-    \caption{Emergent communication success test results,
+    \caption[Emergent communication success test results.]{Emergent communication success test results,
         averaged across 10 runs. Random guess baseline 6.25\%.}
     \label{tab:symbol}
 \end{table}
@@ -541,7 +538,7 @@ starts off dense while exploring, but quickly becomes very sparse
 \begin{figure*}[ht]
     \centering
     \includegraphics[width=0.65\columnwidth]{Figures/sparsemax_nonzero_em_comm.pdf}
-    \caption{
+    \caption[Median decoder calls per epoch.]{
         Median decoder calls per epoch during training
         time with 10 and 90 percentiles in dotted lines by sparsemax.
     }
@@ -619,7 +616,7 @@ explicitly.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/distortion-rate.pdf}
-    \caption{\label{fig:distortion_rd}Test results for Fashion-MNIST. RD plots
+    \caption[Test results for Fashion-MNIST.]{\label{fig:distortion_rd}Test results for Fashion-MNIST. RD plots
         (the closer to the lower right corner, the better).}
 \end{figure}
 
@@ -644,7 +641,7 @@ explicitly.
         \bottomrule
     \end{tabular}
     \vspace{5pt}
-    \caption{\label{tab:distortion_tab}
+    \caption[Test results for Fashion-MNIST.]{\label{tab:distortion_tab}
         Test results for Fashion-MNIST. NLL in bits/dim (lower, the better).}
 \end{table}
 
@@ -728,7 +725,8 @@ this mismatch disappears, making the gradient computation exact.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/spars.pdf}
-    \caption{Bit vector VAE median and quartile decoder calls per
+    \caption[Bit vector VAE median and quartile decoder calls per
+        epoch.]{Bit vector VAE median and quartile decoder calls per
         epoch,
         $D=32$ (left) / $D=128$ (right).\label{fig:structcalls}}
 \end{figure}
@@ -768,7 +766,8 @@ estimators have for 100 epochs.
         \caption{Neg. ELBO over decoder calls.}
         \label{fig:elbo_bit_calls}
     \end{subfigure}
-    \caption{Performance on the validation set
+    \caption[Performance on the validation set
+        for the experiment in \secref{sec:bernvae}.]{Performance on the validation set
         for the experiment in \secref{sec:bernvae},
         $D=32$ (top) / $D=128$ (bottom). For $D=32$, top-$k$ sparsemax continues
         until a total of 561 median decoder calls, and for $D=128$ it continues
