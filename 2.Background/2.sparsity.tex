@@ -275,35 +275,32 @@ The active set method
 optimization problem~\citep[\eqnref{eq:sparsemap};][]{sparsemap}
 is a small variation of the formulation of Nocedal and Wright for handling
 the equality constraint, due to ~\citet[Section 6]{ad3}.
-
-\begin{lemma}[\citet{sparsemap}]
-    Assume that we could identify the \emph{support}, or
-    \emph{active set} of an optimal solution  $\bm{\xi}^\star$, denoted
-    $\bar\ZZ \defeq \left\{z \in \ZZ |\xi^\star_z > 0\right\}$.
-    Then, given this set, we can find the solution to \eqnref{eq:sparsemap}
-    by solving the lower-dimensional equality-constrained problem
-    %
-    \begin{equation}
-        \minimize\| \bar{\bm{A}}\bar{\pv} - \bm{t} \|^2
-        \quad\subjto\quad\bm{1}^\top\bar{\pv} = 1\,,
-    \end{equation}
-    %
-    where we denote by $\bar{\bm{A}}$ and $\bar{\pv}$ the restrictions of $\bm{A}$
-    and $\pv$ to the active set of structures $\bar\ZZ$.
-    The solution to this equality-constrained quadratic program (QP) satisfies the Karush-Kuhn-Tucker (KKT) optimality
-    conditions,
-    %
-    \begin{equation}
-        \label{eq:qp_kkt}
-        \begin{bmatrix}
-            {\bar{\bm{A}}}^\top \bar{\bm{A}} & \bm{1} \\
-            \bm{1}^\top                      & 0      \\
-        \end{bmatrix}
-        \begin{bmatrix} \bar{\pv} \\ \tau \end{bmatrix}
-        =
-        \begin{bmatrix} \bar{\bm{A}}^\top \bm{t} \\ 1 \end{bmatrix}.
-    \end{equation}
-\end{lemma}
+Assume that we could identify the \emph{support}, or
+\emph{active set} of an optimal solution  $\bm{\xi}^\star$, denoted
+$\bar\ZZ \defeq \left\{z \in \ZZ |\xi^\star_z > 0\right\}$.
+Then, given this set, we can find the solution to \eqnref{eq:sparsemap}
+by solving the lower-dimensional equality-constrained problem
+%
+\begin{equation}
+    \minimize\| \bar{\bm{A}}\bar{\pv} - \bm{t} \|^2
+    \quad\subjto\quad\bm{1}^\top\bar{\pv} = 1\,,
+\end{equation}
+%
+where we denote by $\bar{\bm{A}}$ and $\bar{\pv}$ the restrictions of $\bm{A}$
+and $\pv$ to the active set of structures $\bar\ZZ$.
+The solution to this equality-constrained quadratic program (QP) satisfies the Karush-Kuhn-Tucker (KKT) optimality
+conditions,
+%
+\begin{equation}
+    \label{eq:qp_kkt}
+    \begin{bmatrix}
+        {\bar{\bm{A}}}^\top \bar{\bm{A}} & \bm{1} \\
+        \bm{1}^\top                      & 0      \\
+    \end{bmatrix}
+    \begin{bmatrix} \bar{\pv} \\ \tau \end{bmatrix}
+    =
+    \begin{bmatrix} \bar{\bm{A}}^\top \bm{t} \\ 1 \end{bmatrix}.
+\end{equation}
 
 However, the optimal support is not known ahead of time. The active set
 algorithm attempts to guess the support greedily,
