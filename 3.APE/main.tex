@@ -62,11 +62,11 @@ in APE used a transformer~\citep{vaswani2017attention} variant with
         decoder}, for {\tt pe}. This system was named the Dual-Source
 Transformer~\citep{junczys2018ms, tebbifakhr2018multi}. These systems
 greatly improved the MT baseline when concatenating human post-edited
-data and artificial triplets. However, few successes are known using
+data and artificial triplets. However, few successes were known using
 only the actual data created by the human post-editors.
 
 Meanwhile, there had been many successes of {\bf transfer learning}
-for NLP: models such as CoVe~\citep{mccann2017learned},
+for NLP (\secref{sec:pretrained-bg}): models such as CoVe~\citep{mccann2017learned},
 ELMo~\citep{peters2018deep}, OpenAI GPT~\citep{radford2018improving},
 ULMFiT~\citep{howard2018universal}, and BERT~\citep{devlin2018bert}
 obtain powerful representations by training large-scale language
@@ -164,8 +164,8 @@ transformer~\citep{vaswani2017attention} with a large-scale dataset
 in a masked language modeling task where the objective is to predict
 missing words in a sentence. In our experiments, we use the BERT\textsubscript{BASE}
 model, which is composed of $N\!\!=\!\!12$ self-attention layers, hidden size
-$K\!\!=\!\!768$, $H\!\!=\!\!12$ attention heads, and feed-forward inner layer size
-$F\!\!=\!\!3072$. In addition to the word and learned position embeddings,
+$K\!\!=\!768$, $H\!\!=\!\!12$ attention heads, and feed-forward inner layer size
+$F\!\!=\!3072$. In addition to the word and learned position embeddings,
 BERT also has {\bf segment embeddings} to differentiate between a
 segment A and a segment B\,---\,this is useful for tasks such as natural
 language inference, which involves two sentences. In the case of APE,
@@ -268,7 +268,7 @@ every 1,000 steps; when using the eSCAPE corpus, we increase this to
 exponential moving average strategy of \citet{junczys2018marian}
 with a decay of $10^{-4}$. At test time, we select the model with
 the best TER on the development set and apply beam search with a beam
-size of 8 and an average length penalty.
+size of 8 and using an average length penalty.
 
 \begin{table}[t]
     \centering

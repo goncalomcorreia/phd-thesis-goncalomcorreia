@@ -5,8 +5,8 @@
 \doublespacing
 
 \noindent To wrap up the present thesis, we review the main contributions
-developed in this work, and discuss their impact, limitations, and
-potential directions for future work.
+developed in this work, and discuss their impact, limitations,
+potential directions for future work, and their broader impact and ethical implications.
 
 \section{Summary of Contributions}
 
@@ -45,7 +45,7 @@ we can let neural models learn how much sparsity they need; be it
 in the context of an attention mechanism, or in the context of
 the number of relevant latent assignments during training.
 
-On another front, we tackle some forms of \textbf{weak supervision}.
+On another front, we tackled some forms of \textbf{weak supervision}.
 On one hand, we use transfer learning and minimize the amount of data
 required to train an APE model in \chapref{chap:ape}. On the other
 hand, we also applied our method of \chapref{chap:sparsemarg} to
@@ -96,7 +96,7 @@ that draw inspiration from the methods proposed in this thesis. We
 hope this might inspire other researchers in the field to explore
 these directions and extend the ideas presented.
 
-\paragraph*{Semi-supervised Learning.} Some forms of weak
+\paragraph*{Semi-supervised learning.} Some forms of weak
 supervision were explored in this work. In particular, we have shown
 promising results in \chapref{chap:sparsemarg} by introducing a new
 method to train discrete latent variable models, which can be used to
@@ -104,7 +104,7 @@ train semi-supervised models (\secref{sec:gen}). We believe that our
 method can be used in real-world applications where supervision is
 limited and that it will lead to better results than standard
 methods. For example, in NLP, there are many applications where a
-relaxation of the discrete space is not possible~\citep{Lee2019}.
+relaxation of the discrete space is not possible~\citep[\eg, ][]{Lee2019}.
 We can consider the semi-supervised loss
 %
 \begin{equation}
@@ -120,7 +120,7 @@ Whereas before we could only rely on high variance methods if we wished to
 train such a model, we can now circumvent this limitation
 by using our training method and computing deterministic gradients.
 
-\paragraph*{Non-differentiability of the LVM learning signal.} We
+\paragraph*{Non-differentiability of the latent variable model learning signal.} We
 note how, in \eqnref{eq:fit}, the training of the parameters that
 learn $\pi(z|x;\theta)$ is decoupled from the training of the
 parameters of the generative model of the downstream loss: when
@@ -143,7 +143,7 @@ any differentiable or non-differentiable reward signal
 %
 \begin{equation}
     \mathcal{L}_{x}(\theta) =
-    - \sum_{z \in \mathcal{Z}} \pi(z | x) r(x, z),
+    - \sum_{z \in \mathcal{Z}} \pi(z | x; \theta) r(x, z),
 \end{equation}
 %
 where note that $r$ does not depend on the model's parameters $\theta$.
@@ -156,20 +156,20 @@ editing~\citep{guu2018GeneratingSentencesEditing,
 generative process has two main steps: (1) selecting a prototype
 sequence of tokens $\bm{t}$ from a list of possible prototypes (\eg,
 the training data), and (2) editing that prototype by sampling a latent
-edit vector $z$ that encodes the type of edit (\eg, active to passive,
+edit vector $\bm z$ that encodes the type of edit (\eg, active to passive,
 reordering, \textit{inter alia}). We note the promising possibility
-of using this approach to NMT: While \citep{he2020LearningSparsePrototypes} apply their
+of using this approach to NMT: While \citet{he2020LearningSparsePrototypes} apply their
 sparse neural editor to language modeling, we will model instead a
 conditional distribution over $\mathcal{X} \times \mathcal{Y}$:
 %
 \begin{equation}
-    p(y, \bm{t}, \bm{z} | \bm{x}) =
-    p(\bm{t} | \bm{x}; \theta)
-    p(\bm{z} | \bm{x}; \theta)
-    p(\bm{y} | \bm{t}, \bm{z}; \theta)\,.
+    p_{YTZ}(y, \bm{t}, \bm{z} | \bm{x}) =
+    p_{T}(\bm{t} | \bm{x}; \theta)
+    p_Z(\bm{z} | \bm{x}; \theta)
+    p_{Y|TZ}(\bm{y} | \bm{t}, \bm{z}; \theta)\,.
 \end{equation}
 %
-We may think of t as being a template for y\,---\,it can be a
+We may think of $\bm t$ as being a template for $y$\,---\,it can be a
 lexicalized rule with gaps or variables, a phrase-based mapping
 from a section of $\bm x$ to a string in the target language, among others.
 Once again, for deterministic gradients and greater training stability, we

@@ -31,25 +31,25 @@ address the open questions left to answer in the previous section.
           Besides studying the distribution of sparsity and respective $\alpha$ values
           throughout all attention heads in the transformer, we also identify
           examples of sharper attention head behavior than what was found in
-          previous work, along with the disentanglement of newfound behaviors
+          previous work, along with the disentanglement of newfound behaviors,
           thanks to our proposed sparsity.
 
-    \item \textbf{We propose a novel training method for latent variable
-              models with discrete latent nodes that uses sparsity to compute an
+    \item \textbf{We propose a novel training method for discrete latent variable
+              models that uses sparsity to compute an
               exact gradient.} Thanks to this method, we can train discrete latent
           variable models through marginalization of the latent variable
           efficiently thanks to parameterizing the probability mass function
-          with a sparse mapping, the sparsemax~\citep{sparsemax}. We test this
+          with a sparse mapping: the sparsemax~\citep{sparsemax}. We test this
           method on a semi-supervised latent variable model and an emergent
           communication task. In both cases, our approach surpasses the
           performance of standard practices involving Monte Carlo estimation or
           continuous relaxations.
 
     \item \textbf{We propose two novel approaches to train structured latent variable models.}
-          Similarly to the method for unstructured latent variable models, we marginalize
-          the structured space by using sparse mappings: SparseMAP~\citep{sparsemap} or the novel top-$k$
+          Similarly to the method for unstructured discrete latent variable models, we marginalize
+          the structured space by using sparse mappings: SparseMAP~\citep{sparsemap} and the novel top-$k$
           sparsemax. In the latter, the gradient can be exact in certain conditions; in the former,
-          the support is small from the start, making it a very competitive approach with sampling methods.
+          the support is small from the start, making it a very competitive approach against sampling methods.
           We test our strategies on a bit-vector variational auto-encoder and find that
           they are competitive with standard approaches to training these models.
 
@@ -71,8 +71,8 @@ application of neural models to the problem at hand is not sufficient
 for achieving these properties: for \textbf{data-efficiency}, we find that we need
 to allow parameter sharing, careful initialization, and powerful
 transfer learning capabilities to succeed at a low-resource
-generation task; for \textbf{transparency}, we can allow the model to have
+generation task; for \textbf{transparency}, we can allow the model to leverage
 sparsity and let it learn it according to its needs at training time; and
-for \textbf{compactness}, we can leverage discrete latent variable models in a
-better way than what was previously possible by using an exact but
+for \textbf{compactness}, we can use discrete latent variable models in a
+better way than what was previously possible by using a deterministic but
 efficient gradient.

@@ -2,7 +2,10 @@
 \label{sec:sparsity_background}
 
 \noindent We now shift our attention to projections onto the
-\textbf{simplex}. The \textit{probability simplex} $\simplex^{K-1}$
+\textbf{simplex}. Such projections can play multiple roles in a neural model.
+For example, as a weighting function in transformers' attention mechanisms
+or as a way to parameterize discrete probability distributions.
+The \textit{probability simplex} $\simplex^{K-1}$
 is a subset of $\reals^K$ such that, if $\bm{x}\in\simplex^{K-1}$,
 then $0 \leq x_k \leq 1$ for any $k\in\left\{1, \dots, K\right\}$ and
 $\sum_{k=1}^K x_k = 1$. As aforementioned, \textbf{softmax} is one
@@ -19,14 +22,11 @@ potentially harming performance and
 interpretability~\citep{jain2019attention}. This has motivated a line
 of research on learning networks with \emph{sparse}
 mappings~\citep{sparsemax,fusedmax,louizos,shao2019ssn}.
-Such projections can play multiple roles in a neural model.
-For example, as a weighting function in transformers' attention mechanisms
-or as a way to parameterize discrete probability distributions.
 In the following
 sections, we will explore projections that will be used or expanded in
 this thesis: sparsemax~\citep{sparsemax},
 $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}, and
-SparseMAP~\cite{sparsemap}.
+SparseMAP~\citep{sparsemap}.
 
 \subsection{Sparsemax}\label{sec:sparsemax_bg}
 
@@ -40,7 +40,7 @@ passes~\citep{Held1974,sparsemax}, described in detail below.
     to the convex optimization problem
     %
     \begin{equation}\label{eq:sparsemax}
-        \sparsemax(\s) \coloneqq \argmin_{\pv \in \simplex^K} \| \pv - \s \|_2^2\,,
+        \sparsemax(\s) \coloneqq \argmin_{\pv \in \simplex^{K-1}} \| \pv - \s \|_2^2\,,
     \end{equation}
     %
     where $\s\in\reals^K$.
@@ -55,11 +55,9 @@ in the interior of the simplex where all coordinates are non-zero.
 
 As a projection onto a polytope, the solution is likely to fall on the
 set's boundaries or corners. In this case, points on the border of
-$\simplex^K$ have one or more zero coordinates.
+$\simplex^{K-1}$ have one or more zero coordinates.
 From the optimality conditions of the sparsemax problem shown in \eqnref{eq:sparsemax},
 it follows that the solution must have the form:
-
-\newpage
 
 \begin{lemma}[Proof in \citet{sparsemax}]
     \begin{equation}\label{eq:sparsemax_form}
@@ -74,16 +72,17 @@ Letting $\bar{\ZZ}$ be the set of
 nonzero coordinates in the solution (\ie, the \textbf{support}) the
 normalization condition is equivalently $\tau = \frac{\sum_{z \in
             \bar{\ZZ}} \ss_z}{|\bar{\ZZ}|}$.
-Observing that small changes to $\s$ almost always have no effect on the support
-$\bar{\ZZ}$, differentiating Equation~\ref{eq:sparsemax_form} gives
+To derive the gradient, which allows us to perform backpropagation
+(\eqnref{eq:backprop}), we can observe that small changes to $\s$ almost always have no effect on the support
+$\bar{\ZZ}$, and so by differentiating Equation~\ref{eq:sparsemax_form} we obtain the backward pass for sparsemax:
 \begin{equation}
     \pfrac{\bar{\pv}}{\bar{\s}} = \bm{I}_{|\bar{\ZZ}|} - \frac{1}{|\bar{\ZZ}|}
     \bm{11}^\top\,,
 \end{equation}
 where $\bar{\pv}$ and ${\bar{\s}}$ denote the subsets of the respective vectors
 indexed by the support $\bar{\ZZ}$. Outside of the support, the partial
-derivatives are zero. (\emph{cf.}, the more general result in \citet[Proposition
-    2]{entmax}.)
+derivatives are zero (\emph{cf.} the more general result can be found in \citet[Proposition
+    2]{entmax}).
 
 In terms of computation, $\tau$ may be found numerically using root finding
 algorithms on $f(\tau) = \max(\s - \tau, 0) - 1$.
@@ -99,18 +98,17 @@ doubling $k$ until the optimal solution is found. Since solutions get sparser
 over time and $\topk$ is GPU-accelerated
 in modern libraries~\citep{pytorch}, this strategy is very fast in practice.
 
+
 \subsection{Entmax}\label{sec:entmax_bg}
 
 \noindent We now focus on $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}.
-
-\newpage
 
 \begin{definition}[$\aentmax$]
     The $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax} mapping
     is given by the unique solution to the convex optimization problem
     \begin{equation}\label{eq:define_entmax}
         \aentmax(\bm{z}) \coloneqq
-        \argmax_{\p \in \simplex^K} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
+        \argmax_{\p \in \simplex^{K-1}} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
     \end{equation}
     %
     where for $\alpha\geq1$,
@@ -187,7 +185,7 @@ definition of $\HHt_\alpha$, the optimality conditions may be used to derive its
 % \end{proof}
 
 \paragraph*{Properties of {\boldmath $\alpha$}-\entmaxtext.}
-The appeal of $\alpha$-\entmaxtext for attention rests on the
+The appeal of $\alpha$-\entmaxtext rests on the
 following properties. For $\alpha=1$ (\ie, when $\HHt_\alpha$ becomes
 the Shannon entropy) it exactly recovers the softmax mapping. For all $\alpha>1$
 it permits sparse solutions, in stark contrast to softmax. In
@@ -230,9 +228,9 @@ values of $\alpha$, the exponent induces curvature.
 On the other hand, softmax can be shown to be the unique solution of the optimization problem
 \begin{equation}
     \softmax(\x)_i =
-    \argmax_{\p \in \simplex^K} \p^\top\x + \HHs(\p),
+    \argmax_{\p \in \simplex^{K-1}} \p^\top\x + \mathbb H(\p),
 \end{equation}
-where $\HHs(\p) \coloneqq -\sum_i \pp_i \log \pp_i$ is the Shannon entropy.
+where $\mathbb H(\p)$ is the Shannon entropy.
 Indeed, setting the gradient to $0$ yields the condition
 $\log \pp_i = \xx_j - \nu_i - \tau - 1$, where $\thresh$ and $\nu > 0$ are Lagrange
 multipliers for the simplex constraints $\sum_i \pp_i = 1$ and $\pp_i \geq 0$,
@@ -255,14 +253,14 @@ structured extension of sparsemax.
     SparseMAP~\citep{sparsemap,
         sparsemapcg} is given by the solution of the optimization problem
     \begin{equation}\label{eq:sparsemap}
-        \smapop(\bm{t}) \defeq \argmin_{\pv \in \simplex^{|\ZZ|}}
+        \smapop(\bm{t}) \defeq \argmin_{\pv \in \simplex^{|\ZZ|-1}}
         \|\bm{A}\pv - \bm{t}\|_2^2,
     \end{equation}
     %
     where $\bm{A}\in\reals^{D\times K}$ is the matrix of all possible configurations
-    of the structured variable, and $\bm{t}$ is a compact vector variable scores of length $D$.
+    of the structured variable, and $\bm{t}$ is a compact vector of variable scores of length $D$.
     The columns of $\bm{A}$ are the configurations $\bm{a}_i \in \reals^D$ of the structured variable,
-    and the each configuration's score is given by $s_z \defeq \DP{\bm{a}_z}{\bm{t}}$.
+    and each configuration's score is given by $s_z \defeq \DP{\bm{a}_z}{\bm{t}}$.
     More on structured prediction in \secref{sec:struct_lvm_bg}.
 \end{definition}
 
@@ -271,97 +269,13 @@ and matchings, and \citet{sparsemap} apply an active set
 algorithm for evaluating it and computing gradients efficiently,
 requiring only a primitive for computing $\argmax_{z \in \ZZ} \langle
     \bm{a}_z, \bm{t}\rangle$, which we detail below. While the
-$\argmin$ in \eqref{eq:sparsemap} is generally not unique,
+$\argmin$ in \eqnref{eq:sparsemap} is generally not unique,
 Carath\'eodory's theorem guarantees that solutions with support size
 at most $D+1$ exist, and the active set algorithm enjoys linear and
 finite convergence to a very sparse optimal distribution. Crucially,
-\eqref{eq:sparsemap} has a solution $\bm{\xi}^\star$ such that the
+\eqnref{eq:sparsemap} has a solution $\bm{\xi}^\star$ such that the
 set $\bar\ZZ = \left\{z \in \ZZ |\xi^\star_z > 0\right\}$ grows
 only linearly with $D$, and therefore $|\bar\ZZ| \ll |\ZZ|$.
-
-The active set method
-\citep[Chapters 16.4 \& 16.5]{nocedalwright} as applied to the SparseMAP
-optimization problem (Eq.~\ref{eq:sparsemap})~\cite{sparsemap}
-is a small variation of the formulation of Nocedal and Wright for handling
-the equality constraint, due to ~\citet[Section 6]{ad3}.
-Assume that we could identify the \emph{support}, or
-\emph{active set} of an optimal solution  $\bm{\xi}^\star$, denoted
-\[\bar\ZZ \defeq \left\{z \in \ZZ |\xi^\star_z > 0\right\}\,. \]
-Then, given this set, we could find the solution to \eqref{eq:sparsemap}
-by solving the lower-dimensional equality-constrained problem
-%
-\begin{equation}
-    \minimize\| \bar{\bm{A}}\bar{\pv} - \bm{t} \|^2
-    \quad\subjto\quad\bm{1}^\top\bar{\pv} = 1\,,
-\end{equation}
-%
-where we denote by $\bar{\bm{A}}$ and $\bar{\pv}$ the restrictions of $\bm{A}$
-and $\pv$ to the active set of structures $\bar\ZZ$.
-The solution to this equality-constrained QP satisfies the KKT optimality
-conditions,
-%
-\begin{equation}
-    \label{eq:qp_kkt}
-    \begin{bmatrix}
-        {\bar{\bm{A}}}^\top \bar{\bm{A}} & \bm{1} \\
-        \bm{1}^\top                      & 0      \\
-    \end{bmatrix}
-    \begin{bmatrix} \bar{\pv} \\ \tau \end{bmatrix}
-    =
-    \begin{bmatrix} \bar{\bm{A}}^\top \bm{t} \\ 1 \end{bmatrix}.
-\end{equation}
-%
-Of course, the optimal support is not known ahead of time. The active set
-algorithm attempts to guess the support greedily,
-at each iteration either (if the solution of \eqref{eq:qp_kkt} is not feasible
-for \eqref{eq:sparsemap})
-dropping a structure from $\bar\ZZ$, or (otherwise) adding a new structure.
-Since the support changes one structure at a time, the design matrix in
-\eqref{eq:qp_kkt} gains or loses one row and column, so
-we may efficiently maintain its Cholesky decomposition via rank-one updates.
-
-We now give more details about the computation.
-Denote the solution of Eq.~\ref{eq:qp_kkt}, (extended with zeroes),
-by $\hat{\pv} \in \simplex^{|\ZZ|}$.
-Since we might not have the optimal $\bar{\ZZ}$ yet, $\hat{\pv}$ can be infeasible
-(some coordinates may be negative.)
-To account for this, we take a partial step in its direction,
-%
-\begin{equation}
-    \pv^{(i+1)} = (1-\gamma)\pv^{(i)} + \gamma \hat{\pv}^{(i+1)}\,
-\end{equation}
-%
-where to ensure feasibility, the step size is given by
-%
-\begin{equation}\label{eq:step_size}
-    \gamma = \min \left(1, \min_{z \in \bar{\ZZ}; \xi^{(i)}_z > \hat{\xi}_z}
-    \frac{
-        \xi^{(i)}_z
-    }{
-        \xi^{(i)}_z - \hat{\xi}_z}
-    \right)\,.
-\end{equation}
-
-If, on the other hand, $\hat{\pv}$ is feasible for \eqref{eq:sparsemap},
-(so $\gamma=1$),
-we check whether we have a globally optimal solution.
-By construction, $\hat{\pv}$ satisfies all KKT
-conditions except perhaps dual feasibility $\bm{\nu} \geq 0$,
-where $\nu_z$ is the dual variable (Lagrange multiplier) corresponding to the
-constraint $\xi_z \geq 0$.
-Denote $\bm{\mu}^{(i)} \defeq \bm{A}\pv^{(i)} = \bar{\bm{A}}\bar{\pv}^{(i)}$.
-For any $z \not\in \bar{\ZZ}$, the corresponding dual variable must satisfy
-%
-\begin{equation}\label{eq:dual}
-    \nu_z = \tau^{(i)} - \DP{\bm{a}_z}{\bm{t} - \bm{\mu}^{(i)}}\,.
-\end{equation}
-%
-If the smallest dual variable is positive, then our current guess satisfies all
-optimality conditions. To find the smallest dual variable we can equivalently
-solve $\argmax_{z \in \ZZ} \DP{\bm{a}_z}{\bm{t} - \bm{\mu}^{(i)}}$, which is
-a maximization (MAP) oracle call. If the resulting $\nu_z$ is negative,
-then $z$ is the index of the most violated constraint $\xi_z \geq 0$;
-it is thus a good choice of structure to add to the active set.
 
 \begin{algorithm}[htpb]
     \caption{Active set algorithm for SparseMAP \label{alg:activeset}}
@@ -391,6 +305,90 @@ it is thus a good choice of structure to add to the active set.
         \EndFor
     \end{algorithmic}
 \end{algorithm}
+
+The active set method
+\citep[Chapters 16.4 \& 16.5]{nocedalwright} as applied to the SparseMAP
+optimization problem~\citep[\eqnref{eq:sparsemap};][]{sparsemap}
+is a small variation of the formulation of Nocedal and Wright for handling
+the equality constraint, due to ~\citet[Section 6]{ad3}.
+Assume that we could identify the \emph{support}, or
+\emph{active set} of an optimal solution  $\bm{\xi}^\star$, denoted
+$\bar\ZZ \defeq \left\{z \in \ZZ |\xi^\star_z > 0\right\}$.
+Then, given this set, we could find the solution to \eqnref{eq:sparsemap}
+by solving the lower-dimensional equality-constrained problem
+%
+\begin{equation}
+    \minimize\| \bar{\bm{A}}\bar{\pv} - \bm{t} \|^2
+    \quad\subjto\quad\bm{1}^\top\bar{\pv} = 1\,,
+\end{equation}
+%
+where we denote by $\bar{\bm{A}}$ and $\bar{\pv}$ the restrictions of $\bm{A}$
+and $\pv$ to the active set of structures $\bar\ZZ$.
+The solution to this equality-constrained quadratic program (QP) satisfies the Karush-Kuhn-Tucker (KKT) optimality
+conditions,
+%
+\begin{equation}
+    \label{eq:qp_kkt}
+    \begin{bmatrix}
+        {\bar{\bm{A}}}^\top \bar{\bm{A}} & \bm{1} \\
+        \bm{1}^\top                      & 0      \\
+    \end{bmatrix}
+    \begin{bmatrix} \bar{\pv} \\ \tau \end{bmatrix}
+    =
+    \begin{bmatrix} \bar{\bm{A}}^\top \bm{t} \\ 1 \end{bmatrix}.
+\end{equation}
+%
+However, the optimal support is not known ahead of time. The active set
+algorithm attempts to guess the support greedily,
+at each iteration either (if the solution of \eqnref{eq:qp_kkt} is not feasible
+for \eqnref{eq:sparsemap})
+dropping a structure from $\bar\ZZ$, or (otherwise) adding a new structure.
+Since the support changes one structure at a time, the design matrix in
+\eqnref{eq:qp_kkt} gains or loses one row and column, so
+we may efficiently maintain its Cholesky decomposition via rank-one updates.
+
+We now give more details about the computation.
+Denote the solution of Eq.~\ref{eq:qp_kkt}, (extended with zeroes),
+by $\hat{\pv} \in \simplex^{|\ZZ|-1}$.
+Since we might not have the optimal $\bar{\ZZ}$ yet, $\hat{\pv}$ can be infeasible
+(some coordinates may be negative.)
+To account for this, we take a partial step in its direction,
+%
+\begin{equation}
+    \pv^{(i+1)} = (1-\gamma)\pv^{(i)} + \gamma \hat{\pv}^{(i+1)}\,
+\end{equation}
+%
+where to ensure feasibility, the step size is given by
+%
+\begin{equation}\label{eq:step_size}
+    \gamma = \min \left(1, \min_{z \in \bar{\ZZ}; \xi^{(i)}_z > \hat{\xi}_z}
+    \frac{
+        \xi^{(i)}_z
+    }{
+        \xi^{(i)}_z - \hat{\xi}_z}
+    \right)\,.
+\end{equation}
+
+If, on the other hand, $\hat{\pv}$ is feasible for \eqnref{eq:sparsemap},
+(so $\gamma=1$),
+we check whether we have a globally optimal solution.
+By construction, $\hat{\pv}$ satisfies all KKT
+conditions except perhaps dual feasibility $\bm{\nu} \geq 0$,
+where $\nu_z$ is the dual variable (Lagrange multiplier) corresponding to the
+constraint $\xi_z \geq 0$.
+Denote $\bm{\mu}^{(i)} \defeq \bm{A}\pv^{(i)} = \bar{\bm{A}}\bar{\pv}^{(i)}$.
+For any $z \not\in \bar{\ZZ}$, the corresponding dual variable must satisfy
+%
+\begin{equation}\label{eq:dual}
+    \nu_z = \tau^{(i)} - \DP{\bm{a}_z}{\bm{t} - \bm{\mu}^{(i)}}\,.
+\end{equation}
+%
+If the smallest dual variable is positive, then our current guess satisfies all
+optimality conditions. To find the smallest dual variable we can equivalently
+solve $\argmax_{z \in \ZZ} \DP{\bm{a}_z}{\bm{t} - \bm{\mu}^{(i)}}$, which is
+a maximization (MAP) oracle call. If the resulting $\nu_z$ is negative,
+then $z$ is the index of the most violated constraint $\xi_z \geq 0$;
+it is thus a good choice of structure to add to the active set.
 
 The full procedure is given in Algorithm~\ref{alg:activeset}.
 The backward pass is computed by implicit differentiation of \eqnref{eq:qp_kkt} \wrt

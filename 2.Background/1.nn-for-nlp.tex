@@ -18,12 +18,13 @@ the parameters $\theta$ by minimizing the loss
 $L$ on that set. The resulting model with optimal
 $\hat{\theta}$ can then be evaluated on a held-out set of
 $\mathcal{D}$, called \textit{test set}, to assess its performance.
+We will often assume $\mathcal D$ is made out of input-output pairs,
+unless specified otherwise.
 
 When the model is probabilistic, this process creates a probability
 model that identifies the probability measure of a random experiment:
 it maps from available inputs in the set of possible inputs
-$\mathcal{X}$ to a probability distribution of a random variable $Y$
-(when $\mathcal D$ is made of input-output pairs). When the set of
+$\mathcal{X}$ to a probability distribution of a random variable $Y$. When the set of
 possible outputs $\mathcal{Y}$ is discrete, the probability
 distribution of $Y$ is prescribed by a probability mass function
 (pmf) $p_{Y|X}(y|\bm{x};\theta)$; when the set of possible outputs
@@ -33,14 +34,14 @@ the present thesis, we will not have applications in which
 $\mathcal{Y}\in\reals$ (\ie, \textit{regression problems}) and as
 such, when referring to $p_{Y|X}(y|\bm{x};\theta)$, we assume that it is a
 probability mass function. Furthermore, our problems will most often
-involve a $k$-way classification, and so $p_{Y|X}(y|\bm{x};\theta)$ is
+involve a $k$-way classification, and so $p_{Y|X}(y|\bm{x};\theta)$ will be
 specifying a \textit{Categorical} distribution,
 %
 \begin{equation}
-    Y|X\!\!=\!\bm{x} \sim \text{Cat}(f(\bm{x}; \theta)),
+    Y|X\!\!=\!\bm{x}~\sim \text{Cat}(f(\bm{x}; \theta)),
 \end{equation}
 %
-where $f(x; \theta) \in \simplex^K$ is a function such that
+where $f(x; \theta) \in \simplex^{K-1}$ is a function such that
 $p_{Y|X}(y|\bm{x};\theta)=\text{Cat}(y|f(\bm{x}; \theta))$.
 
 \paragraph*{Supervised learning.} We now turn our attention to applications
@@ -63,7 +64,7 @@ the \textit{negative log-likelihood}
 A model with the loss function of \eqnref{eq:discr-loss} is called a
 \textit{discriminative model}, while one that models instead
 $p_{XY}(\bm{x}, y; \theta)$ is called a \textit{generative model}.
-Typically, the loss function might also entail a regularization term,
+Typically, the loss function might also entail a regularization term (\eg, the $\ell_2$ norm),
 which is added to the negative log-likelihood
 %
 \begin{equation}
@@ -89,10 +90,10 @@ sentences, $\mathcal{Y}=\{\text{negative},\text{positive}\}$, and
 $\mathcal{X}$ would be the set of possible sentences in the English
 language.
 
-\paragraph*{Unsupervised learning.} Similarly, we can also use just a
-dataset of inputs $\bm{x}$ and estimate the parameters $\theta$ under a loss to
+\paragraph*{Unsupervised learning.} Similarly, there are also applications in machine learning where we use just a
+dataset of inputs $\mathcal D = \left\{\bm{x}\right\}_{n=1}^N$ and estimate the parameters $\theta$ under a loss to
 obtain an unsupervised model; that is, a model in which inferences are made
-without access to any labels. In this case, the loss function $L$ only
+without access to any labels (\ie, outputs). In this case, the loss function $L$ only
 depends on the inputs $\bm{x}_n$ and the parameters $\theta$
 and we thus model $p_X(\bm{x}|\theta)$.
 In this case, the loss function is
@@ -179,10 +180,10 @@ and $\left[\softmax(\bm{s})\right]_k \geq 0$.
     \end{equation}
 \end{definition}
 
-The problem of obtaining the optimal $\bm{W}_{\theta}$ lies
+In these linear models, the problem of obtaining the optimal $\bm{W}_{\theta}$ lies
 within the set of problems that convex optimization can solve, which
 significantly simplifies the optimization process. While the
-optimization simplicity of linear models is appealing, constructing
+optimization simplicity of linear models is appealing, constructing a suitable
 $\bm{\phi}$ may require significant effort. The creation of an
 effective feature function $\bm{\phi}: \mathcal{X} \rightarrow \reals^d$ might
 demand extensive knowledge of the domain of $\mathcal{X}$ and of the
@@ -210,7 +211,7 @@ to \eqnref{eq:linear} in order to build these hidden representations.
     %
     where compositions of differentiable functions with learnable
     $\theta$ parameterize $\bm{\phi}_{\theta}$ and $\pi$ is a
-    function that projects the scores into vectors of probabilities (\eg, $\softmax$).
+    function that projects the scores into vectors of probabilities (\eg, softmax).
     The composition of $\bm{\phi}_{\theta}$ is extremely flexible and
     can be defined in a variety of ways, making it a powerful way to
     obtain meaningful representations of the input space.
@@ -225,9 +226,6 @@ Just as well, non-linearities and the flexible composition of functions end up
 impeding the usage of convex optimization, and so neural networks are
 often trained instead through a process called
 \textit{backpropagation}, a gradient-based optimization algorithm.
-
-% TODO: might remove
-\newpage
 
 \begin{definition}[backpropagation]
     Backpropagation is a gradient-based optimization algorithm that
@@ -252,24 +250,27 @@ backpropagation; for example, Adam~\citep{kingma2014adam}.
 In practice, computing \eqnref{eq:backprop} for the whole dataset
 $\mathcal D$ is a costly operation, and so the gradient is usually
 computed through an unbiased estimate: independent and identically
-distributed samples of the dataset are drawn, and \eqnref{eq:backprop}
+distributed samples of the dataset are drawn at each iteration, and \eqnref{eq:backprop}
 is computed on that set of samples (\ie, the \textit{mini-batch}).
+The size of the step at which $\theta$ is updated is determined by a value usually called the learning rate,
+which is a hyperparameter of the model that is chosen to maximize a given metric on a held-out
+dataset (the \textit{validation set} or \textit{development set}).
 
 \section{Neural Networks and Natural Language}
 
 \noindent Using neural networks in NLP applications is a pivotal part
 of the research shown in the present thesis. While there are many
 ways of applying neural networks to NLP, exploiting many different
-architectures and aimed at many different tasks in the literature, we give
+architectures and aimed at many different tasks, we give
 special attention to sequence-to-sequence models, which we will
 explain in the sequel.
 
 Nevertheless, in the context of neural networks for NLP, there is a
-clear focus on obtaining vectorized representations of words, words
-within their context, and whole sentences. A common ingredient in all
+clear focus on obtaining vectorized representations of words, of words
+within their context, and of whole sentences. A common ingredient in all
 neural network architectures of NLP is the use of
 \textbf{embeddings}. After the sentence is segmented into tokens
-(words, part of words, and punctuation), the first component of the
+(words, segments of words, and punctuation), the first component of the
 neural network is an \textit{embedding table}: a set of learnable
 vectors of parameters that represent each token in the vocabulary $V$
 (chosen beforehand). For each token in the sentence, the
@@ -328,7 +329,7 @@ representation of the items. The particular attention mechanism used
 in \citet{vaswani2017attention} is called \emph{scaled dot-product
     attention}.
 
-\begin{definition}[scaled dot-product attention]
+\begin{definition}[attention mechanisms and scaled dot-product attention]
     Attention mechanisms are a possible differentiable building block
     of a neural network, mainly used in sequence modeling. For each
     item in the sequence, the attention mechanism computes a weighted
@@ -349,10 +350,10 @@ in \citet{vaswani2017attention} is called \emph{scaled dot-product
     representations of the queries, $\bm{K}, \bm{V} \in \reals^{m
             \times d}$ are the \emph{keys} and \emph{values} of the items
     attended over, and $d$ is the dimensionality of these
-    representations. The $\amap$ mapping normalizes row-wise using
+    representations. The $\amap$ mapping normalizes row-wise using a mapping function like
     \textbf{softmax}, that is, $\amap(\bm{Z})_{ij} = \softmax(\bm{z}_i)_j$.
     In words, the \emph{keys} compute a relevance score between each item
-    and query. Then, softmax normalizes these attention weights, and
+    and query. Then, $\amap$ normalizes these attention weights, and
     these will weight the \emph{values} of each item at each query
     context.
 \end{definition}

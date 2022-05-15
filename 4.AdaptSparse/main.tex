@@ -71,7 +71,7 @@ Our contributions are the following:
           and adaptivity of our proposed model.
 \end{itemize}
 
-\begin{figure}[htbp]
+\begin{figure}[t]
     \centering
     \includegraphics[width=0.95\columnwidth]{Figures/comparison.pdf}
     \caption[Comparison of Adaptively Sparse Transformers to related work.]{
@@ -93,7 +93,7 @@ Our contributions are the following:
 Prior work has developed sparse attention mechanisms, including
 applications to NMT~\citep{sparsemax, malaviya2018sparse, fusedmax,
     shao2019ssn, maruf2019selective}. \citet{entmax} introduced the
-\entmaxtext function this work builds upon. In their work, there is a
+\entmaxtext function this work builds upon (\secref{sec:entmax_bg}). In their work, there is a
 single attention mechanism that is controlled by a fixed $\alpha$.
 In contrast, this is the first work to allow such attention mappings
 to \emph{dynamically} adapt their curvature and sparsity, by
@@ -245,6 +245,7 @@ self-attention, context attention, and decoder self-attention), \ie,
     j \in \{1, \dots, H\},~
     t \in \{\texttt{enc}, \texttt{ctx}, \texttt{dec}\} \big\},
 \end{equation}
+where $L$ is the number of transformer layers, $H$ is the number of attention heads in that layer,
 and we set $\alpha_{i,j}^t = 1 + \sigmoid(a_{i,j}^t) \in ]1, 2[$.
 All or some of the $\alpha$ values can be tied if desired, but we
 keep them independent for analysis purposes.
@@ -345,7 +346,7 @@ models.
     \caption[Trajectories of $\alpha$ values for a subset of the heads during
         training.]{\label{fig:learning_alpha}
         Trajectories of $\alpha$ values for a subset of the heads during
-        training. Initialized at random, most heads become denser in the
+        training on \langp{en}{de}. Initialized at random, most heads become denser in the
         beginning, before converging. This suggests that dense attention may
         be more beneficial while the network is still uncertain, being
         replaced by sparse attention afterward.}
@@ -456,17 +457,15 @@ $\alpha$ values, we compare the empirical attention weight density
 (the average number of tokens receiving non-zero attention) within
 each module, against sparse transformers with fixed $\alpha=1.5$.
 
-\begin{sloppypar}
-    \figref{fig:hist_densities} shows that, with fixed $\alpha=1.5$, heads
-    tend to be sparse and similarly distributed in all three attention
-    modules. With learned $\alpha$, there are two notable changes: (i) a
-    prominent mode corresponding to fully dense probabilities, showing
-    that our models learn to combine sparse and dense attention, and (ii)
-    a distinction between the encoder self-attention -- whose background
-    distribution tends toward extreme sparsity -- and the other two
-    modules, which exhibit more uniform background distributions. This
-    suggests that perhaps entirely sparse transformers are suboptimal.
-\end{sloppypar}
+\figref{fig:hist_densities} shows that, with fixed $\alpha=1.5$, heads
+tend to be sparse and similarly distributed in all three attention
+modules. With learned $\alpha$, there are two notable changes: (i) a
+prominent mode corresponding to fully dense probabilities, showing
+that our models learn to combine sparse and dense attention, and (ii)
+a distinction between the encoder self-attention\,---\,whose background
+distribution tends toward extreme sparsity\,---\,and the other two
+modules, which exhibit more uniform background distributions. This
+suggests that perhaps entirely sparse transformers are suboptimal.
 
 The fact that the decoder seems to prefer denser attention
 distributions might be attributed to it being auto-regressive, only
@@ -560,14 +559,14 @@ between heads, as a measure of head diversity, we use the
 following generalization of the Jensen-Shannon divergence:
 %
 \begin{equation}
-    JS = \HHs\left(\frac{1}{H}\sum_{j=1}^H \bm{p}_{j}\right) -
+    \text{JS} = \mathbb H\left(\frac{1}{H}\sum_{j=1}^H \bm{p}_{j}\right) -
     \frac{1}{H}\sum_{j=1}^{H}
-    \HHs(\bm{p}_j)
+    \mathbb H(\bm{p}_j)
 \end{equation}
 %
 where $\bm{p}_j$ is the vector of attention weights assigned by the head
-$j$ to each word in the sequence, and $\HHs$ is the Shannon entropy,
-base-adjusted based on the dimension of $\bm{p}$ such that $JS \leq
+$j$ to each word in the sequence, and $\mathbb H$ is the Shannon entropy,
+base-adjusted based on the dimension of $\bm{p}$ such that $\text{JS} \leq
     1$. We average this measure over the entire validation set. The
 higher this metric is, the more the heads are taking different roles
 in the model.
@@ -761,7 +760,7 @@ token. This approach also leads to similar performance to the
 original transformer but ends up having a 1.43 times faster decoding
 performance in translation tasks.
 
-Regarding the concept of Sparse transformers,
+Regarding the concept of sparse transformers,
 \citet{yun2020ConnectionsareExpressive} unify several works that
 sparsify transformers in a single framework.
 This unified framework is constructed through conditions based on the
@@ -777,7 +776,7 @@ properties.
 \citet{zhang2021SparseAttentionLinear} proposed another approach to
 induce sparsity in each attention head of the transformer. In this
 work, instead of replacing the softmax with entmax, the authors
-replace it with the ReLU activation. When compared to our approach,
+replace it with the $\text{ReLU}=\max(0, \bm{x})$ activation. When compared to our approach,
 Rectified Linear Attention (ReLA) obtains faster training and
 decoding time while achieving close performance in translation
 tasks. In their analysis, they followed our methodology and found
@@ -798,10 +797,9 @@ being dropped are often uninformative, while the retained ones
 are relatively rare.
 
 On the topic of interpretability and understanding the inner workings
-of transformers, inspired by our analysis along with other
-works~\citep{specialized} that find that
-encoder self-attention heads learn fixed patterns
-(\secref{sec:spec}), \citet{raganato2020FixedEncoderSelfAttention}
+of transformers, inspired by our analysis (\secref{sec:spec}) along with other
+works~\citep[\eg, ][]{specialized} that find that
+encoder self-attention heads learn fixed patterns, \citet{raganato2020FixedEncoderSelfAttention}
 fixes the attention pattern of all but one head in each layer,
 letting only a single head in each layer learn its attention. Those
 fixed patterns include the positional heads that focus on the

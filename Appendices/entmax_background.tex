@@ -21,7 +21,7 @@
 Recall that the \entmaxtext transformation is defined as:
 \begin{equation}\label{eq:entmax_form_supp}
     \aentmax(\bm{z}) \coloneqq
-    \argmax_{\p \in \simplex^d} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
+    \argmax_{\p \in \simplex^{d-1}} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
 \end{equation}
 where $\alpha \geq 1$ and $\HHt_{\alpha}$ is the Tsallis entropy,
 \begin{equation}%
@@ -31,13 +31,13 @@ where $\alpha \geq 1$ and $\HHt_{\alpha}$ is the Tsallis entropy,
     \begin{cases}
         \frac{1}{\alpha(\alpha-1)}\sum_j\!\left(p_j - p_j^\alpha\right)\!, &
         \!\!\!\alpha \ne 1,                                                  \\
-        \HHs(\bm{p}),                                                      &
+        \mathbb H(\bm{p}),                                                 &
         \!\!\!\alpha = 1,
     \end{cases}
 \end{equation}
-and $\HHs(\bm{p}):= -\sum_j p_j \log p_j$ is the Shannon entropy.
+and $\mathbb H(\bm{p}):= -\sum_j p_j \log p_j$ is the Shannon entropy.
 
-In this section, we derive the Jacobian of $\entmax$ with respect to the scalar parameter $\alpha$.
+In this section, we derive the Jacobian of \entmaxtext with respect to the scalar parameter $\alpha$.
 
 \section*{General case of {\boldmath $\alpha>1$}}
 
@@ -89,18 +89,18 @@ we get
     &=& \sum_{i \in \mathcal{S}} \frac{p_i^{\star}}{(\alpha-1)^2} \left[1 - \frac{\alpha-1}{z_i - \tau^{\star}}\frac{\partial \tau^{\star}}{\partial \alpha} - \log[(\alpha-1)(z_i - \tau^{\star})] \right]\nonumber\\
     &=&  \frac{1}{(\alpha-1)^2} - \frac{\partial \tau^{\star}}{\partial \alpha} \sum_{i \in \mathcal{S}} \frac{p_i^{\star}}{(\alpha - 1)(z_i - \tau^{\star})} - \sum_{i \in \mathcal{S}} \frac{p_i^{\star}}{(\alpha-1)^2} \log[(\alpha-1)(z_i - \tau^{\star})] \nonumber\\
     &=&  \frac{1}{(\alpha-1)^2} - \frac{\partial \tau^{\star}}{\partial \alpha} \sum_{i} (p_i^{\star})^{2-\alpha} - \sum_{i} \frac{p_i^{\star}}{\alpha-1} \log p_i^{\star}\nonumber\\
-    &=&  \frac{1}{(\alpha-1)^2} - \frac{\partial \tau^{\star}}{\partial \alpha} \sum_{i} (p_i^{\star})^{2-\alpha} + \frac{\HHs(\bm{p}^*)}{\alpha-1},
+    &=&  \frac{1}{(\alpha-1)^2} - \frac{\partial \tau^{\star}}{\partial \alpha} \sum_{i} (p_i^{\star})^{2-\alpha} + \frac{\mathbb H(\bm{p}^*)}{\alpha-1},
 \end{eqnarray}
 from which we obtain:
 \begin{eqnarray}\label{eq:gradient_tau}
-    \frac{\partial \tau^{\star}}{\partial \alpha} &=& \frac{\frac{1}{(\alpha-1)^2} + \frac{\HHs(\bm{p}^{\star})}{\alpha-1}}{\sum_i (p_i^{\star})^{2-\alpha}}.
+    \frac{\partial \tau^{\star}}{\partial \alpha} &=& \frac{\frac{1}{(\alpha-1)^2} + \frac{\mathbb H(\bm{p}^{\star})}{\alpha-1}}{\sum_i (p_i^{\star})^{2-\alpha}}.
 \end{eqnarray}
 
 Finally, plugging Eq.~\ref{eq:gradient_tau} into Eq.~\ref{eq:gradient_alpha_01}, we get:
 \begin{eqnarray}\label{eq:gradient_alpha}
     \frac{\partial p_i^{\star}}{\partial \alpha} &=&  \frac{p_i^{\star}}{(\alpha-1)^2} \left[1 - \frac{1}{(p_i^{\star})^{\alpha-1}}\frac{\partial \tau^{\star}}{\partial \alpha} - (\alpha-1)\log p_i^{\star} \right]\nonumber\\
-    &=&  \frac{p_i^{\star}}{(\alpha-1)^2} \left[1 - \frac{1}{(p_i^{\star})^{\alpha-1}}\frac{\frac{1}{(\alpha-1)^2} + \frac{\HHs(\bm{p}^{\star})}{\alpha-1}}{\sum_i (p_i^{\star})^{2-\alpha}} - (\alpha-1)\log p_i^{\star} \right]\nonumber\\
-    &=& \frac{p_i^{\star} - \tilde{p}_i(\alpha)}{(\alpha-1)^2} - \frac{p_i^{\star}\log p_i^{\star} + \tilde{p}_i(\alpha)\HHs(\bm{p}^{\star})}{\alpha-1},
+    &=&  \frac{p_i^{\star}}{(\alpha-1)^2} \left[1 - \frac{1}{(p_i^{\star})^{\alpha-1}}\frac{\frac{1}{(\alpha-1)^2} + \frac{\mathbb H(\bm{p}^{\star})}{\alpha-1}}{\sum_i (p_i^{\star})^{2-\alpha}} - (\alpha-1)\log p_i^{\star} \right]\nonumber\\
+    &=& \frac{p_i^{\star} - \tilde{p}_i(\alpha)}{(\alpha-1)^2} - \frac{p_i^{\star}\log p_i^{\star} + \tilde{p}_i(\alpha)\mathbb H(\bm{p}^{\star})}{\alpha-1},
 \end{eqnarray}
 where we denote by
 \begin{equation}
@@ -116,7 +116,7 @@ $\aentmax(\x)$ \wrt $\x$ as well~\cite{entmax}.
 We can write Eq.~\ref{eq:gradient_alpha} as
 \begin{eqnarray}\label{eq:gradient_alpha_fraction}
     \frac{\partial p_i^{\star}}{\partial \alpha} &=&
-    \frac{p_i^{\star} - \tilde{p}_i(\alpha) - (\alpha-1)(p_i^{\star}\log p_i^{\star} + \tilde{p}_i(\alpha)\HHs(\bm{p}^{\star}))}{(\alpha-1)^2}.
+    \frac{p_i^{\star} - \tilde{p}_i(\alpha) - (\alpha-1)(p_i^{\star}\log p_i^{\star} + \tilde{p}_i(\alpha)\mathbb H(\bm{p}^{\star}))}{(\alpha-1)^2}.
 \end{eqnarray}
 When $\alpha \rightarrow 1^+$, we have $\tilde{\bm{p}}(\alpha) \rightarrow \bm{p}^{\star}$, which leads to a $\frac{0}{0}$ indetermination.
 
@@ -134,26 +134,26 @@ therefore
 Differentiating the numerator and denominator in Eq.~\ref{eq:gradient_alpha_fraction}, we get:
 \begin{eqnarray}\label{eq:gradient_alpha_shannon_01}
     \frac{\partial p_i^{\star}}{\partial \alpha} &=&
-    \lim_{\alpha \rightarrow 1^+} \frac{(1 + (\alpha-1)\HHs(\bm{p}^{\star})) \tilde{p}_i(\alpha) (\log p_i^{\star} - \sum_j \tilde{p}_j(\alpha) \log p_j^{\star}) - p_i^{\star}\log p_i^{\star} - \tilde{p}_i(\alpha) \HHs(\bm{p}^{\star})}{2(\alpha-1)} \nonumber\\
+    \lim_{\alpha \rightarrow 1^+} \frac{(1 + (\alpha-1)\mathbb H(\bm{p}^{\star})) \tilde{p}_i(\alpha) (\log p_i^{\star} - \sum_j \tilde{p}_j(\alpha) \log p_j^{\star}) - p_i^{\star}\log p_i^{\star} - \tilde{p}_i(\alpha) \mathbb H(\bm{p}^{\star})}{2(\alpha-1)} \nonumber\\
     &=& A + B,
 \end{eqnarray}
 with
 \begin{eqnarray}\label{eq:A_shannon}
-    A &=& \lim_{\alpha \rightarrow 1^+} \frac{\HHs(\bm{p}^{\star}) \tilde{p}_i(\alpha) (\log p_i^{\star} - \sum_j \tilde{p}_j(\alpha) \log p_j^{\star}) \HHs(\bm{p}^{\star})}{2}\nonumber\\
-    &=& \frac{\HHs(\bm{p}^{\star}) p_i^{\star}\log p_i^{\star} + p_i^{\star} (\HHs(\bm{p}^{\star}))^2}{2},
+    A &=& \lim_{\alpha \rightarrow 1^+} \frac{\mathbb H(\bm{p}^{\star}) \tilde{p}_i(\alpha) (\log p_i^{\star} - \sum_j \tilde{p}_j(\alpha) \log p_j^{\star}) \mathbb H(\bm{p}^{\star})}{2}\nonumber\\
+    &=& \frac{\mathbb H(\bm{p}^{\star}) p_i^{\star}\log p_i^{\star} + p_i^{\star} (\mathbb H(\bm{p}^{\star}))^2}{2},
 \end{eqnarray}
 and
 \begin{equation}\label{eq:B_shannon}
-    B = \lim_{\alpha \rightarrow 1^+} \frac{\tilde{p}_i(\alpha) (\log p_i^{\star} - \sum_j \tilde{p}_j(\alpha) \log p_j^{\star}) - p_i^{\star}\log p_i^{\star} - \tilde{p}_i(\alpha) \HHs(\bm{p}^{\star})}{2(\alpha-1)}.
+    B = \lim_{\alpha \rightarrow 1^+} \frac{\tilde{p}_i(\alpha) (\log p_i^{\star} - \sum_j \tilde{p}_j(\alpha) \log p_j^{\star}) - p_i^{\star}\log p_i^{\star} - \tilde{p}_i(\alpha) \mathbb H(\bm{p}^{\star})}{2(\alpha-1)}.
 \end{equation}
 When $\alpha\rightarrow 1^+$, $B$ becomes again a $\frac{0}{0}$ indetermination, which we can solve by applying again L'H\^opital's rule. Differentiating the numerator and denominator in Eq.~\ref{eq:B_shannon}:
 \begin{eqnarray}\label{eq:B_shannon_02}
     B &=& \frac{1}{2}\lim_{\alpha \rightarrow 1^+} \left\{ \tilde{p}_i(\alpha) \log p_i^{\star} \left(\sum_j \tilde{p}_j(\alpha) \log p_j^{\star} - \log p_i^{\star}\right) \right. \nonumber\\
-    && - \tilde{p}_i(\alpha) \left(\sum_j \tilde{p}_j(\alpha) \log p_j^{\star} - \log p_i^{\star}\right) \left(\sum_j \tilde{p}_j(\alpha) \log p_j^{\star} + \HHs(\bm{p}^{\star})\right) \nonumber\\
+    && - \tilde{p}_i(\alpha) \left(\sum_j \tilde{p}_j(\alpha) \log p_j^{\star} - \log p_i^{\star}\right) \left(\sum_j \tilde{p}_j(\alpha) \log p_j^{\star} + \mathbb H(\bm{p}^{\star})\right) \nonumber\\
     && \left. - \tilde{p}_i(\alpha) \sum_j \tilde{p}_j(\alpha) \log p_j^{\star} \left(\sum_k \tilde{p}_k(\alpha) \log p_k^{\star} - \log p_j^{\star}\right)\right\}\nonumber\\
-    &=& \frac{-p_i^{\star} \log p_i^{\star}(\HHs(\bm{p}^{\star}) + \log p_i^{\star})
-    +p_i^{\star} \sum_j p_j^{\star} \log p_j^{\star}(\HHs(\bm{p}^{\star}) + \log p_j^{\star})}{2}\nonumber\\
-    &=& \frac{-\HHs(\bm{p}^{\star}) p_i^{\star}\log p_i^{\star} - p_i^{\star} (\HHs(\bm{p}^{\star}))^2 - p_i^{\star}\log^2 p_i^{\star} + p_i^{\star} \sum_j p_j^{\star}\log^2 p_j^{\star}}{2}.
+    &=& \frac{-p_i^{\star} \log p_i^{\star}(\mathbb H(\bm{p}^{\star}) + \log p_i^{\star})
+    +p_i^{\star} \sum_j p_j^{\star} \log p_j^{\star}(\mathbb H(\bm{p}^{\star}) + \log p_j^{\star})}{2}\nonumber\\
+    &=& \frac{-\mathbb H(\bm{p}^{\star}) p_i^{\star}\log p_i^{\star} - p_i^{\star} (\mathbb H(\bm{p}^{\star}))^2 - p_i^{\star}\log^2 p_i^{\star} + p_i^{\star} \sum_j p_j^{\star}\log^2 p_j^{\star}}{2}.
 \end{eqnarray}
 Finally, summing Eq.~\ref{eq:A_shannon} and Eq.~\ref{eq:B_shannon_02}, we get
 \begin{eqnarray}\label{eq:gradient_alpha_shannon_02}
@@ -168,8 +168,8 @@ To sum up, we have the following expression for the Jacobian of $\aentmax$ with 
     \frac{\partial p_i^{\star}}{\partial \alpha} =
     \left\{
     \begin{array}{ll}
-        \frac{p_i^{\star} - \tilde{p}_i(\alpha)}{(\alpha-1)^2} - \frac{p_i^{\star}\log p_i^{\star} + \tilde{p}_i(\alpha)\HHs(\bm{p}^{\star})}{\alpha-1}, & \text{for $\alpha > 1$}  \\
-        \frac{- p_i^{\star}\log^2 p_i^{\star} + p_i^{\star} \sum_j p_j^{\star}\log^2 p_j^{\star}}{2},                                                    & \text{for $\alpha = 1$.}
+        \frac{p_i^{\star} - \tilde{p}_i(\alpha)}{(\alpha-1)^2} - \frac{p_i^{\star}\log p_i^{\star} + \tilde{p}_i(\alpha)\mathbb H(\bm{p}^{\star})}{\alpha-1}, & \text{for $\alpha > 1$}  \\
+        \frac{- p_i^{\star}\log^2 p_i^{\star} + p_i^{\star} \sum_j p_j^{\star}\log^2 p_j^{\star}}{2},                                                         & \text{for $\alpha = 1$.}
     \end{array}
     \right.
 \end{equation}
