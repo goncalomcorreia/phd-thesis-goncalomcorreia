@@ -13,18 +13,17 @@ such projection that maps from $\bm{s}\in\reals^K$ into it
 (\eqnref{eq:softmax}), but others exist, which we will explore and
 use in this thesis.
 
-Note how the softmax mapping (\eqnref{eq:softmax}) is elementwise
-proportional to $\exp$; therefore, it can never assign a weight of
-\textbf{exactly zero}. Thus, unnecessary items are still taken into
-consideration to some extent. Since its output sums to one, this
-invariably means less weight is assigned to the relevant items,
-potentially harming performance and
-interpretability~\citep{jain2019attention}. This has motivated a line
-of research on learning networks with \emph{sparse}
-mappings~\citep{sparsemax,fusedmax,louizos,shao2019ssn}.
-In the following
-sections, we will explore projections that will be used or expanded in
-this thesis: sparsemax~\citep{sparsemax},
+Note how $\softmax(\s) \propto \exp(\s)$, that is, the softmax
+mapping (\eqnref{eq:softmax}) is elementwise proportional to $\exp$;
+therefore, it can never assign a weight of \textbf{exactly zero}.
+Thus, unnecessary items are still taken into consideration to some
+extent. Since its output sums to one, this invariably means less
+weight is assigned to the relevant items, potentially harming
+performance and interpretability~\citep{jain2019attention}. This has
+motivated a line of research on learning networks with \emph{sparse}
+mappings~\citep{sparsemax,fusedmax,louizos,shao2019ssn}. In the
+following sections, we will explore projections that will be used or
+expanded in this thesis: sparsemax~\citep{sparsemax},
 $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}, and
 SparseMAP~\citep{sparsemap}.
 
@@ -49,9 +48,9 @@ passes~\citep{Held1974,sparsemax}, described in detail below.
 Since
 \eqnref{eq:sparsemax} is the Euclidean projection operator onto the probability
 simplex and solutions can hit the boundary, where some coordinates are zero-valued, sparsemax can assign {\bf
-        probabilities of exactly zero}; in contrast, $\softmax(\s)
-    \propto \exp(\s)$ is always dense, that is, it is always strictly
-in the interior of the simplex where all coordinates are non-zero.
+        probabilities of exactly zero}; in contrast, $\softmax(\s)$
+is always dense, that is, it always maps strictly
+to the interior of the simplex where all coordinates are non-zero.
 
 As a projection onto a polytope, the solution is likely to fall on the
 set's boundaries or corners. In this case, points on the border of
@@ -103,7 +102,9 @@ in modern libraries~\citep{pytorch}, this strategy is very fast in practice.
 
 \noindent We now focus on $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}.
 
-\begin{definition}[$\aentmax$]
+\newpage
+
+\begin{definition}[$\alpha$-\entmaxtext]
     The $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax} mapping
     is given by the unique solution to the convex optimization problem
     \begin{equation}\label{eq:define_entmax}
@@ -146,43 +147,6 @@ definition of $\HHt_\alpha$, the optimality conditions may be used to derive its
     threshold\,---\,is the Lagrange multiplier corresponding to the $\sum_i
         \pp_i=1$ constraint.
 \end{lemma}
-% \begin{proof}
-%     From the definition of $\aentmax$,
-%     \begin{equation}
-%         \aentmax(\bm{z}) \coloneqq
-%         \argmax_{\p \in \simplex^d} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}),
-%     \end{equation}
-%     we may easily identify it with a regularized prediction function~\citep{blondel2019learning}:
-%     \[\aentmax(\x) \equiv \amap_{-\HHt_{\alpha}}(\x).\]
-%     We first note that for all $\p \in \triangle^d$,
-%     \begin{equation}
-%         -(\alpha-1) \HHt_\alpha(\p) = \frac{1}{\alpha} \sum_{i=1}^d p_i^\alpha + \text{const}.
-%     \end{equation}
-%     From the constant invariance and
-%     scaling properties of $\amap_{\Omega}$
-%     \citep[Proposition~1, items~4--5]{blondel2019learning},
-%     \[\amap_{-\HHt_\alpha}(\x)
-%         = \amap_{\Omega}((\alpha - 1)\x),
-%         \quad\text{with}\quad
-%         \Omega(\p) =
-%         \sum_{j=1}^{d} g(\pp_j),
-%         \quad
-%         g(t) = \frac{t^\alpha}{\alpha}.
-%     \]
-%     Using \citet[Proposition~5]{blondel2019learning}, noting that
-%     $g'(t) = t^{\alpha - 1}$ and $(g')^{-1}(u) =  u^{\nicefrac{1}{\alpha-1}}$,
-%     yields
-%     \begin{equation}\label{eq:rootform}
-%         \amap_{\Omega}(\x) = [\x - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}},
-%         \quad\text{and therefore}\quad
-%         \aentmax(\x) = [(\alpha-1)\x - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
-%     \end{equation}
-%     Since $\HHt_\alpha$ is strictly convex on the simplex, $\aentmax$ has a unique
-%     solution $\p^\star$. \eqnref{eq:rootform}
-%     implicitly defines a one-to-one mapping between $\p^\star$ and $\tau^\star$
-%     as long as $\p^\star \in \simplex$,
-%     therefore $\tau^\star$ is also unique.
-% \end{proof}
 
 \paragraph*{Properties of {\boldmath $\alpha$}-\entmaxtext.}
 The appeal of $\alpha$-\entmaxtext rests on the
@@ -198,7 +162,7 @@ To compute the value of $\alpha$-\entmaxtext, one must find the
 threshold $\thresh$ such that the \rhs in \eqnref{eq:entmax_form} sums
 to one. \citet{blondel2019learning} propose a general bisection
 algorithm. \citet{entmax} introduce a faster, exact algorithm for
-$\alpha=1.5$, and enable using $\aentmax$ with fixed $\alpha$ within
+$\alpha=1.5$, and enable using $\alpha$-\entmaxtext with fixed $\alpha$ within
 a neural network by showing that the $\alpha$-\entmaxtext Jacobian
 \wrt $\x$ for $\p^\star = \aentmax(\x)$ is
 
@@ -311,33 +275,36 @@ The active set method
 optimization problem~\citep[\eqnref{eq:sparsemap};][]{sparsemap}
 is a small variation of the formulation of Nocedal and Wright for handling
 the equality constraint, due to ~\citet[Section 6]{ad3}.
-Assume that we could identify the \emph{support}, or
-\emph{active set} of an optimal solution  $\bm{\xi}^\star$, denoted
-$\bar\ZZ \defeq \left\{z \in \ZZ |\xi^\star_z > 0\right\}$.
-Then, given this set, we could find the solution to \eqnref{eq:sparsemap}
-by solving the lower-dimensional equality-constrained problem
-%
-\begin{equation}
-    \minimize\| \bar{\bm{A}}\bar{\pv} - \bm{t} \|^2
-    \quad\subjto\quad\bm{1}^\top\bar{\pv} = 1\,,
-\end{equation}
-%
-where we denote by $\bar{\bm{A}}$ and $\bar{\pv}$ the restrictions of $\bm{A}$
-and $\pv$ to the active set of structures $\bar\ZZ$.
-The solution to this equality-constrained quadratic program (QP) satisfies the Karush-Kuhn-Tucker (KKT) optimality
-conditions,
-%
-\begin{equation}
-    \label{eq:qp_kkt}
-    \begin{bmatrix}
-        {\bar{\bm{A}}}^\top \bar{\bm{A}} & \bm{1} \\
-        \bm{1}^\top                      & 0      \\
-    \end{bmatrix}
-    \begin{bmatrix} \bar{\pv} \\ \tau \end{bmatrix}
-    =
-    \begin{bmatrix} \bar{\bm{A}}^\top \bm{t} \\ 1 \end{bmatrix}.
-\end{equation}
-%
+
+\begin{lemma}[\citet{sparsemap}]
+    Assume that we could identify the \emph{support}, or
+    \emph{active set} of an optimal solution  $\bm{\xi}^\star$, denoted
+    $\bar\ZZ \defeq \left\{z \in \ZZ |\xi^\star_z > 0\right\}$.
+    Then, given this set, we can find the solution to \eqnref{eq:sparsemap}
+    by solving the lower-dimensional equality-constrained problem
+    %
+    \begin{equation}
+        \minimize\| \bar{\bm{A}}\bar{\pv} - \bm{t} \|^2
+        \quad\subjto\quad\bm{1}^\top\bar{\pv} = 1\,,
+    \end{equation}
+    %
+    where we denote by $\bar{\bm{A}}$ and $\bar{\pv}$ the restrictions of $\bm{A}$
+    and $\pv$ to the active set of structures $\bar\ZZ$.
+    The solution to this equality-constrained quadratic program (QP) satisfies the Karush-Kuhn-Tucker (KKT) optimality
+    conditions,
+    %
+    \begin{equation}
+        \label{eq:qp_kkt}
+        \begin{bmatrix}
+            {\bar{\bm{A}}}^\top \bar{\bm{A}} & \bm{1} \\
+            \bm{1}^\top                      & 0      \\
+        \end{bmatrix}
+        \begin{bmatrix} \bar{\pv} \\ \tau \end{bmatrix}
+        =
+        \begin{bmatrix} \bar{\bm{A}}^\top \bm{t} \\ 1 \end{bmatrix}.
+    \end{equation}
+\end{lemma}
+
 However, the optimal support is not known ahead of time. The active set
 algorithm attempts to guess the support greedily,
 at each iteration either (if the solution of \eqnref{eq:qp_kkt} is not feasible

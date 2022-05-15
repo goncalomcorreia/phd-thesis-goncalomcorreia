@@ -315,6 +315,13 @@ the sequence-to-sequence models presented in this thesis: the \textbf{transforme
 \subsection{Transformer}
 \label{sec:transformer_bg}
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.6\textwidth]{transformer.png}
+    \caption{The transformer architecture \citep[figure taken from][]{vaswani2017attention}.}
+    \label{fig:transformer_architecture}
+\end{figure}
+
 \noindent The transformer~\citep{vaswani2017attention} is an architecture which
 maps an input sequence to an output sequence through many layers of
 \textbf{multi-head attention} mechanisms, yielding a dynamic,
@@ -322,7 +329,8 @@ context-dependent strategy for propagating information within and
 across sentences. It contrasts with previous seq2seq models for neural machine translation (NMT), which
 usually rely either on gated recurrent operations~\citep[often
     LSTMs:][]{bahdanau2014neural,luong2015effective} or static
-convolutions~\citep{convseq}.
+convolutions~\citep{convseq}. A diagram of this architecture is
+shown in \figref{fig:transformer_architecture}.
 
 Attention mechanisms compute, for each query, a weighted
 representation of the items. The particular attention mechanism used
