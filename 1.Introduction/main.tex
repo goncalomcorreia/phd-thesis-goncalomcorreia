@@ -19,7 +19,9 @@ vector representations that permit them to excel in their respective
 tasks. However, these models are often highly overparameterized;
 additionally, their interpretation is difficult due to the underlying
 opaqueness of neural models. Moreover, they require costly computing
-power, which causes environmental concerns~\citep{Strubell2019}. In
+power, which causes environmental concerns~\citep{Strubell2019}.
+
+In
 natural language processing (NLP), one such model is the transformer
 architecture~\citep{vaswani2017attention} which has quickly risen to
 prominence thanks to its outstanding performance, leading to
@@ -33,15 +35,16 @@ On the other hand, neural latent variable models are powerful and
 expressive tools for finding patterns in high-dimensional data, such
 as images or text~\citep{Kim2018,Kingma+2014:VAE,RezendeEtAl14VAE}.
 These models have powerful structural biases that guide the model's
-training; of particular
-interest are \emph{discrete} latent variables, which can recover
-categorical and structured encodings of hidden aspects of the data,
-leading to compact representations~\citep{KingmaEtAl2014SSVAE} and,
-in some cases, superior explanatory power~\citep{titov2008joint,
-    Bastings2019}. However, more often than not, training models with
-discrete latent nodes is a difficult task due to the need to rely on
-high-variance methods~\citep{Williams1992} or relaxations into the
-continuous space~\citep{GumbelSoftmax,Concrete}.
+training; of particular interest are \emph{discrete} latent
+variables, which can recover discrete encodings of hidden aspects of
+the data, leading to compact
+representations~\citep{KingmaEtAl2014SSVAE} and, in some cases,
+superior explanatory power~\citep{titov2008joint, Bastings2019}.
+However, more often than not, training models with discrete latent
+nodes is a difficult task due to the need to rely on high-variance
+methods~\citep[\eg, \textsc{REINFORCE};][]{Williams1992} or relaxations
+into the continuous space~\citep[\eg,
+    Gumbel-Softmax;][]{GumbelSoftmax,Concrete}.
 
 In this thesis, we will address the issues mentioned above of overuse
 of data points, opaqueness, and the difficulties in training compact
@@ -50,11 +53,11 @@ rely on forms of \textbf{weak supervision} and, most importantly, on
 \textbf{sparse} projections onto probability spaces.
 
 When this project began in 2018, the use of large pre-trained
-language models was very much in an infant state.
-ELMo~\citep{peters2018deep} had just been released, closely followed
-by BERT~\citep{devlin2018bert}, and practitioners were just starting
-to use these models in their research to improve the state-of-the-art
-of tasks in NLP. The transformer
+language models was very much in an infant state. The
+pre-trained model ELMo~\citep{peters2018deep} had just been released,
+closely followed by BERT~\citep{devlin2018bert}, and practitioners
+were just starting to use these models in their research to improve
+the state-of-the-art of tasks in NLP. The transformer
 arquitecture~\citep{vaswani2017attention} was also a promising model
 that had just started to pick up much steam and to replace the
 recurrent neural network (RNN) sequence-to-sequence models that were
@@ -63,11 +66,12 @@ time~\citep{bahdanau2014neural}. During the course of this project,
 there has been remarkable progress in neural networks and NLP
 research; for example, pre-trained language model literature has
 evolved from proposing simply encoders that provide rich contextual
-representations~\citep{devlin2018bert}, to also provide decoders that
-deliver extremely realistic text~\citep[GPT-3;][]{brown2020language},
-and encoder-decoder models that allow for any task to be posed as a
-natural language
-prompt~\citep{raffel2020Exploringlimitstransfer,lewis2020BARTDenoisingSequencetoSequence}.
+representations~\citep[\eg, ELMo and BERT;][]{peters2018deep,
+    devlin2018bert}, to also provide decoders that deliver extremely
+realistic text~\citep[\eg, GPT-3;][]{brown2020language}, and
+encoder-decoder models that allow for any task to be posed as a
+natural language prompt~\citep[\eg, T5 and
+    BART;][]{raffel2020Exploringlimitstransfer,lewis2020BARTDenoisingSequencetoSequence}.
 
 The approaches found in the present thesis are, in part, a product of
 the aforementioned research efforts. As we will see in the following
@@ -83,10 +87,9 @@ within the computational graphs of neural networks. Before this
 thesis, the foundations had been laid by the study of sparse
 normalization functions~\citep{sparsemax,fusedmax,entmax} and their
 applications~\citep{maruf2019selective,malaviya2018sparse}, and also
-their uses in structured
-prediction~\citep{niculae2018sparsemap,sparsemapcg}. During the
-course of this project, we have extended this line of work by
-tackling some of the abovementioned issues with our sparsity-induced
+their counterparts and uses in structured prediction~\citep{sparsemap,sparsemapcg}.
+During this project, we have extended this line of work by tackling
+some of the abovementioned issues with our sparsity-induced
 solutions. We have also created new foundations for others to extend
 upon our work and create their own sparse approaches to new and
 challenging problems~\citep{treviso2021PredictingAttentionSparsity,

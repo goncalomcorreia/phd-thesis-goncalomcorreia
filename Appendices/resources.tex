@@ -1,0 +1,35 @@
+\fancychapter[Infrastructure]{Infrastructure}\label{app:infrastructure}
+
+\cleardoublepage
+\doublespacing
+
+\noindent The infrastructure used during the course of this project
+consisted of 4 machines with the specifications
+shown in Table~\ref{table:computing_infrastructure}. The machines
+were used interchangeably, and all experiments were executed in a
+single GPU. Despite having machines with different specifications, we
+did not observe large differences in the execution time of our models
+across different machines.
+
+\begin{table}[!hb]
+    \small
+    \begin{center}
+        \begin{tabular}{l ll}
+            \toprule
+            \sc \# & \sc GPU                       & \sc CPU                                       \\
+            \midrule
+            % hermes
+            1.     & 4 $\times$ Titan Xp - 12GB    & 16 $\times$ AMD Ryzen 1950X @ 3.40GHz - 128GB \\
+            % athena
+            2.     & 4 $\times$ GTX 1080 Ti - 12GB & 8 $\times$ Intel i7-9800X @ 3.80GHz - 128GB   \\
+            % zeus
+            3.     & 3 $\times$ RTX 2080 Ti - 12GB & 12 $\times$ AMD Ryzen 2920X @ 3.50GHz - 128GB \\
+            % hera
+            4.     & 3 $\times$ RTX 2080 Ti - 12GB & 12 $\times$ AMD Ryzen 2920X @ 3.50GHz - 128GB \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+    \caption{Computing infrastructure.}
+    \label{table:computing_infrastructure}
+\end{table}
+

@@ -13,13 +13,13 @@
         $\bm{e}_{i}$                               & the indicator vector for which every entry is
         zero, except the $i$\textsuperscript{th}, which is 1;                                                                                                                 \\
 
-        $\simplex^K$                               & the canonical simplex, \ie, $\pv \in
+        $\simplex^{K-1}$                           & the canonical simplex, \ie, $\pv \in
         \reals^K:~\sum_i \xi_i = 1, \pv \geq \bm{0}\}$;                                                                                                                       \\
 
         $Y$                                        & a random variable;                                                                                                       \\
 
         $p_Y(y;\theta)$                            & the probability mass function (pmf) that
-        specifies the probability distribution of the random variable
+        specifies the probability distribution of the discrete random variable
         $Y$, evaluated at the outcome $y$ using parameters $\theta$;                                                                                                          \\
 
         $p(y|x)$                                   & the probability value of outcome $y$ given outcome $x$;                                                                  \\
@@ -28,18 +28,17 @@
 
         $\text{Cat}(y; f(x;\theta))$               & the probability mass value of outcome $y$ under the categorical distribution parameterized by the function $f(x;\theta)$ \\
 
-        $\mathbb H(p)$                             & the Shannon's entropy of the pmf
+        $\mathbb H(p)$                             & the Shannon entropy of the pmf
         $p(z)$, \ie, $-\sum_i p_i \log p_i$;                                                                                                                                  \\
 
         $\KL\left[ p || q \right]$                 & the Kullback-Leibler divergence
         of $p(z)$ from $q(z)$;                                                                                                                                                \\
 
         $\|z\|_0 \defeq |\{t: z_t \neq 0 \}|$      & the number of
-        non-zeros of a sequence $z$;                                                                                                                                          \\
+        non-zeros of a sequence $z$, also known as the Hamming weight;                                                                                                        \\
 
         $\mathbb{E}_{p(z)}[f(z)]$                  & the expectation of a function
-        $f:\ZZ \rightarrow \mathbb{R}$ under the pmf $p(z)$,
-        letting $z \in \ZZ$ be an outcome of a random variable;                                                                                                               \\
+        $f:\ZZ \rightarrow \mathbb{R}$ under the pmf $p(z)$.                                                                                                                  \\
 
 
 

@@ -9,7 +9,7 @@ paving the way for more \textbf{data-efficient} neural network
 models. To achieve this, we use weak supervision in the form of
 transfer learning.
 
-When the article shown in this chapter was published, the use of
+When the work discussed in this chapter was published, the use of
 pre-trained transformers (\secref{sec:pretrained-bg}) in NLP
 generation tasks had not been explored as much as it has been in
 recent years. For instance, the work that proposed
@@ -62,11 +62,11 @@ in APE used a transformer~\citep{vaswani2017attention} variant with
         decoder}, for {\tt pe}. This system was named the Dual-Source
 Transformer~\citep{junczys2018ms, tebbifakhr2018multi}. These systems
 greatly improved the MT baseline when concatenating human post-edited
-data and artificial triplets. However, few successes are known using
+data and artificial triplets. However, few successes were known using
 only the actual data created by the human post-editors.
 
 Meanwhile, there had been many successes of {\bf transfer learning}
-for NLP: models such as CoVe~\citep{mccann2017learned},
+for NLP (\secref{sec:pretrained-bg}): models such as CoVe~\citep{mccann2017learned},
 ELMo~\citep{peters2018deep}, OpenAI GPT~\citep{radford2018improving},
 ULMFiT~\citep{howard2018universal}, and BERT~\citep{devlin2018bert}
 obtain powerful representations by training large-scale language
@@ -85,7 +85,7 @@ pair that one wishes to train an APE system for, which ends up
 increasing the computational and time resources in the long run.
 
 On the other hand, using transfer learning and with only the tiny shared
-task dataset ($23$K triplets), our proposed strategy outperforms this
+task dataset (23K triplets), our proposed strategy outperforms this
 baseline considerably, by $-4.9$ TER and $+7.4$ BLEU in the
 English-German WMT 2018 APE shared task, with only 3 hours of training on
 a single GPU. Adding the artificial eSCAPE
@@ -121,7 +121,7 @@ decoder.
 As stated in \secref{sec:experiments}, \citet{berard2017lig} also
 showed improved results over the MT baseline, using exclusively the
 shared task data. Their system outputs edit operations that decide
-whether to insert, keep or delete tokens from the machine translated
+whether to insert, keep or delete tokens from the machine-translated
 sentence. Instead of relying on edit operations, our approach
 mitigates the small amount of data with transfer learning through
 BERT.
@@ -142,14 +142,14 @@ unsupervised MT systems. They also used segment embeddings (along
 with word and position embeddings) to differentiate between a pair of
 sentences in different languages. However, this is only used in one
 of the pre-training phases of the language model (translation
-language modelling) and not in the downstream task. In our work, we
+language modeling) and not in the downstream task. In our work, we
 use segment embeddings during the downstream task itself, which is a
-perfect fit to the APE task.
+perfect fit for the APE task.
 
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=0.9\textwidth]{Figures/bert-ape-diagram.pdf}
-    \caption{Dual-Source BERT. Dashed lines show which blocks have shared parameters in our best configuration.}
+    \caption[Dual-Source BERT.]{Dual-Source BERT. Dashed lines show which blocks have shared parameters in our best configuration.}
     \label{fig:transformer_diagram}
 \end{figure}
 
@@ -164,11 +164,11 @@ transformer~\citep{vaswani2017attention} with a large-scale dataset
 in a masked language modeling task where the objective is to predict
 missing words in a sentence. In our experiments, we use the BERT\textsubscript{BASE}
 model, which is composed of $N\!\!=\!\!12$ self-attention layers, hidden size
-$K\!\!=\!\!768$, $H\!\!=\!\!12$ attention heads, and feed-forward inner layer size
-$F\!\!=\!\!3072$. In addition to the word and learned position embeddings,
+$K\!\!=\!768$, $H\!\!=\!\!12$ attention heads, and feed-forward inner layer size
+$F\!\!=\!3072$. In addition to the word and learned position embeddings,
 BERT also has {\bf segment embeddings} to differentiate between a
-segment A and a segment B---this is useful for tasks such as natural
-language inference, which involve two sentences. In the case of APE,
+segment A and a segment B\,---\,this is useful for tasks such as natural
+language inference, which involves two sentences. In the case of APE,
 there is also a pair of input sentences ({\tt src}, {\tt mt}) which
 are in different languages. Since one of the released BERT models was
 jointly pre-trained on 104 languages,\footnote{
@@ -190,12 +190,12 @@ not as {\bf decoders} of sequence-to-sequence models. Doing so
 requires a strategy for generating fluently from the pre-trained
 model. Note that, when using BERT as a decoder, its bidirectionality is lost, since the
 model cannot look at words that have not been generated yet, and it
-is an open question how to learn decoder-specific blocks (e.g.
+is an open question of how to learn decoder-specific blocks (\eg,
 context attention), which are absent in the pre-trained model.
 
 One of our key contributions is to use BERT in the decoder by
-experimenting different strategies for initializing and sharing the
-self and context attention layers and the positionwise feed-forward
+experimenting with different strategies for initializing and sharing the
+self and context attention layers and the position-wise feed-forward
 layers. We tie together the encoder and decoder embeddings weights
 (word, position, and segment) along with the decoder output layer
 (transpose of the word embedding layer). We use the same segment
@@ -214,7 +214,7 @@ pre-trained models in the decoder:
     \item \textbf{Pre-trained BERT.} This initializes the decoder with
           the pre-trained BERT model. The only component initialized randomly
           is the context attention (CA) layer, which is absent in BERT. Unlike
-          in the original BERT model---which only encodes sentences---a mask in
+          in the original BERT model\,---\,which only encodes sentences\,---\,a mask in
           the self-attention is required to prevent the model from looking to
           subsequent tokens in the target sentence.
     \item \textbf{ BERT initialized context attention.} Instead of a
@@ -224,8 +224,8 @@ pre-trained models in the decoder:
           initialization, the self-attentions (SA) in the encoder and decoder
           are tied during training.
     \item \textbf{Context attention shared with self-attention.} We take
-          a step further and \emph{tie} the context attention and self
-          attention weights---making all the attention transformation matrices
+          a step further and \emph{tie} the context attention and self-attention
+          weights\,---\,making all the attention transformation matrices
           (self and context) in the encoder and decoder tied.
     \item \textbf{Shared feed-forward.} We tie the feed-forward weights
           (FF) between the encoder and decoder.
@@ -233,7 +233,7 @@ pre-trained models in the decoder:
 
 \section{Experiments} \label{sec:experiments}
 
-We now describe our experimental results. Our models were implemented
+\noindent We now describe our experimental results. Our models were implemented
 on a fork of OpenNMT-py~\citep{klein2017opennmt} using HuggingFace's
 transformers
 library.\footnote{\url{https://github.com/huggingface/transformers}}
@@ -257,7 +257,7 @@ tokenized BLEU~\citep{papineni2002bleu}.
 \paragraph*{Training Details.}
 We use Adam~\citep{kingma2014adam} with a triangular learning rate
 schedule that increases linearly during the first 5,000 steps until
-$5\times 10^{-5}$ and has a linear decay afterwards. When using BERT
+$5\times 10^{-5}$ and has a linear decay afterward. When using BERT
 components, we use a $\ell_2$ weight decay of $0.01$. We apply
 dropout~\citep{srivastava2014dropout} with $p_{\text{drop}}\!=\!0.1$ to all
 layers and use label smoothing with
@@ -267,8 +267,8 @@ every 1,000 steps; when using the eSCAPE corpus, we increase this to
 2048 tokens and 10,000 steps. The checkpoints are created with the
 exponential moving average strategy of \citet{junczys2018marian}
 with a decay of $10^{-4}$. At test time, we select the model with
-best TER on the development set, and apply beam search with a beam
-size of 8 and average length penalty.
+the best TER on the development set and apply beam search with a beam
+size of 8 and using an average length penalty.
 
 \begin{table}[t]
     \centering
@@ -296,7 +296,7 @@ size of 8 and average length penalty.
         {FF $\leftrightarrow$}{CA $\leftarrow$} Encoder FF & 19.04           & 71.53          \\
         \bottomrule
     \end{tabular}
-    \caption{
+    \caption[Ablation study of decoder configurations.]{
         Ablation study of decoder configurations, by gradually having more
         shared parameters between the encoder and decoder (trained without
         synthetic data). $\leftrightarrow$ denotes parameter tying and
@@ -366,7 +366,8 @@ size of 8 and average length penalty.
             \textbf{73.94}                                   & \textbf{17.15} & \textbf{73.60}                                                 \\
             \bottomrule
         \end{tabular}
-        \caption{Results on the WMT 2016--18 APE shared task datasets. Our
+        \caption[Results on the WMT 2016--18 APE shared task datasets.]{
+            Results on the WMT 2016--18 APE shared task datasets. Our
             single models trained on the 23K dataset took only 3h20m to converge
             on a single Nvidia GeForce GTX 1080 GPU, while results for models
             trained on 8M triplets take approximately 2 days on the same GPU.
@@ -390,9 +391,9 @@ sentence, respectively). Future work will investigate if this is
 still beneficial when the source and target languages are less
 similar. On the other hand, the initialization of the context
 attention with BERT's self-attention weights is essential to reap the
-benefits of BERT representations in the decoder---without it, using
+benefits of BERT representations in the decoder\,---\,without it, using
 BERT decreases performance when compared to a regular transformer
-decoder. This might be due to the fact that context attention and
+decoder. This might be because context attention and
 self-attention share the same neural block architecture (multi-head
 attention) and thus the context attention benefits from the
 pre-trained BERT's better weight initialization. No benefit was
@@ -411,7 +412,7 @@ Using the small shared task dataset only (23K triplets), our single
 large margin ($-$4.90 TER in test 2018). The only system we are aware
 to beat the MT baseline with only the shared task data is
 \citet{berard2017lig}, which we also outperform ($-$4.05 TER in test
-2017). With only about 3 GPU-hours and on a much smaller dataset, our
+2017). With only about 3 GPU hours and on a much smaller dataset, our
 model reaches a performance that is comparable to an ensemble of the
 best WMT 2018 system with an artificial dataset of 5M triplets
 ($+$0.02 TER in test 2016), which is much more expensive to train.
@@ -425,17 +426,17 @@ than the previous state of the art).
 
 \section{Subsequent Work}
 
-After our publication~\citep{Correia2019}, many works have since been
+\noindent After our publication~\citep{Correia2019}, many works have since been
 published exploring the use of large pre-trained language models for
-generation purposes (e.g.
+generation purposes (\eg,
 \citep{zhang2019PretrainingBasedNaturalLanguage,
     chen2020DistillingKnowledgeLearned}), and our work shown in this
-chapter was one of the first to do so. % maybe too on the nose?
+chapter was one of the first to do so.
 
 Most closely related to our work, and co-authored by the writer of
-the present thesis, \citet{lopes2019unbabels} used our model on the
+the present thesis, \citet{Lopes2019} used our model on the
 harder English-German NMT APE subtask of WMT 2019, winning the shared
-task on that year. To obtain this result, the transfer learning
+task that year. To obtain this result, the transfer learning
 capabilities of BERT were not enough and further engineering effort
 was required. Particularly, a conservativeness factor was added
 during beam decoding to constrain the changes the APE system can make
@@ -473,7 +474,7 @@ consider this to also be a promising direction: increasing inductive
 bias in an effort to decrease larger data dependency. To address the
 more difficult challenge of doing APE on NMT outputs,
 \citet{chollampatt2020CanAutomaticPostEditing} used our model to
-explore how many traning instances are needed to achieve a better
+explore how many training instances are needed to achieve a better
 performance than the harder \emph{do-nothing} NMT baseline and have
 concluded that, while substantial improvements for NMT require more
 data samples than SMT, the APE model can still improve upon the
@@ -484,7 +485,7 @@ subtitles (\emph{SubEdits}).
 
 The approach conducted in this chapter has also been successfully
 generalized to other tasks. \citet{kodama2020GeneratingResponsesthat}
-used our model for generation of responses of a dialogue system,
+used our model for the generation of responses of a dialogue system,
 where, in the input, instead of \texttt{src} and a tentative
 \texttt{mt} output, they concatenate a question with meta-data that
 indicates how the system should generate a response in terms of
@@ -499,14 +500,14 @@ To mitigate catastrophic forgetting, they propose a \emph{gradual
 stage to adapt the pre-trained language model to a single-source
 sequence-to-sequence task, before finally fine-tuning on the
 multiple-source sequence-to-sequence task. They achieve increased
-performance on low-resource datasets, not only for APE, but also for
+performance on low-resource datasets, not only for APE but also for
 multi-source translation and document-level translation.
 
 \section{Final Remarks and Chapter Summary}
 
-In this chapter, we proposed a transfer learning approach to APE
+\noindent In this chapter, we proposed a transfer learning approach to APE
 using BERT pre-trained models and careful parameter sharing. We
-explored various ways for coupling BERT in the decoder for language
+explored various ways of coupling BERT in the decoder for language
 generation. We found it beneficial to initialize the context
 attention of the decoder with BERT's self-attention and to tie
 together the parameters of the self-attention layers between the

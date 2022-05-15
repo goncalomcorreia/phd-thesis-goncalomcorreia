@@ -1,8 +1,6 @@
 %%
 % version 2.0, 2017, Authors : Filipe Marques; (original Master Degree Thesis Template authors:) Miguel Amador and João Marques.
 %%
-% TODO: normalize Transformers capitaization
-% TODO: normalize usage of k or K for thousands
 \documentclass[defaultstyle,master,12pt,Helvetica]{01.thesis}
 %Use 01.thesis_pt instead for PT version
 %Dummy text if written by default in English. Just changed to whatever you need.
@@ -67,7 +65,7 @@
 % Use Main document Language
 \selectlanguage{english}
 % space between paragraphs
-\setlength{\parskip}{0.4em}
+\setlength{\parskip}{0.2em}
 \input{0.Preliminaries/3.Acknowledgments.tex}
 % \endgroup
 \input{0.Preliminaries/2.citation.tex} % --- Citation (optional) ---
@@ -86,7 +84,7 @@
 \pagestyle{documentsimple}%Simple head
 \newgeometry{top=3.0cm, bottom=3.0cm, inner=3.0cm, outer=2.5cm}
 % space between paragraphs
-\setlength{\parskip}{0.4em}
+\setlength{\parskip}{0.2em}
 \input{1.Introduction/main.tex}
 \input{2.Background/main.tex}
 \input{3.APE/main.tex}
@@ -110,6 +108,7 @@
     \begin{appendix}
         \pagenumbering{bychapter}
         \input{Appendices/entmax_background.tex}
+        \input{Appendices/resources.tex}
         \cleardoublepage
     \end{appendix}
 \end{appendices}
