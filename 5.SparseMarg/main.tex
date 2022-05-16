@@ -307,18 +307,29 @@ To circumvent the need for the marginal likelihood,
 \citet{KingmaEtAl2014SSVAE} use variational inference
 \citep{Jordan+1999:VI} with an approximate posterior $\pi(z|x;
     \theta_\pi)q(h|z,x; \lambda)$. This trains a classifier $\pi(z|x;
-    \theta_\pi)$ along with the generative model. In
-\citet{KingmaEtAl2014SSVAE}, $h$ is sampled with the
+    \theta_\pi)$ along with the generative model.
+In \citet{KingmaEtAl2014SSVAE}, $h$ is sampled with the
 reparameterization trick~\citep{Kingma+2014:VAE,RezendeEtAl14VAE},
 and the expectation over $z$ is computed in closed-form, that is,
 assessing all $K$ terms of the sum for a sampled $h$. Under the
-notation in \secref{sec:lvm}, and for the unsupervised component of
-the loss in \eqnref{eq:ss_loss_vae}, we let $\theta_\ell = \{\lambda,
+notation in \secref{sec:lvm}, we let $\theta_\ell = \{\lambda,
     \phi\}$ and define $\pi(z|x; \theta_\pi) \defeq q(z|x; \lambda)$ and
+the loss in \eqnref{eq:ss_loss_vae}
+turns into
+%
+\begin{equation}
+    L_{\mathcal D}(\theta) =
+    \sum_{z'\in\mathcal Z}\pi(z'|x; \theta_\pi)\ell_U(x, z'; \theta_\ell)
+    + \log \pi(z|x; \theta_\pi)\ell_L(x, z; \theta_\ell)
+    + \mathcal{R}(\theta),
+    \label{eq:ss_loss_vae_vi}
+\end{equation}
+%
+where for the unsupervised component
 %
 \begin{align}
     \begin{split}
-        \ell(x, z; \theta_\ell) \defeq
+        \ell_U(x, z; \theta_\ell) \defeq
         & - \mathbb E_{q(h|z,  \lambda)}\left[ \log p_{X|ZH}(x |z, h; \phi) \right] \\
         & - \log \frac{p_Z(z)}{\pi(z |x; \theta_\pi)}                          \\
         & + \KL\left[q(h |x, z; \lambda) \,\,\|\,\, p_H(h)\right],
@@ -331,7 +342,7 @@ which turns \eqnref{eq:fit} into the (negative) evidence lower bound
 %
 \begin{align}
     \begin{split}
-        \ell(x, z; \theta_\ell) \defeq
+        \ell_L(x, z; \theta_\ell) \defeq
         & - \mathbb E_{q(h|z,  \lambda)}\left[ \log p_{X|ZH}(x |z, h; \phi) \right] \\
         & - \log p_Z(z)                          \\
         & + \KL\left[q(h |x, z; \lambda) \,\,\|\,\, p_H(h)\right].
@@ -339,8 +350,8 @@ which turns \eqnref{eq:fit} into the (negative) evidence lower bound
     \end{split}
 \end{align}
 %
-Finally, to complete the specification of \eqnref{eq:ss_loss_vae},
-we let $\mathcal R(\phi) = - \log \pi(z |x; \theta_\pi)$ when $z$ is supervised
+Finally, to complete the specification of \eqnref{eq:ss_loss_vae_vi},
+we let $\mathcal R(\theta) = - \log \pi(z |x; \theta_\pi)$ when $z$ is supervised
 in order to train the classifier on the supervised data as well.
 To update $q(h | x, z; \lambda)$, we use the
 reparameterization trick to obtain gradients through a sampled $h$.
@@ -494,9 +505,13 @@ a set of images $\mathcal{V} = \left\{ v_1, \dots, v_C
 the messages communicated this way can be correlated with broad
 object properties amenable to interpretation by humans. In our
 framework of \eqnref{eq:fit}, we let $x = (\mathcal{V}, y)$ and define
-$\ell (x, z; \theta) \coloneqq -\log p_{X|Z}(y |\mathcal{V}, z; \theta_\ell)$
+\begin{equation}
+    \ell (x, z; \theta) \coloneqq -\log p_{X|Z}(y |\mathcal{V}, z; \theta_\ell)
+\end{equation}
 and
-$\pi (z |x; \theta) \coloneqq p_{Z|X}(z |v_y; \theta_\pi)\,$,
+\begin{equation}
+    \pi (z |x; \theta) \coloneqq p_{Z|X}(z |v_y; \theta_\pi)\,,
+\end{equation}
 where
 $p_{X|Z}(y |\mathcal{V}, z; \theta_\ell)$ corresponds to the sender and
 $p_{Z|X}(z |v_y; \theta_\pi)$ to the receiver. Following
