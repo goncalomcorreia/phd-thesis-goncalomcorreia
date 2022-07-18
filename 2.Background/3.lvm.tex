@@ -50,9 +50,9 @@ under a
 probability model $\pi(z|x;\theta)$ of the latent variable; in other
 words, the latent variable $z$ is {\it marginalized} to compute this loss.
 \eqnref{eq:fit} might also include a regularizer $\mathcal{R}(\theta)$.
-With this loss, we are assuming that the latent variable is discrete. We refer the reader
-to \citet{Kim2018} for other possibilities, such as continuous latent variables, and more
-details in general.
+Note that, with this loss, we are assuming that the latent variable $z$ is discrete.\footnote{We refer the reader
+    to \citet{Kim2018} for other possibilities, such as continuous latent variables, and more
+    details in general.}
 To model complex data, one parameterizes both the downstream loss and
 the pmf over latent assignments using neural networks, due
 to their flexibility and capacity~\citep{Kingma+2014:VAE}.
@@ -84,7 +84,7 @@ assignments sampled from $\pi(z|x;\theta)$. Under an appropriate
 learning rate schedule, this procedure converges to a local optimum
 of $\mathcal L_x(\theta)$ as long as gradient estimates are unbiased
 \citep{robbins1951stochastic}. Next, we describe the two current main
-strategies for MC estimation of this gradient. Later, in
+strategies for Monte Carlo estimation of this gradient. Later, in
 \chapref{chap:sparsemarg}, we propose our
 \textbf{deterministic} alternative, based on sparsifying $\pi(z| x,
     \theta)$.

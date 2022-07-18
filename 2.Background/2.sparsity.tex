@@ -49,7 +49,7 @@ respectively), described in detail below.
 \end{definition}
 
 Since
-\eqnref{eq:sparsemax} is the Euclidean projection operator onto the probability
+\eqnref{eq:sparsemax} is the Euclidean projection onto the probability
 simplex and solutions can hit the boundary, where some coordinates are zero-valued, sparsemax can assign {\bf
         probabilities of exactly zero}; in contrast, $\softmax(\s)$
 is always dense, that is, it always maps strictly
@@ -104,8 +104,6 @@ in modern libraries~\citep{pytorch}, this strategy is very fast in practice.
 \subsection{Entmax}\label{sec:entmax_bg}
 
 \noindent We now focus on $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax}.
-
-\newpage
 
 \begin{definition}[$\alpha$-\entmaxtext]
     The $\alpha$-\entmaxtext~\citep{blondel2019learning,entmax} mapping
@@ -277,12 +275,12 @@ The active set method
 \citep[sections 16.4 \& 16.5]{nocedalwright} as applied to the SparseMAP
 optimization problem~\citep[\eqnref{eq:sparsemap};][]{sparsemap}
 is a small variation of the formulation of Nocedal and Wright for handling
-the equality constraint, due to ~\citet[Section 6]{ad3}.
+the equality constraint, due to ~\citet[section 6]{ad3}.
 Assume that we could identify the \emph{support}, or
 \emph{active set} of an optimal solution  $\bm{\xi}^\star$, denoted
 $\bar\ZZ \defeq \left\{z \in \ZZ |\xi^\star_z > 0\right\}$.
 Then, given this set, we can find the solution to \eqnref{eq:sparsemap}
-by solving the lower-dimensional equality-constrained problem
+by solving the lower-dimensional equality-constrained optimization problem
 %
 \begin{equation}
     \minimize\| \bar{\bm{A}}\bar{\pv} - \bm{t} \|^2
