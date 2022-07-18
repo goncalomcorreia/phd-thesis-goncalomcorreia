@@ -7,11 +7,10 @@
 \noindent In the previous chapter, we used transfer learning as a way
 to weakly supervise a transformer model on a low-resource task.
 While we achieved good results with this approach, the
-architecture of the transformer remains largely uninterpretable,
+transformer architecture remains largely uninterpretable,
 which is unappealing if one wishes to find the
 reasons behind the strengths and shortcomings of the model.
-
-To this end, we introduce in the present chapter an approach that
+To this end, we introduce in this chapter an approach that
 uses \textbf{learnable sparsity} on each of the transformer's
 attention heads. In the context of this thesis, this contribution
 leads to neural models that are more \textbf{transparent} in their
@@ -26,7 +25,7 @@ ends up playing in the overall model.
 \noindent At the heart of the transformer architecture
 (\secref{sec:transformer_bg}) lie \emph{multi-head attention}
 mechanisms: each word is represented by multiple different weighted
-averages of its relevant context. As suggested by recent works on
+averages of its relevant context. As suggested in recent works on
 interpreting attention head roles, separate heads may learn
 to look for various relationships between
 tokens~\citep{tang2018why,raganato2018analysis,
@@ -45,9 +44,9 @@ Qualitative analysis of attention heads
 what phenomena they capture, heads tend to favor flatter or more
 peaked distributions.
 
-Recent works have proposed Sparse
-Transformers~\citep{openai_sparse_transf} and Adaptive Span
-Transformers~\citep{Sukhbaatar2019}. However, the ``sparsity" of those
+Recent works have proposed sparse
+transformers~\citep{openai_sparse_transf} and adaptive span
+transformers~\citep{Sukhbaatar2019}. However, the ``sparsity" of those
 models only limits the attention to a contiguous span of past tokens,
 while in this work we propose a \textbf{highly adaptive} transformer
 model that is capable of attending to a sparse set of words that are
@@ -120,8 +119,8 @@ shorter attention span than higher layers.
 
 \paragraph*{Transformer interpretability.} The original transformer
 paper~\citep{vaswani2017attention} shows attention visualizations,
-from which some speculation can be made of the roles the several
-attention heads have. \citet{marecek-rosa-2018-extracting} study the
+from which some speculation can be made on the roles of the several
+attention heads. \citet{marecek-rosa-2018-extracting} study the
 syntactic abilities of the transformer self-attention, while
 \citet{raganato2018analysis} extract dependency relations from the
 attention weights. \citet{bert-rediscovers} find that the
@@ -190,7 +189,12 @@ shape away from softmax and toward sparse mappings like sparsemax.
 
 \begin{proposition}\label{prop:grad_alpha}%
     Let $\p^\star \coloneqq \aentmax(\x)$ be the solution of
-    \eqnref{eq:define_entmax}.
+    \eqnref{eq:define_entmax},
+    \begin{equation}
+        \aentmax(\bm{z}) \coloneqq
+        \argmax_{\p \in \simplex^{K-1}} \bm{p}^\top\bm{z} + \HHt_{\alpha}(\bm{p}).
+    \end{equation}
+    %
     Denote the distribution $\tilde{\pp}_i \coloneqq \nicefrac{(\pp_i^\star)^{2 - \alpha}}{
             \sum_j(\pp_j^\star)^{2-\alpha}}$ and let
     $h_i \coloneqq -\pp^\star_i \log \pp^\star_i$.
@@ -210,8 +214,8 @@ shape away from softmax and toward sparse mappings like sparsemax.
 \noindent%
 The proof uses implicit function differentiation and is given in \appref{app:alpha_grad}.
 
-\eqnref{eq:final_gradient_alpha} provides the remaining missing
-piece needed for training adaptively sparse transformers. In the
+\eqnref{eq:final_gradient_alpha} provides the needed piece that was missing
+for training adaptively sparse transformers. In the
 following section, we evaluate this strategy on neural machine
 translation and analyze the behavior of the learned attention heads.
 
@@ -367,7 +371,7 @@ drops to around $\alpha=1.3$ before becoming one of the sparsest
 heads, with $\alpha\approx2$.
 
 The overall distribution of $\alpha$ values at convergence can be
-seen in \figref{fig:hist_alphas}. We can observe that the encoder
+seen in \figref{fig:hist_alphas}. We observe that the encoder
 self-attention blocks learn to concentrate the $\alpha$ values in two
 modes: a very sparse one around $\alpha \rightarrow 2$, and a dense
 one between softmax and 1.5-\entmaxtext{}. However, the decoder self
@@ -478,7 +482,7 @@ Teasing this down into separate layers,
 \figref{fig:head_density_per_layer} shows the average (sorted) density of
 each head for each layer. We observe that $\alpha$-\entmaxtext{} is
 able to learn different sparsity patterns at each layer, leading to
-more variance in individual head behavior, to clearly-identified
+more variation in individual head behavior, to clearly-identified
 dense and sparse heads and overall different tendencies compared
 to the fixed case of $\alpha=1.5$.
 
@@ -773,14 +777,14 @@ in contrast to the constant $\mathcal{O}(n^2)$ connections of dense
 transformers), they still hold the same universal approximation
 properties.
 
-\citet{zhang2021SparseAttentionLinear} proposed another approach to
+\citet{zhang2021SparseAttentionLinear} propose another approach to
 induce sparsity in each attention head of the transformer. In this
 work, instead of replacing the softmax with entmax, the authors
 replace it with the $\text{ReLU}=\max(0, \bm{x})$ activation. When compared to our approach,
-Rectified Linear Attention (ReLA) obtains faster training and
+rectified linear attention (ReLA) obtains faster training and
 decoding time while achieving close performance in translation
 tasks. In their analysis, they followed our methodology and found
-that their method had higher JS Divergence than our own, suggesting
+that their method had higher JS divergence than our own, suggesting
 that attention heads using ReLA tend to be more diverse in where they
 attend at each layer. Furthermore, ReLA is also able to assign null
 attention for some queries, that is, to effectively deactivate an
