@@ -6,7 +6,7 @@
 For example, as a weighting function in transformers' attention mechanisms
 or as a way to parameterize discrete probability distributions.
 The \textit{probability simplex} $\simplex^{K-1}$
-is a subset of $\reals^K$ such that, if $\bm{x}\in\simplex^{K-1}$,
+is a subset of $\reals^K$ such that, if and only if $\bm{x}\in\simplex^{K-1}$,
 then $0 \leq x_k \leq 1$ for any $k\in\left\{1, \dots, K\right\}$ and
 $\sum_{k=1}^K x_k = 1$. As aforementioned, \textbf{softmax} is one
 such projection that maps from $\bm{s}\in\reals^K$ into it
@@ -30,8 +30,11 @@ SparseMAP~\citep{sparsemap}.
 \subsection{Sparsemax}\label{sec:sparsemax_bg}
 
 \noindent Firstly, we will introduce the \textbf{sparsemax} mapping.
-Like softmax, sparsemax is differentiable and has efficient forward and backward
-passes~\citep{Held1974,sparsemax}, described in detail below.
+Like softmax, sparsemax is differentiable and has efficient forward
+and backward passes~\citep{Held1974,sparsemax} (\ie, the
+transformation that happens at the input of a neural network block,
+and the respective gradient computation required for backpropagation,
+respectively), described in detail below.
 
 \begin{definition}[sparsemax]
     The sparsemax transformation
@@ -50,7 +53,7 @@ Since
 simplex and solutions can hit the boundary, where some coordinates are zero-valued, sparsemax can assign {\bf
         probabilities of exactly zero}; in contrast, $\softmax(\s)$
 is always dense, that is, it always maps strictly
-to the interior of the simplex where all coordinates are non-zero.
+to the relative interior of the simplex where all coordinates are non-zero.
 
 As a projection onto a polytope, the solution is likely to fall on the
 set's boundaries or corners. In this case, points on the border of
@@ -139,13 +142,13 @@ definition of $\HHt_\alpha$, the optimality conditions may be used to derive its
     %
     \begin{equation}\label{eq:entmax_form}
         \aentmax(\x)
-        = [(\alpha - 1){\x} - \tau^\star \ones]_+^{\nicefrac{1}{\alpha-1}}.
+        = [(\alpha - 1){\x} - \tau^\star \ones]_+^{\nicefrac{1}{\left(\alpha-1\right)}}.
     \end{equation}
     %
     where $[\cdot]_+$ is the positive part function, $\bm{1}$
-    denotes the vector of all ones, and $\tau^\star$\,---\,which acts like a
-    threshold\,---\,is the Lagrange multiplier corresponding to the $\sum_i
-        \pp_i=1$ constraint.
+    denotes the vector of all ones, and $\tau^\star$, which acts like a
+    threshold, is the Lagrange multiplier corresponding to the constraint $\sum_i
+        \pp_i=1$.
 \end{lemma}
 
 \paragraph*{Properties of {\boldmath $\alpha$}-\entmaxtext.}
@@ -271,7 +274,7 @@ only linearly with $D$, and therefore $|\bar\ZZ| \ll |\ZZ|$.
 \end{algorithm}
 
 The active set method
-\citep[Chapters 16.4 \& 16.5]{nocedalwright} as applied to the SparseMAP
+\citep[sections 16.4 \& 16.5]{nocedalwright} as applied to the SparseMAP
 optimization problem~\citep[\eqnref{eq:sparsemap};][]{sparsemap}
 is a small variation of the formulation of Nocedal and Wright for handling
 the equality constraint, due to ~\citet[Section 6]{ad3}.

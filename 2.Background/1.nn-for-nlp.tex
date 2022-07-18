@@ -1,14 +1,15 @@
 \section{Machine Learning}
 \label{sec:ml-primer}
 
-\noindent We begin by presenting the main ingredients in the machine learning pipeline:
+\noindent We begin by presenting the main ingredients in the common machine learning pipeline:
 %
 \begin{itemize}
     \item a dataset $\mathcal{D}$, made out of
           \textit{inputs} $\mathcal{D}=\left\{\bm{x}_n\right\}_{n=1}^N$ or
           \textit{input-output} pairs
           $\mathcal{D}=\left\{(\bm{x}_n,y_n)\right\}_{n=1}^N$;
-    \item a set of parameters $\theta$;
+    \item a set of parameters $\theta$, which are the parameters of the
+          model; and
     \item a loss function $L$.
 \end{itemize}
 %
@@ -16,9 +17,10 @@ With these ingredients, we create a machine learning pipeline by
 taking a \textit{training set} that is a subset of $\mathcal{D}$ and estimate
 the parameters $\theta$ by minimizing the loss
 $L$ on that set. The resulting model with optimal
-$\hat{\theta}$ can then be evaluated on a held-out set of
+$\hat{\theta}$ can then be evaluated on a held-out subset of
 $\mathcal{D}$, called \textit{test set}, to assess its performance.
 We will often assume $\mathcal D$ is made out of input-output pairs,
+\ie we'll be addressing supervised learning,
 unless specified otherwise.
 
 When the model is probabilistic, this process creates a probability
@@ -46,7 +48,7 @@ $p_{Y|X}(y|\bm{x};\theta)=\text{Cat}(y|f(\bm{x}; \theta))$.
 
 \paragraph*{Supervised learning.} We now turn our attention to applications
 in which one uses a dataset of input-output pairs. In such a case,
-to estimate $\theta$ we minimize the loss over the input-pair dataset,
+to estimate $\theta$, we minimize the loss over the input-pair dataset,
 %
 \begin{equation}
     \hat{\theta} = \argmin_\theta L_\mathcal{D}(\theta),
@@ -77,9 +79,9 @@ still use a statistical model; for example, one might use the 0/1
 loss where the loss is $1$ if the $\argmax$ mode is wrong (\ie,
 $\hat{y}\neq y$) and $0$ otherwise. After training the model, we wish
 to make predictions $\hat{y}$ for each novel input $\bm{x}$ of the
-test set, and we can make such predictions by using the optimal
+test set, and we can make such predictions by using the
 trained parameters $\hat{\theta}$ and selecting, for instance, the highest-scoring
-$y\in\mathcal{Y}$ by taking the $\argmax$
+$y\in\mathcal{Y}$:
 %
 \begin{equation}
     \hat{y}=\argmax_{y\in\mathcal{Y}}p_{Y|X}\left(y|\bm{x};\hat{\theta}\right).
@@ -145,7 +147,7 @@ thesis, we will use the term \textit{weakly-supervised} and
 alleviate the need for labeled data to obtain a well-performing
 model. This setting not only includes semi-supervision but also
 includes, for example, the transferring of learned parameters of an
-already optimized unsupervised model to a supervised one, also called
+already optimized model to a new one, also called
 \textit{transfer learning}. In such a case, the estimation of
 parameters can first occur by minimizing the first loss component in
 \eqnref{eq:semisup}, and then those learned parameters can be reused
@@ -158,13 +160,13 @@ constraints, labels obtained via heuristics, among others.
 
 \noindent Naturally, there are many different ways one can use $\theta$ to
 parameterize $p_{Y|X}\left(y|\bm{x};\theta\right)$. One of the simpler ways
-is to define a log-linear model
+is to define a log-linear model,
 %
 \begin{align}
     p_{Y|X}\left(y|\bm{x};\theta\right) & = \text{Cat}(y|f(\bm x; \theta)) \\
     f(x; \theta)                        & = \softmax \left(\bm{s}\right)   \\
     \bm{s}                              & 
-    = \bm{W}_{\theta}^T\bm{\phi}\left(\bm{x}\right) \label{eq:linear}
+    = \bm{W}_{\theta}^T\bm{\phi}\left(\bm{x}\right), \label{eq:linear}
 \end{align}
 %
 where $\bm{\phi}$ is a function that maps $\bm{x}$ into a
@@ -191,7 +193,7 @@ task itself. The \textit{art} of creating these functions $\bm{\phi}$
 is often called \textbf{feature engineering}.
 
 An alternative to the log-linear model is a \textbf{neural network}, which, in a
-way, performs feature engineering automatically through the use of hidden
+way, performs feature learning automatically through the use of hidden
 representations. Neural networks use non-linear functions, also known
 as \textit{activation functions}, along with linear functions similar
 to \eqnref{eq:linear} in order to build these hidden representations.
@@ -224,11 +226,11 @@ for feature engineering.
 
 Just as well, non-linearities and the flexible composition of functions end up
 impeding the usage of convex optimization, and so neural networks are
-often trained instead through a process called
-\textit{backpropagation}, a gradient-based optimization algorithm.
+often trained instead through  a gradient-based optimization algorithm based on a process called
+\textit{backpropagation}.
 
 \begin{definition}[backpropagation]
-    Backpropagation is a gradient-based optimization algorithm that
+    Backpropagation is a gradient-based process that
     locally minimizes the loss function $L$ by iteratively updating the
     parameters $\theta$. In order to be able to update $\theta$,
     the only requirement is to be able to compute the gradient of
@@ -259,7 +261,7 @@ dataset (the \textit{validation set} or \textit{development set}).
 \section{Neural Networks and Natural Language}
 
 \noindent Using neural networks in NLP applications is a pivotal part
-of the research shown in the present thesis. While there are many
+of the research presented in this thesis. While there are many
 ways of applying neural networks to NLP, exploiting many different
 architectures and aimed at many different tasks, we give
 special attention to sequence-to-sequence models, which we will
@@ -303,7 +305,7 @@ models. In this thesis, we mainly focus on
     $\bm{x}=[x^1, \dots, x^N]$ is the input sequence of words,
     $y_i$ is the next word in the output sequence $y=[y^1, \dots, y^M]$,
     and $y_{\leq i}$ is the history of previous words in $y$.
-    When modeled with neural networks, these models typically have
+    When modeled with neural networks, these typically have
     two main building blocks: the \textit{encoder}, which processes $\bm{x}$,
     and the \textit{decoder}, that parameterizes the probability of the next
     token $y_i$ in the context of $y_{\leq i}$ and $\bm{x}$.
@@ -338,8 +340,8 @@ in \citet{vaswani2017attention} is called \emph{scaled dot-product
     attention}.
 
 \begin{definition}[attention mechanisms and scaled dot-product attention]
-    Attention mechanisms are a possible differentiable building block
-    of a neural network, mainly used in sequence modeling. For each
+    Attention mechanisms are a differentiable building block
+    of a neural network. For each
     item in the sequence, the attention mechanism computes a weighted
     representation of all the other items in said sequence or a given
     context sequence. Given the current item, it can often be

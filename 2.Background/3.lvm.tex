@@ -21,14 +21,13 @@ in the modeling of $p_X(\bm{x}|\theta)$ stems from the simple
 observation that
 %
 \begin{equation}\label{eq:lvm}
-    \log p_X(\bm{x}|\theta) =
-    \mathbb{E}_{\pi(z | x; \theta)} \left[\log p_X(\bm{x}|\theta)\right]\,,
+    p_X(\bm{x}|\theta) = \sum_z p(x, z) = \sum_z \pi(z|x; \theta) p_X(\bm{x}|\theta),
 \end{equation}
 %
-where $z$ is the underlying latent or hidden variable and $\pi$ is the
+where $z$ is the underlying latent or hidden variable and $\pi(z|x; \theta) = p(z|x; \theta)$ is the
 probability of an assignment $z$ given the current observed $\bm{x}$.
 
-When discussing latent variable models, we assume throughout that there are observed variables
+When discussing latent variable models, we assume throughout that there are observed stochastic variables
 $x \in \mathcal{X}$ and latent stochastic variables $z \in \ZZ$. The
 overall fit to a dataset $\mathcal D$ is $L_\mathcal{D}(\theta) =
     \sum_{x \in \mathcal{D}} \LL_x(\theta)$, where the loss of each
@@ -42,9 +41,10 @@ observation,
 \end{equation}
 %
 is the expected value of a downstream loss $\ell(x,z;\theta)$\footnote{
-    We swapped the probabilistically-grounded $\log p_X(\bm{x}|\theta)$ in \eqnref{eq:lvm}
+    We swapped the probabilistically-grounded $p_X(\bm{x}|\theta)$ in \eqnref{eq:lvm}
     for a more general $\ell(x,z;\theta)$ in order
-    to englobate any possible loss, probabilistic or non-probabilistic.
+    to englobate any possible loss, probabilistic or non-probabilistic,
+    and to include a optional dependency on $z$.
 }
 under a
 probability model $\pi(z|x;\theta)$ of the latent variable; in other
@@ -78,7 +78,7 @@ evaluations of the downstream loss. When $\ZZ$ is not too large, the
 expectation may be evaluated explicitly, and learning can proceed
 with exact gradient updates. If $\ZZ$ is large, and/or if $\ell$ is
 an expensive computation, evaluating the expectation becomes
-prohibitive. In such cases, practitioners typically turn to MC
+prohibitive. In such cases, practitioners typically turn to Monte Carlo (MC)
 estimates of $\nabla_\theta \LL_x(\theta)$ derived from latent
 assignments sampled from $\pi(z|x;\theta)$. Under an appropriate
 learning rate schedule, this procedure converges to a local optimum
@@ -93,7 +93,7 @@ strategies for MC estimation of this gradient. Later, in
     \theta_\ell)$, where $\theta_\pi$ is the subset of weights that $\pi$
 depends on, and $\theta_\ell$ the subset of weights that $\ell$
 depends on. Given a sample $\zsamp \sim \pi(z| x;\theta_\pi)$, an
-unbiased estimator of the gradient for \eqnref{eq:fit} \wrt
+unbiased estimate of the gradient for \eqnref{eq:fit} \wrt
 $\theta_\ell$ is $\nabla_{\theta_\ell} \mathcal L_x(\theta) \approx
     \nabla_{\theta_\ell} \ell(x, \zsamp; \theta_\ell)$. Unbiased
 estimation of $\nabla_{\theta_\pi} \mathcal L_x(\theta)$ is more
@@ -123,7 +123,7 @@ using the so-called \emph{reparameterization trick}
 variables, reparameterizations can only be obtained by introducing a
 step function like $\argmax$, which has null gradients almost everywhere.
 Replacing the gradient of $\argmax$ with a nonzero surrogate like the identity
-function, known as Straight-Through~\citep{STE}, or with the gradient of softmax, known
+function, known as straight-through~\citep{STE}, or with the gradient of softmax, known
 as \emph{Gumbel-Softmax}~\citep{Concrete,GumbelSoftmax}, leads to a
 biased estimator that can still perform well in practice. Continuous
 relaxations like Straight-Through and Gumbel-Softmax are only
