@@ -9,7 +9,7 @@ paving the way for more \textbf{data-efficient} neural network
 models. To achieve this, we use weak supervision in the form of
 transfer learning.
 
-When the work discussed in this chapter was published, the use of
+When the work presented in this chapter was published, the use of
 pre-trained transformers (\secref{sec:pretrained-bg}) in NLP
 generation tasks had not been explored as much as it has been in
 recent years. For instance, the work that proposed
@@ -22,7 +22,7 @@ natural language. However, as BERT was a transformer encoder, it was
 not straightforward to consider it to be used as a generation model.
 
 In this work, we presented a simple and effective solution to this
-problem, using the scarcity of Automatic Post-Editing data as the
+problem, using the scarcity of automatic post-editing~\citep[APE;][]{simard2007rule} data as a
 playground to explore the transfer learning capacity of a large
 transformer encoder model in a sequence-to-sequence task, being one
 of the first works to do so.
@@ -31,9 +31,9 @@ of the first works to do so.
 
 \section{Motivation}
 
-\noindent {\bf Automatic post-editing}~\citep[APE;][]{simard2007rule} is
+\noindent {\bf Automatic post-editing} is
 inspired by human post-editing, in which a human translator corrects
-mistakes made by an MT system.
+mistakes made by a machine translation (MT) system.
 The goal of APE is to automatically correct the mistakes produced by
 a black-box MT system. APE is particularly
 appealing for rapidly customizing MT, avoiding training new systems
@@ -70,7 +70,7 @@ for NLP (\secref{sec:pretrained-bg}): models such as CoVe~\citep{mccann2017learn
 ELMo~\citep{peters2018deep}, OpenAI GPT~\citep{radford2018improving},
 ULMFiT~\citep{howard2018universal}, and BERT~\citep{devlin2018bert}
 obtain powerful representations by training large-scale language
-models and use them to improve performance in many sentence-level and
+models and using them to improve performance in many sentence-level and
 word-level tasks. However, a language generation task such as APE
 presents additional challenges.
 
@@ -84,7 +84,7 @@ triplets for APE need to be created separately for every language
 pair that one wishes to train an APE system for, which ends up
 increasing the computational and time resources in the long run.
 
-On the other hand, using transfer learning and with only the tiny shared
+On the other hand, using transfer learning with only the tiny shared
 task dataset (23K triplets), our proposed strategy outperforms this
 baseline considerably, by $-4.9$ TER and $+7.4$ BLEU in the
 English-German WMT 2018 APE shared task, with only 3 hours of training on
@@ -101,7 +101,7 @@ Our main contributions are the following:
           sentence pair as input.
     \item We show how pre-trained BERT models can also be used and
           fine-tuned as the {\bf decoder} in a language generation task.
-    \item We make a thorough empirical evaluation and ablation of different ways of
+    \item We make a thorough empirical evaluation and ablation study of different ways of
           coupling BERT models in an APE system, comparing different options
           of parameter sharing, initialization, and fine-tuning.
 \end{itemize}
@@ -126,7 +126,7 @@ sentence. Instead of relying on edit operations, our approach
 mitigates the small amount of data with transfer learning through
 BERT.
 
-Our work makes use of the key advances in transfer learning for
+Our work makes use of key advances in transfer learning for
 NLP~\citep{peters2018deep, howard2018universal, radford2018improving,
     devlin2018bert}. Pre-training these large language models has largely
 improved the state of the art of the GLUE
@@ -157,8 +157,8 @@ perfect fit for the APE task.
 
 \subsection{BERT as a Cross-Lingual Encoder}
 
-\noindent Our transfer learning approach is based on the Bidirectional Encoder
-Representations from Transformers~\citep[BERT;][]{devlin2018bert}.
+\noindent Our transfer learning approach is based on the bidirectional encoder
+representations from transformers~\citep[BERT;][]{devlin2018bert}.
 This model obtains deep bidirectional representations by training a
 transformer~\citep{vaswani2017attention} with a large-scale dataset
 in a masked language modeling task where the objective is to predict
@@ -433,8 +433,8 @@ generation purposes (\eg,
     chen2020DistillingKnowledgeLearned}), and our work shown in this
 chapter was one of the first to do so.
 
-Most closely related to our work, and co-authored by the writer of
-the present thesis, \citet{Lopes2019} used our model on the
+Most closely related to our work, and co-authored by the author of
+this thesis, \citet{Lopes2019} used our model on the
 harder English-German NMT APE subtask of WMT 2019, winning the shared
 task that year. To obtain this result, the transfer learning
 capabilities of BERT were not enough and further engineering effort
@@ -466,7 +466,7 @@ stage~\citep{wang2020AlibabaSubmissionWMT}.
 On the data-efficiency side,
 \citet{gois2020LearningNonMonotonicAutomatic} performed
 experiments on the APE subtask, using only the real post-edited data,
-without recurring to expensive synthetic dataset creation. In their
+without resorting to expensive synthetic dataset creation. In their
 case, they also leveraged transfer learning using a BERT encoder, but
 increased the decoder's supervision to include real keystrokes data,
 from human post-editors. While not surpassing our approach, we
